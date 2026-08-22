@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Sparkles, Terminal, Code2, Cpu, Check, MapPin, ShieldCheck, Zap } from 'lucide-react';
 import { ThemeMode } from '../types';
-import { AVATAR_BASE64 } from '../assets/avatarBase64';
 import avatarImg from '../assets/avatar.png';
 
 interface OpeningAnimationProps {
@@ -26,14 +25,13 @@ export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
 
   const avatarCandidates = [
     avatarUrl,
-    AVATAR_BASE64,
     avatarImg,
     '/avatar.png',
     '/avatar.jpg',
     '/avatar_new.png',
     '/user_photo.jpg'
   ].filter(Boolean) as string[];
-  const currentAvatar = avatarCandidates[imgFallbackIndex] || AVATAR_BASE64;
+  const currentAvatar = avatarCandidates[imgFallbackIndex] || avatarImg || '/avatar.png';
 
   const logs = [
     { text: 'Mounting Developer Environment & Core Modules...', tag: 'CORE' },
