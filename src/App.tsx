@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HeaderBar } from './components/HeaderBar';
 import { TabBar } from './components/TabBar';
 import { Sidebar } from './components/Sidebar';
@@ -25,6 +25,7 @@ import { OpeningAnimation } from './components/OpeningAnimation';
 import { ModeTransitionOverlay } from './components/ModeTransitionOverlay';
 import { portfolioData as initialPortfolioData } from './data/portfolioData';
 import { EditorTabId, ViewMode, ThemeMode, Project, PortfolioData } from './types';
+import { syncGithubProjects } from './utils/githubSync';
 import confetti from 'canvas-confetti';
 
 export default function App() {
@@ -60,31 +61,61 @@ export default function App() {
   // Full-screen mode transition (JSON <-> GUI) with 0-100% circle progress
   const [transitioningMode, setTransitioningMode] = useState<ViewMode | null>(null);
 
+  // Sync projects from GitHub @mishuk08 on startup (excluding mishuk08 and RS_Employ_Hosting)
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadGithubRepos() {
+      try {
+        const result = await syncGithubProjects('mishuk08');
+        if (isMounted && result.projects.length > 0) {
+          setData(prev => {
+            // Merge GitHub projects ensuring no duplicates by id or title
+            const existingNonGh = prev.projects.filter(p => !p.id.startsWith('gh-'));
+            return {
+              ...prev,
+              projects: [...result.projects, ...existingNonGh]
+            };
+          });
+        }
+      } catch (err) {
+        console.warn('GitHub initial sync notice:', err);
+      }
+    }
+
+    loadGithubRepos();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const toggleThemeMode = () => {
     if (themeBlurState !== 'idle') return;
-    // Step 1: Start progressive frosted glass blur
+    
+    // Step 1: Immediately apply fast frosted glass blur
     setThemeBlurState('in');
     
-    // Step 2: At peak blur (200ms), switch theme behind frosted glass and fire wave ripple
+    // Step 2: At 120ms (when blur fully covers the screen), switch theme & trigger wave
     setTimeout(() => {
       setThemeMode(prev => (prev === 'dark' ? 'light' : 'dark'));
       setShowThemeWave(true);
 
-      // Step 3: Wait until DOM has fully rendered the new theme before dissolving the blur
+      // Step 3: Now smoothly reduce/fade out the blur (blur-out) to reveal the new theme
       setTimeout(() => {
         setThemeBlurState('out');
 
-        // Step 4: Clear blur state after smooth dissipation
+        // Step 4: Reset blur state to idle once blur is completely gone
         setTimeout(() => {
           setThemeBlurState('idle');
-        }, 320);
-      }, 90);
-    }, 200);
+        }, 280);
+      }, 50);
+    }, 120);
 
     // Step 5: Clear wave animation overlay
     setTimeout(() => {
       setShowThemeWave(false);
-    }, 800);
+    }, 700);
   };
 
   const handleRequestViewMode = (newMode: ViewMode) => {

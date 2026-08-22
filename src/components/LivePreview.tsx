@@ -645,9 +645,17 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                   <Code2 className="w-4 h-4" />
                   <span>Featured Work</span>
                 </div>
-                <h2 className={`text-2xl sm:text-3xl font-extrabold tracking-tight mt-1 ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>
-                  Software Projects & Apps
-                </h2>
+                <div className="flex flex-wrap items-center gap-2.5 mt-1">
+                  <h2 className={`text-2xl sm:text-3xl font-extrabold tracking-tight ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>
+                    Software Projects & Apps
+                  </h2>
+                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono border backdrop-blur-md ${
+                    isDark ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' : 'bg-amber-50 text-amber-800 border-amber-300'
+                  }`}>
+                    <Github className="w-3 h-3 text-amber-500" />
+                    <span>Synced with GitHub @mishuk08</span>
+                  </span>
+                </div>
               </div>
 
               {/* Filter Tabs */}
@@ -1048,23 +1056,6 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                 </a>
               )}
 
-              {portfolioData.developer.socials.linkedin && (
-                <a
-                  href={portfolioData.developer.socials.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer backdrop-blur-md ${
-                    isDark 
-                      ? 'bg-[#141622]/80 hover:bg-[#1f2338] text-cyan-400 border-cyan-500/30' 
-                      : 'bg-white/90 hover:bg-cyan-50 text-cyan-700 border-cyan-200 shadow-xs'
-                  }`}
-                  title="LinkedIn Network"
-                >
-                  <Linkedin className="w-4 h-4" />
-                  <span>LinkedIn</span>
-                </a>
-              )}
-
               {portfolioData.developer.socials.whatsapp && (
                 <a
                   href={portfolioData.developer.socials.whatsapp}
@@ -1081,36 +1072,6 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                   <span>WhatsApp</span>
                 </a>
               )}
-
-              {portfolioData.developer.socials.twitter && (
-                <a
-                  href={portfolioData.developer.socials.twitter}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer backdrop-blur-md ${
-                    isDark 
-                      ? 'bg-[#141622]/80 hover:bg-[#1f2338] text-sky-400 border-sky-500/30' 
-                      : 'bg-white/90 hover:bg-sky-50 text-sky-600 border-sky-200 shadow-xs'
-                  }`}
-                  title="Twitter / X"
-                >
-                  <Twitter className="w-4 h-4" />
-                  <span>Twitter</span>
-                </a>
-              )}
-
-              <a
-                href={`mailto:${portfolioData.developer.email}`}
-                className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer backdrop-blur-md ${
-                  isDark 
-                    ? 'bg-[#141622]/80 hover:bg-[#1f2338] text-amber-400 border-amber-500/30' 
-                    : 'bg-white/90 hover:bg-amber-50 text-amber-700 border-amber-200 shadow-xs'
-                }`}
-                title="Send Direct Email"
-              >
-                <Mail className="w-4 h-4" />
-                <span>Email</span>
-              </a>
             </div>
 
             {/* Right: Developed by Mishuk Babu Shoukhin (Clickable to Facebook) */}

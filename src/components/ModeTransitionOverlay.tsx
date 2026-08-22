@@ -22,8 +22,16 @@ export const ModeTransitionOverlay: React.FC<ModeTransitionOverlayProps> = ({
 
   const isSwitchingToGui = targetMode === 'preview';
 
+  const onApplyModeRef = useRef(onApplyMode);
+  const onCompleteRef = useRef(onComplete);
+
   useEffect(() => {
-    const duration = 850; // 850ms ultra-smooth 0-100% progression
+    onApplyModeRef.current = onApplyMode;
+    onCompleteRef.current = onComplete;
+  }, [onApplyMode, onComplete]);
+
+  useEffect(() => {
+    const duration = 800; // 800ms ultra-smooth 0-100% uninterrupted progression
     const startTime = performance.now();
     let animationFrameId: number;
 
@@ -31,7 +39,7 @@ export const ModeTransitionOverlay: React.FC<ModeTransitionOverlayProps> = ({
       const elapsed = now - startTime;
       const progressRatio = Math.min(1, Math.max(0, elapsed / duration));
       
-      // Smooth natural curve (ease-in-out quad for steady 0-100%)
+      // Smooth natural curve (ease-in-out quad for steady monotonic 0-100%)
       const eased = progressRatio < 0.5
         ? 2 * progressRatio * progressRatio
         : 1 - Math.pow(-2 * progressRatio + 2, 2) / 2;
@@ -39,10 +47,10 @@ export const ModeTransitionOverlay: React.FC<ModeTransitionOverlayProps> = ({
       const currentPct = Math.min(100, Math.round(eased * 100));
       setProgress(currentPct);
 
-      // Pre-apply mode behind the backdrop at 38% so DOM has fully painted the new view
-      if (progressRatio >= 0.38 && !modeAppliedRef.current) {
+      // Pre-apply mode behind the backdrop at 40% so DOM has fully painted the new view
+      if (progressRatio >= 0.4 && !modeAppliedRef.current) {
         modeAppliedRef.current = true;
-        onApplyMode();
+        onApplyModeRef.current();
       }
 
       if (progressRatio < 1) {
@@ -51,8 +59,8 @@ export const ModeTransitionOverlay: React.FC<ModeTransitionOverlayProps> = ({
         setProgress(100);
         setIsFadingOut(true);
         setTimeout(() => {
-          onComplete();
-        }, 250);
+          onCompleteRef.current();
+        }, 220);
       }
     };
 
@@ -61,7 +69,7 @@ export const ModeTransitionOverlay: React.FC<ModeTransitionOverlayProps> = ({
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [onApplyMode, onComplete]);
+  }, []); // Run once on mount: never restart halfway
 
   // SVG Circular progress math
   const radius = 52;

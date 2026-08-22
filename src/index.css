@@ -72,11 +72,11 @@
 }
 
 .theme-blur-in {
-  animation: theme-blur-in 0.2s cubic-bezier(0.3, 0, 0.2, 1) forwards;
+  animation: theme-blur-in 0.12s cubic-bezier(0.2, 0, 0.2, 1) forwards;
 }
 
 .theme-blur-out {
-  animation: theme-blur-out 0.3s cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
+  animation: theme-blur-out 0.28s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
 }
 
 /* Luminous Theme Wave Animation */

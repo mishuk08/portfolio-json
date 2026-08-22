@@ -76,14 +76,31 @@ export const portfolioData: PortfolioData = {
   ],
   projects: [
     {
+      id: "gh-cod_store",
+      title: "Cod Store - Modern E-Commerce Platform",
+      tagline: "High-performance headless online store with live cart, catalog filtering, and instant checkout.",
+      description: "A full-stack e-commerce web application built with TypeScript, React, and modern web tooling. Live deployed at shopjms.vercel.app with complete shopping cart, responsive UI, dynamic catalog search, and modern design.",
+      category: "Full-Stack",
+      tags: ["TypeScript", "React", "Next.js", "Tailwind CSS", "Vercel", "E-Commerce", "GitHub"],
+      githubUrl: "https://github.com/mishuk08/cod_store",
+      liveUrl: "https://shopjms.vercel.app",
+      featured: true,
+      metrics: "Live on Vercel • Synced with GitHub @mishuk08",
+      highlights: [
+        "Repository: github.com/mishuk08/cod_store",
+        "Live Production Deployment: https://shopjms.vercel.app",
+        "Modular TypeScript architecture with reactive state management and responsive styling"
+      ]
+    },
+    {
       id: "devhub-cloud",
       title: "DevHub Cloud Management Platform",
       tagline: "High-performance dashboard for server telemetry, microservices orchestration, and log inspection.",
       description: "An enterprise-grade developer cockpit that monitors cloud instances, live memory/CPU consumption, docker containers, and automated deployment pipelines with sub-second alert triggers.",
       category: "Full-Stack",
       tags: ["React", "TypeScript", "Node.js", "Express", "Tailwind CSS", "WebSockets", "Docker"],
-      githubUrl: "https://github.com",
-      liveUrl: "https://example.com/devhub",
+      githubUrl: "https://github.com/mishuk08",
+      liveUrl: "https://github.com/mishuk08",
       featured: true,
       metrics: "99.98% Telemetry Uptime, <50ms Stream Latency",
       highlights: [
