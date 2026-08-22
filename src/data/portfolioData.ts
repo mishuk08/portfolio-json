@@ -12,9 +12,9 @@ export const portfolioData: PortfolioData = {
     location: "Rangpur, Bangladesh",
     yearsOfExperience: 1,
     bio: [
-      "I am a dedicated Web and Software Developer at RoboSuperior (RoboSuperior.org), focused on crafting high-quality web applications, responsive user interfaces, and robust software solutions.",
-      "Committed to continuous growth and deep foundational mastery in modern computer science, algorithms, JavaScript/TypeScript ecosystems, React, and server-side technologies.",
-      "Passionate about writing clean, maintainable code, problem solving, and transforming ideas into functional, user-centric digital products."
+      "I am Mishuk Babu Shoukhin, a driven and passionate technologist focused on software engineering, modern web technologies, and computational problem solving.",
+      "Dedicated to the craft of writing clean, maintainable code and building high-performance digital products with intuitive user experiences.",
+      "Driven by continuous learning, strong architectural foundations, and transforming creative ideas into impactful software solutions."
     ],
     socials: {
       github: "https://www.github.com/mishuk08",
@@ -29,51 +29,33 @@ export const portfolioData: PortfolioData = {
   },
   skills: [
     {
-      category: "Programming & Core Foundations",
+      category: "Programming Foundations",
       icon: "Code2",
       skills: [
         { name: "JavaScript (ES6+)", status: "Learning", badge: "Learning" },
         { name: "TypeScript", status: "Learning", badge: "Learning" },
-        { name: "HTML5 & Semantic Markup", status: "Learning", badge: "Learning" },
-        { name: "CSS3 & Modern Layouts", status: "Learning", badge: "Learning" },
-        { name: "Python", status: "Learning", badge: "Learning" },
-        { name: "C / C++ Basics", status: "Learning", badge: "Learning" }
+        { name: "HTML5 & CSS3", status: "Learning", badge: "Learning" },
+        { name: "Python", status: "Learning", badge: "Learning" }
       ]
     },
     {
-      category: "Frontend & Web Technologies",
+      category: "Web Engineering",
       icon: "Layout",
       skills: [
         { name: "React.js", status: "Learning", badge: "Learning" },
         { name: "Tailwind CSS", status: "Learning", badge: "Learning" },
-        { name: "Responsive Web Design", status: "Learning", badge: "Learning" },
-        { name: "DOM Manipulation & Events", status: "Learning", badge: "Learning" },
-        { name: "Fetch & RESTful API Integration", status: "Learning", badge: "Learning" },
-        { name: "Single Page Applications (SPA)", status: "Learning", badge: "Learning" }
+        { name: "Node.js & Express", status: "Learning", badge: "Learning" },
+        { name: "REST APIs & JSON", status: "Learning", badge: "Learning" }
       ]
     },
     {
-      category: "Backend & Systems Foundations",
-      icon: "Server",
-      skills: [
-        { name: "Node.js", status: "Learning", badge: "Learning" },
-        { name: "Express.js", status: "Learning", badge: "Learning" },
-        { name: "REST API Architecture", status: "Learning", badge: "Learning" },
-        { name: "JSON Data Handling", status: "Learning", badge: "Learning" },
-        { name: "Server Basics & Routing", status: "Learning", badge: "Learning" },
-        { name: "Database Concepts (SQL/NoSQL)", status: "Learning", badge: "Learning" }
-      ]
-    },
-    {
-      category: "CS Concepts & Development Tools",
+      category: "Tools & Development",
       icon: "Terminal",
       skills: [
-        { name: "Data Structures & Algorithms (DSA)", status: "Learning", badge: "Learning" },
-        { name: "Problem Solving", status: "Learning", badge: "Learning" },
-        { name: "Git & Version Control", status: "Learning", badge: "Learning" },
-        { name: "GitHub Collaboration", status: "Learning", badge: "Learning" },
+        { name: "Git & GitHub", status: "Learning", badge: "Learning" },
+        { name: "Problem Solving & DSA", status: "Learning", badge: "Learning" },
         { name: "VS Code & Debugging", status: "Learning", badge: "Learning" },
-        { name: "Vercel & Web Deployment", status: "Learning", badge: "Learning" }
+        { name: "Vercel Deployment", status: "Learning", badge: "Learning" }
       ]
     }
   ],

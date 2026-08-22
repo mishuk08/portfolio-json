@@ -115,17 +115,41 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         : 'bg-[#f4f6fa] text-slate-800 selection:bg-amber-500/30 selection:text-amber-900'
     }`}>
       
-      {/* Background ambient lighting */}
+      {/* Background ambient lighting with dynamic floating animations */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className={`absolute -top-40 -left-40 w-96 h-96 rounded-full blur-[120px] opacity-20 ${
-          isDark ? 'bg-amber-500' : 'bg-amber-300'
-        }`} />
-        <div className={`absolute top-1/3 -right-40 w-96 h-96 rounded-full blur-[140px] opacity-15 ${
-          isDark ? 'bg-cyan-500' : 'bg-cyan-300'
-        }`} />
-        <div className={`absolute bottom-20 left-1/4 w-96 h-96 rounded-full blur-[130px] opacity-15 ${
-          isDark ? 'bg-purple-500' : 'bg-purple-300'
-        }`} />
+        <motion.div 
+          animate={{ 
+            x: [0, 40, 0], 
+            y: [0, -30, 0],
+            scale: [1, 1.2, 1] 
+          }}
+          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+          className={`absolute -top-40 -left-40 w-[480px] h-[480px] rounded-full blur-[140px] opacity-25 ${
+            isDark ? 'bg-amber-500' : 'bg-amber-300'
+          }`} 
+        />
+        <motion.div 
+          animate={{ 
+            x: [0, -50, 0], 
+            y: [0, 40, 0],
+            scale: [1, 1.25, 1] 
+          }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          className={`absolute top-1/3 -right-40 w-[500px] h-[500px] rounded-full blur-[160px] opacity-20 ${
+            isDark ? 'bg-cyan-500' : 'bg-cyan-300'
+          }`} 
+        />
+        <motion.div 
+          animate={{ 
+            x: [0, 35, 0], 
+            y: [0, -45, 0],
+            scale: [1, 1.15, 1] 
+          }}
+          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut", delay: 4 }}
+          className={`absolute bottom-20 left-1/4 w-[460px] h-[460px] rounded-full blur-[150px] opacity-20 ${
+            isDark ? 'bg-purple-600' : 'bg-purple-300'
+          }`} 
+        />
       </div>
 
       <div className="relative z-10 w-full">
@@ -284,7 +308,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
               </div>
             </motion.div>
 
-            {/* Quick Metrics Bar with Frosted Glass Cards */}
+            {/* Quick Highlights Bar with Frosted Glass Cards */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -293,42 +317,43 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
               className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3.5 pt-4 w-full"
             >
               <div className={`p-4 rounded-2xl ${glassCardClass}`}>
-                <div className="text-xl sm:text-2xl font-bold text-amber-500 font-mono">{portfolioData.developer.yearsOfExperience}+</div>
-                <div className={`text-[11px] sm:text-xs mt-0.5 font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Years Experience</div>
+                <div className="text-lg sm:text-xl font-bold text-amber-500 font-mono">Web & Software</div>
+                <div className={`text-[11px] sm:text-xs mt-0.5 font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Development Craft</div>
               </div>
               <div className={`p-4 rounded-2xl ${glassCardClass}`}>
-                <div className="text-xl sm:text-2xl font-bold text-cyan-400 font-mono">{portfolioData.projects.length}+</div>
-                <div className={`text-[11px] sm:text-xs mt-0.5 font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Projects Shipped</div>
+                <div className="text-lg sm:text-xl font-bold text-cyan-400 font-mono">{portfolioData.projects.length}+ Projects</div>
+                <div className={`text-[11px] sm:text-xs mt-0.5 font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Active Repositories</div>
               </div>
               <div className={`p-4 rounded-2xl ${glassCardClass}`}>
-                <div className="text-xl sm:text-2xl font-bold text-emerald-400 font-mono">100%</div>
-                <div className={`text-[11px] sm:text-xs mt-0.5 font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Delivery Rate</div>
+                <div className="text-lg sm:text-xl font-bold text-emerald-400 font-mono">Modern Stack</div>
+                <div className={`text-[11px] sm:text-xs mt-0.5 font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>React, TS & Node</div>
               </div>
               <div className={`p-4 rounded-2xl ${glassCardClass}`}>
-                <div className="text-xl sm:text-2xl font-bold text-purple-400 font-mono">Full Stack</div>
-                <div className={`text-[11px] sm:text-xs mt-0.5 font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Engineering</div>
+                <div className="text-lg sm:text-xl font-bold text-purple-400 font-mono">Problem Solver</div>
+                <div className={`text-[11px] sm:text-xs mt-0.5 font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Clean Architecture</div>
               </div>
             </motion.div>
           </div>
         </section>
 
         {/* SECTION: ABOUT */}
-        <section id="section-about" className={`px-3 sm:px-6 lg:px-8 py-10 sm:py-14 border-b transition-colors duration-200 w-full max-w-full overflow-hidden ${
+        <section id="section-about" className={`px-3 sm:px-6 lg:px-8 py-10 sm:py-16 border-b transition-colors duration-200 w-full max-w-full overflow-hidden ${
           isDark ? 'border-[#1b1e2c]/70' : 'border-slate-200/70'
         }`}>
-          <div className="max-w-5xl mx-auto space-y-6">
+          <div className="max-w-5xl mx-auto space-y-7">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.5 }}
+              className="space-y-1.5"
             >
               <div className="text-amber-500 font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-                <Code2 className="w-4 h-4" />
-                <span>About Mishuk</span>
+                <Sparkles className="w-4 h-4" />
+                <span>Identity & Philosophy</span>
               </div>
-              <h2 className={`text-2xl sm:text-3xl font-extrabold tracking-tight mt-1 ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>
-                Background & Engineering Philosophy
+              <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>
+                About
               </h2>
             </motion.div>
 
@@ -341,7 +366,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                 className="md:col-span-2 space-y-3.5 text-xs sm:text-sm leading-relaxed"
               >
                 {portfolioData.developer.bio.map((para, pIdx) => (
-                  <div key={pIdx} className={`p-4 rounded-2xl ${glassCardClass}`}>
+                  <div key={pIdx} className={`p-4 sm:p-5 rounded-2xl ${glassCardClass}`}>
                     <p className={isDark ? 'text-slate-300' : 'text-slate-700'}>
                       {para}
                     </p>
@@ -354,25 +379,25 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className={`p-5 rounded-2xl ${glassCardClass} space-y-3 h-fit`}
+                className={`p-5 sm:p-6 rounded-2xl ${glassCardClass} space-y-4 h-fit`}
               >
-                <h3 className="font-bold font-mono text-xs text-amber-500 uppercase tracking-wider">Quick Facts</h3>
-                <div className="space-y-2.5 text-xs">
-                  <div className="border-b pb-2 border-slate-700/30 dark:border-white/5">
-                    <span className={`block text-[11px] font-mono ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Name:</span>
-                    <span className="font-semibold">{portfolioData.developer.name}</span>
+                <h3 className="font-bold font-mono text-xs text-amber-500 uppercase tracking-wider">Professional Profile</h3>
+                <div className="space-y-3 text-xs">
+                  <div className="border-b pb-2.5 border-slate-700/30 dark:border-white/5">
+                    <span className={`block text-[11px] font-mono ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Full Name:</span>
+                    <span className="font-semibold text-sm">{portfolioData.developer.name}</span>
                   </div>
-                  <div className="border-b pb-2 border-slate-700/30 dark:border-white/5">
-                    <span className={`block text-[11px] font-mono ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Specialization:</span>
+                  <div className="border-b pb-2.5 border-slate-700/30 dark:border-white/5">
+                    <span className={`block text-[11px] font-mono ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Core Discipline:</span>
                     <span className="font-semibold text-cyan-400">{portfolioData.developer.role}</span>
                   </div>
-                  <div className="border-b pb-2 border-slate-700/30 dark:border-white/5">
+                  <div className="border-b pb-2.5 border-slate-700/30 dark:border-white/5">
                     <span className={`block text-[11px] font-mono ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Location:</span>
                     <span className="font-semibold">{portfolioData.developer.location}</span>
                   </div>
                   <div>
-                    <span className={`block text-[11px] font-mono ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Years Active:</span>
-                    <span className="font-semibold text-amber-500">{portfolioData.developer.yearsOfExperience}+ Years</span>
+                    <span className={`block text-[11px] font-mono ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Core Focus:</span>
+                    <span className="font-semibold text-amber-500">Continuous Growth & Clean Architecture</span>
                   </div>
                 </div>
               </motion.div>
@@ -400,7 +425,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
               </h2>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
               {portfolioData.skills.map((group, gIdx) => (
                 <motion.div 
                   key={group.category} 
@@ -408,38 +433,40 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-40px" }}
                   transition={{ duration: 0.45, delay: gIdx * 0.08 }}
-                  className={`p-4 sm:p-5 rounded-2xl ${glassCardClass}`}
+                  className={`p-4 sm:p-5 rounded-2xl ${glassCardClass} flex flex-col justify-between`}
                 >
-                  <h3 className="text-sm font-bold text-amber-500 font-mono mb-3.5 flex items-center justify-between">
-                    <span>{group.category}</span>
-                    <span className={`text-xs font-normal ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-                      {group.skills.length} topics
-                    </span>
-                  </h3>
+                  <div>
+                    <h3 className="text-sm font-bold text-amber-500 font-mono mb-3.5 flex items-center justify-between">
+                      <span>{group.category}</span>
+                      <span className={`text-xs font-normal ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                        {group.skills.length} skills
+                      </span>
+                    </h3>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {group.skills.map((skill) => (
-                      <div 
-                        key={skill.name}
-                        className={`p-2.5 rounded-xl border flex items-center justify-between gap-2 transition-all ${
-                          isDark 
-                            ? 'bg-[#10121b]/80 border-slate-800/80 hover:border-slate-700' 
-                            : 'bg-slate-50/90 border-slate-200/90 hover:border-slate-300'
-                        }`}
-                      >
-                        <span className={`text-xs font-medium truncate ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
-                          {skill.name}
-                        </span>
-                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold border shrink-0 ${
-                          isDark
-                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                            : 'bg-emerald-50 text-emerald-700 border-emerald-300'
-                        }`}>
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                          <span>{skill.status || skill.badge || 'Learning'}</span>
-                        </span>
-                      </div>
-                    ))}
+                    <div className="space-y-2">
+                      {group.skills.map((skill) => (
+                        <div 
+                          key={skill.name}
+                          className={`p-2.5 rounded-xl border flex items-center justify-between gap-2 transition-all ${
+                            isDark 
+                              ? 'bg-[#10121b]/80 border-slate-800/80 hover:border-amber-500/40 hover:bg-[#151928]' 
+                              : 'bg-slate-50/90 border-slate-200/90 hover:border-amber-400 hover:bg-amber-50/30'
+                          }`}
+                        >
+                          <span className={`text-xs font-medium truncate ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
+                            {skill.name}
+                          </span>
+                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold border shrink-0 ${
+                            isDark
+                              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                              : 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                          }`}>
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span>{skill.status || skill.badge || 'Learning'}</span>
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </motion.div>
               ))}

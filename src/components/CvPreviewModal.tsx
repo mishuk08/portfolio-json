@@ -175,17 +175,27 @@ export const CvPreviewModal: React.FC<CvPreviewModalProps> = ({
         </div>
 
         {/* Scrollable CV Document Canvas */}
-        <div className="flex-1 overflow-y-auto p-3 sm:p-6 bg-slate-900/40">
+        <div className={`flex-1 overflow-y-auto p-3 sm:p-6 transition-colors duration-200 ${
+          isDark ? 'bg-black/60' : 'bg-slate-900/10'
+        }`}>
           <div 
             ref={cvRef}
-            className="max-w-[794px] mx-auto bg-white text-slate-900 rounded-xl sm:rounded-2xl shadow-xl p-6 sm:p-10 font-sans border border-slate-200 print:border-none print:shadow-none print:p-0 print:m-0"
+            className={`max-w-[794px] mx-auto rounded-xl sm:rounded-2xl shadow-2xl p-6 sm:p-10 font-sans border transition-colors duration-200 print:border-none print:shadow-none print:p-0 print:m-0 ${
+              isDark 
+                ? 'bg-[#0e1017] text-slate-100 border-[#1f2438] shadow-black/80' 
+                : 'bg-white text-slate-900 border-slate-200 shadow-xl'
+            }`}
           >
             
             {/* Header: Photo + Profile Details */}
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-6 border-b border-slate-200 pb-6">
+            <div className={`flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-6 border-b pb-6 ${
+              isDark ? 'border-slate-800' : 'border-slate-200'
+            }`}>
               {/* Photo */}
               <div className="shrink-0">
-                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-amber-500 shadow-md bg-slate-100 flex items-center justify-center p-0.5 ring-2 ring-amber-400/30">
+                <div className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-amber-500 shadow-md flex items-center justify-center p-0.5 ring-2 ring-amber-400/30 ${
+                  isDark ? 'bg-[#151824]' : 'bg-slate-100'
+                }`}>
                   {!avatarError ? (
                     <img
                       src={currentAvatar}
@@ -194,7 +204,7 @@ export const CvPreviewModal: React.FC<CvPreviewModalProps> = ({
                       className="w-full h-full object-cover rounded-full"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 text-white font-bold text-2xl">
+                    <div className="w-full h-full flex items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 text-slate-950 font-bold text-2xl">
                       MB
                     </div>
                   )}
@@ -203,37 +213,41 @@ export const CvPreviewModal: React.FC<CvPreviewModalProps> = ({
 
               {/* Title & Contact details */}
               <div className="flex-1 text-center sm:text-left space-y-1.5">
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                <h1 className={`text-2xl sm:text-3xl font-extrabold tracking-tight ${
+                  isDark ? 'text-slate-100' : 'text-slate-900'
+                }`}>
                   {portfolioData.developer.name}
                 </h1>
-                <p className="text-amber-700 font-bold text-sm sm:text-base tracking-wide">
+                <p className="text-amber-500 font-bold text-sm sm:text-base tracking-wide">
                   {portfolioData.developer.role}
                 </p>
 
                 {/* Contact Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs text-slate-600 pt-2 font-medium">
+                <div className={`grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs pt-2 font-medium ${
+                  isDark ? 'text-slate-300' : 'text-slate-600'
+                }`}>
                   <div className="flex items-center justify-center sm:justify-start gap-1.5">
-                    <Mail className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                    <Mail className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                     <span className="truncate">{portfolioData.developer.email}</span>
                   </div>
                   <div className="flex items-center justify-center sm:justify-start gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                    <MapPin className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                     <span>{portfolioData.developer.location}</span>
                   </div>
                   <div className="flex items-center justify-center sm:justify-start gap-1.5">
-                    <Github className="w-3.5 h-3.5 text-slate-800 shrink-0" />
+                    <Github className={`w-3.5 h-3.5 shrink-0 ${isDark ? 'text-slate-200' : 'text-slate-800'}`} />
                     <span>github.com/mishuk08</span>
                   </div>
                   <div className="flex items-center justify-center sm:justify-start gap-1.5">
-                    <Facebook className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                    <Facebook className="w-3.5 h-3.5 text-blue-500 shrink-0" />
                     <span>facebook.com/mishuk008</span>
                   </div>
                   <div className="flex items-center justify-center sm:justify-start gap-1.5">
-                    <Instagram className="w-3.5 h-3.5 text-pink-600 shrink-0" />
+                    <Instagram className="w-3.5 h-3.5 text-pink-500 shrink-0" />
                     <span>instagram.com/mi_sh_uk_008</span>
                   </div>
                   <div className="flex items-center justify-center sm:justify-start gap-1.5">
-                    <MessageSquare className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <MessageSquare className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                     <span>WhatsApp: @mishuk_babu_shoukhin</span>
                   </div>
                 </div>
@@ -241,31 +255,47 @@ export const CvPreviewModal: React.FC<CvPreviewModalProps> = ({
             </div>
 
             {/* Executive Summary */}
-            <div className="py-5 border-b border-slate-200 space-y-2">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-amber-700 flex items-center gap-1.5">
+            <div className={`py-5 border-b space-y-2 ${
+              isDark ? 'border-slate-800' : 'border-slate-200'
+            }`}>
+              <h2 className="text-xs font-bold uppercase tracking-wider text-amber-500 flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Executive Summary</span>
               </h2>
-              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-normal">
+              <p className={`text-xs sm:text-sm leading-relaxed font-normal ${
+                isDark ? 'text-slate-300' : 'text-slate-700'
+              }`}>
                 {portfolioData.developer.tagline} {portfolioData.developer.bio.join(' ')}
               </p>
             </div>
 
             {/* Technical Skills */}
-            <div className="py-5 border-b border-slate-200 space-y-3">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-amber-700 flex items-center gap-1.5">
+            <div className={`py-5 border-b space-y-3 ${
+              isDark ? 'border-slate-800' : 'border-slate-200'
+            }`}>
+              <h2 className="text-xs font-bold uppercase tracking-wider text-amber-500 flex items-center gap-1.5">
                 <Code2 className="w-3.5 h-3.5" />
-                <span>Technical Skills & Proficiencies</span>
+                <span>Technical Skills & Coding Foundations</span>
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                 {portfolioData.skills.map((cat, idx) => (
-                  <div key={idx} className="bg-slate-50 p-2.5 rounded-lg border border-slate-200/80">
-                    <span className="font-bold text-slate-800 block mb-1.5">{cat.category}</span>
-                    <div className="flex flex-wrap gap-1">
+                  <div key={idx} className={`p-3 rounded-xl border ${
+                    isDark 
+                      ? 'bg-[#131622] border-[#22283d]' 
+                      : 'bg-slate-50 border-slate-200/80'
+                  }`}>
+                    <span className={`font-bold block mb-2 ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
+                      {cat.category}
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
                       {cat.skills.map((s, sIdx) => (
                         <span 
                           key={sIdx}
-                          className="px-2 py-0.5 bg-white text-slate-700 border border-slate-200 rounded text-[11px] font-medium"
+                          className={`px-2 py-0.5 rounded text-[11px] font-medium border ${
+                            isDark 
+                              ? 'bg-[#1c2033] text-slate-200 border-[#2f3654]' 
+                              : 'bg-white text-slate-700 border-slate-200'
+                          }`}
                         >
                           {s.name}
                         </span>
@@ -277,32 +307,42 @@ export const CvPreviewModal: React.FC<CvPreviewModalProps> = ({
             </div>
 
             {/* Work Experience */}
-            <div className="py-5 border-b border-slate-200 space-y-4">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-amber-700 flex items-center gap-1.5">
+            <div className={`py-5 border-b space-y-4 ${
+              isDark ? 'border-slate-800' : 'border-slate-200'
+            }`}>
+              <h2 className="text-xs font-bold uppercase tracking-wider text-amber-500 flex items-center gap-1.5">
                 <Briefcase className="w-3.5 h-3.5" />
                 <span>Professional Experience</span>
               </h2>
               <div className="space-y-4">
                 {portfolioData.experiences.map((exp, idx) => (
-                  <div key={idx} className="text-xs space-y-1">
-                    <div className="flex flex-wrap items-center justify-between font-bold text-slate-900">
-                      <span className="text-sm font-extrabold text-slate-900">{exp.role}</span>
-                      <span className="text-slate-500 font-normal">{exp.period}</span>
+                  <div key={idx} className={`text-xs space-y-1.5 p-3.5 rounded-xl border ${
+                    isDark ? 'bg-[#131622]/60 border-[#22283d]' : 'bg-slate-50/70 border-slate-200/80'
+                  }`}>
+                    <div className="flex flex-wrap items-center justify-between font-bold">
+                      <span className={`text-sm font-extrabold ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>
+                        {exp.role}
+                      </span>
+                      <span className={`font-mono text-[11px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                        {exp.period}
+                      </span>
                     </div>
-                    <div className="flex items-center gap-2 text-amber-700 font-semibold">
-                      <span>{exp.company}</span>
+                    <div className="flex items-center gap-2 text-amber-500 font-semibold">
+                      <span>{exp.company} (RoboSuperior.org)</span>
                       <span>•</span>
-                      <span className="text-slate-500 font-normal">{exp.location} ({exp.type})</span>
+                      <span className={`font-normal ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{exp.location}</span>
                     </div>
-                    <p className="text-slate-600 pt-0.5 leading-relaxed">{exp.description}</p>
-                    <ul className="list-disc list-inside space-y-0.5 text-slate-700 pt-1">
+                    <p className={`pt-0.5 leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>{exp.description}</p>
+                    <ul className={`list-disc list-inside space-y-0.5 pt-1 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
                       {exp.achievements.map((ach, aIdx) => (
                         <li key={aIdx} className="leading-snug">{ach}</li>
                       ))}
                     </ul>
-                    <div className="flex flex-wrap gap-1 pt-1">
+                    <div className="flex flex-wrap gap-1 pt-1.5">
                       {exp.technologies.map((t, tIdx) => (
-                        <span key={tIdx} className="text-[10px] font-mono px-1.5 py-0.2 bg-slate-100 text-slate-700 rounded border border-slate-200">
+                        <span key={tIdx} className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${
+                          isDark ? 'bg-[#1c2033] text-slate-300 border-[#2f3654]' : 'bg-white text-slate-700 border-slate-200'
+                        }`}>
                           {t}
                         </span>
                       ))}
@@ -313,24 +353,40 @@ export const CvPreviewModal: React.FC<CvPreviewModalProps> = ({
             </div>
 
             {/* Featured Projects */}
-            <div className="py-5 border-b border-slate-200 space-y-3">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-amber-700 flex items-center gap-1.5">
+            <div className={`py-5 border-b space-y-3 ${
+              isDark ? 'border-slate-800' : 'border-slate-200'
+            }`}>
+              <h2 className="text-xs font-bold uppercase tracking-wider text-amber-500 flex items-center gap-1.5">
                 <Award className="w-3.5 h-3.5" />
                 <span>Featured Software Projects</span>
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 {portfolioData.projects.slice(0, 4).map((proj) => (
-                  <div key={proj.id} className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
-                    <div className="font-bold text-slate-900 flex items-center justify-between">
-                      <span>{proj.title}</span>
-                      <span className="text-[10px] font-normal px-1.5 py-0.2 bg-amber-100 text-amber-800 rounded">
+                  <div key={proj.id} className={`p-3 rounded-xl border space-y-1.5 ${
+                    isDark 
+                      ? 'bg-[#131622] border-[#22283d]' 
+                      : 'bg-slate-50 border-slate-200'
+                  }`}>
+                    <div className="font-bold flex items-center justify-between">
+                      <span className={isDark ? 'text-slate-100' : 'text-slate-900'}>{proj.title}</span>
+                      <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${
+                        isDark 
+                          ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' 
+                          : 'bg-amber-50 text-amber-800 border-amber-200'
+                      }`}>
                         {proj.category}
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-600 line-clamp-2 leading-relaxed">{proj.description}</p>
-                    <div className="flex flex-wrap gap-1 pt-1 font-mono text-[9px] text-slate-600">
-                      {proj.tags.slice(0, 3).map((t, i) => (
-                        <span key={i} className="px-1 bg-white border border-slate-200 rounded">{t}</span>
+                    <p className={`text-[11px] line-clamp-2 leading-relaxed ${
+                      isDark ? 'text-slate-300' : 'text-slate-600'
+                    }`}>{proj.description}</p>
+                    <div className={`flex flex-wrap gap-1 pt-1 font-mono text-[9px] ${
+                      isDark ? 'text-slate-400' : 'text-slate-600'
+                    }`}>
+                      {proj.tags.slice(0, 4).map((t, i) => (
+                        <span key={i} className={`px-1.5 py-0.5 border rounded ${
+                          isDark ? 'bg-[#1a1e30] border-slate-800 text-slate-300' : 'bg-white border-slate-200 text-slate-700'
+                        }`}>{t}</span>
                       ))}
                     </div>
                   </div>
@@ -340,24 +396,28 @@ export const CvPreviewModal: React.FC<CvPreviewModalProps> = ({
 
             {/* Education */}
             <div className="pt-5 space-y-3">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-amber-700 flex items-center gap-1.5">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-amber-500 flex items-center gap-1.5">
                 <GraduationCap className="w-3.5 h-3.5" />
                 <span>Education</span>
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 {portfolioData.education.map((edu, idx) => (
-                  <div key={idx} className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
-                    <span className="font-bold text-slate-900 block">{edu.degree}</span>
-                    <span className="text-amber-700 font-medium block">{edu.institution}</span>
-                    <span className="text-slate-500 text-[11px] block">{edu.period} • {edu.location}</span>
-                    <p className="text-slate-600 text-[11px] pt-1">{edu.details}</p>
+                  <div key={idx} className={`p-3.5 rounded-xl border space-y-1.5 ${
+                    isDark ? 'bg-[#131622] border-[#22283d]' : 'bg-slate-50 border-slate-200'
+                  }`}>
+                    <span className={`font-bold block text-sm ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>{edu.degree}</span>
+                    <span className="text-amber-500 font-medium block">{edu.institution}</span>
+                    <span className={`text-[11px] font-mono block ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{edu.period} • {edu.location}</span>
+                    <p className={`text-[11px] pt-1 leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>{edu.details}</p>
                   </div>
                 ))}
                 {portfolioData.certifications && portfolioData.certifications.length > 0 && (
-                  <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
-                    <span className="font-bold text-slate-900 block">Credentials</span>
+                  <div className={`p-3.5 rounded-xl border space-y-1.5 ${
+                    isDark ? 'bg-[#131622] border-[#22283d]' : 'bg-slate-50 border-slate-200'
+                  }`}>
+                    <span className={`font-bold block ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>Credentials</span>
                     {portfolioData.certifications.map((c, i) => (
-                      <div key={i} className="text-slate-600 text-[11px]">
+                      <div key={i} className={`text-[11px] ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
                         • {c.name} - {c.issuer} ({c.year})
                       </div>
                     ))}

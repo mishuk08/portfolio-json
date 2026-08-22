@@ -47,7 +47,7 @@ export function downloadDeveloperCv(customData?: PortfolioData) {
 
     doc.setFontSize(8.5);
     doc.setTextColor(148, 163, 184); // Slate-400
-    doc.text(`${data.developer.location}  |  ${data.developer.email}  |  Exp: ${data.developer.yearsOfExperience}+ Years`, margin + 5, y + 22);
+    doc.text(`${data.developer.location}  |  ${data.developer.email}  |  github.com/mishuk08`, margin + 5, y + 22);
 
     y += 32;
 

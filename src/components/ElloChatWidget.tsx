@@ -176,7 +176,7 @@ export const ElloChatWidget: React.FC<ElloChatProps> = ({
     // About / Bio inquiry
     if (q.includes('about') || q.includes('who is') || q.includes('bio') || q.includes('mishuk') || q.includes('shoukhin') || q.includes('role')) {
       return {
-        text: `👋 **About Mishuk Babu Shoukhin:**\n\n${portfolioData.developer.bio.join('\n\n')}\n\n• **Role:** ${portfolioData.developer.role}\n• **Experience:** ${portfolioData.developer.yearsOfExperience}+ Years\n• **Location:** ${portfolioData.developer.location}`,
+        text: `👋 **About Mishuk Babu Shoukhin:**\n\n${portfolioData.developer.bio.join('\n\n')}\n\n• **Role:** ${portfolioData.developer.role}\n• **Location:** ${portfolioData.developer.location}\n• **Core Philosophy:** Software craftsmanship, continuous learning, and clean code.`,
         category: 'general'
       };
     }
