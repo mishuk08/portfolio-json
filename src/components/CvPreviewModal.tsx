@@ -26,6 +26,7 @@ import confetti from 'canvas-confetti';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { downloadDeveloperCv } from '../utils/cvDownload';
+import { AVATAR_BASE64 } from '../assets/avatarBase64';
 import avatarImg from '../assets/avatar.png';
 
 interface CvPreviewModalProps {
@@ -50,6 +51,7 @@ export const CvPreviewModal: React.FC<CvPreviewModalProps> = ({
 
   const isDark = themeMode === 'dark';
   const avatarSources = [
+    AVATAR_BASE64,
     portfolioData.developer.avatar,
     avatarImg,
     '/avatar.png',
@@ -57,7 +59,7 @@ export const CvPreviewModal: React.FC<CvPreviewModalProps> = ({
     '/avatar_new.png',
     '/user_photo.jpg'
   ].filter(Boolean) as string[];
-  const currentAvatar = avatarSources[imgFallbackIndex] || avatarImg || '/avatar.png';
+  const currentAvatar = avatarSources[imgFallbackIndex] || AVATAR_BASE64;
 
   const handleImageError = () => {
     if (imgFallbackIndex < avatarSources.length - 1) {

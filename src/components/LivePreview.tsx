@@ -31,7 +31,9 @@ import {
 import { motion } from 'motion/react';
 import { PortfolioData, ThemeMode } from '../types';
 import { ElloChatWidget } from './ElloChatWidget';
+import { RangpurDivisionMap } from './RangpurDivisionMap';
 import { downloadDeveloperCv } from '../utils/cvDownload';
+import { AVATAR_BASE64 } from '../assets/avatarBase64';
 import avatarImg from '../assets/avatar.png';
 import confetti from 'canvas-confetti';
 
@@ -60,6 +62,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
   const [imageError, setImageError] = useState(false);
 
   const avatarCandidates = [
+    AVATAR_BASE64,
     portfolioData.developer.avatar,
     avatarImg,
     '/avatar.png',
@@ -67,7 +70,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
     '/avatar_new.png',
     '/user_photo.jpg'
   ].filter(Boolean) as string[];
-  const currentAvatar = avatarCandidates[imgFallbackIndex] || avatarImg || '/avatar.png';
+  const currentAvatar = avatarCandidates[imgFallbackIndex] || AVATAR_BASE64;
 
   const handleAvatarError = () => {
     if (imgFallbackIndex < avatarCandidates.length - 1) {
@@ -1039,6 +1042,16 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                   </div>
                 </form>
               )}
+            </motion.div>
+
+            {/* Stylized Rangpur Division Map */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <RangpurDivisionMap themeMode={themeMode} />
             </motion.div>
           </div>
 

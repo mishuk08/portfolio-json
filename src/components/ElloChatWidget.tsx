@@ -43,7 +43,7 @@ export const ElloChatWidget: React.FC<ElloChatProps> = ({
     {
       id: 'welcome',
       sender: 'ello',
-      text: `Hello! 👋 I am **Ello**, Mishuk Babu Shoukhin's personal portfolio assistant.\n\nI can answer anything about Mishuk's **Skills**, **Projects**, **Work Experience**, **Educational Background**, or **Contact details**. How can I help you today?`,
+      text: `Hello! 👋 I am Ello, Mishuk Babu Shoukhin's Personal Assistant.\n\nI can answer anything about Mishuk's Skills, Projects, Work Experience, Educational Background, or Contact details. How can I help you today?`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       category: 'general'
     }
@@ -111,12 +111,12 @@ export const ElloChatWidget: React.FC<ElloChatProps> = ({
     if (isExplicitlyUnrelated || (!isRelated && q.split(' ').length > 2)) {
       if (isBengali) {
         return {
-          text: `আমি **এলো (Ello)**, মিশুক বাবুর পোর্টফোলিও অ্যাসিস্ট্যান্ট। 😊\n\nআমি শুধুমাত্র মিশুক বাবুর **পোর্টফোলিও, প্রজেক্ট, টেকনিক্যাল স্কিল, শিক্ষাগত যোগ্যতা (Education) এবং কাজের অভিজ্ঞতা (Work Experience)** সম্পর্কিত প্রশ্নের উত্তর দিতে পারি।\n\nএর বাইরের কোনো বিষয়ে আমি অবগত নই। মিশুক বাবুর পোর্টফোলিও সম্পর্কিত যেকোনো প্রশ্ন করতে পারেন!`,
+          text: `আমি এলো (Ello), মিশুক বাবুর পার্সোনাল অ্যাসিস্ট্যান্ট। 😊\n\nআমি শুধুমাত্র মিশুক বাবুর পোর্টফোলিও, প্রজেক্ট, টেকনিক্যাল স্কিল, শিক্ষাগত যোগ্যতা (Education) এবং কাজের অভিজ্ঞতা (Work Experience) সম্পর্কিত প্রশ্নের উত্তর দিতে পারি।\n\nমিশুক বাবুর যেকোনো তথ্য জানতে আমাকে প্রশ্ন করতে পারেন!`,
           category: 'out-of-scope'
         };
       }
       return {
-        text: `I am **Ello**, Mishuk Babu Shoukhin's dedicated portfolio assistant. 😊\n\nI only have information regarding Mishuk's **portfolio, skills, projects, work experience, education, and contact details**.\n\nI cannot answer questions outside of this portfolio scope. Feel free to ask me anything about Mishuk's engineering work or background!`,
+        text: `I am Ello, Mishuk Babu Shoukhin's Personal Assistant. 😊\n\nI have complete information regarding Mishuk's portfolio, skills, projects, work experience, education, and contact details.\n\nFeel free to ask me anything about Mishuk's engineering work or background!`,
         category: 'out-of-scope'
       };
     }
@@ -124,10 +124,10 @@ export const ElloChatWidget: React.FC<ElloChatProps> = ({
     // Education inquiry
     if (q.includes('education') || q.includes('degree') || q.includes('university') || q.includes('study') || q.includes('college') || q.includes('school') || q.includes('academic') || q.includes('shikkha') || q.includes('ssc') || q.includes('hsc')) {
       const eduList = portfolioData.education.map(e => 
-        `• **${e.degree}**\n  *Institution:* ${e.institution} (${e.location})\n  *Timeline:* ${e.period}\n  *Details:* ${e.details}`
+        `• Degree: ${e.degree}\n  Institution: ${e.institution} (${e.location})\n  Timeline: ${e.period}\n  Details: ${e.details}`
       ).join('\n\n');
       return {
-        text: `🎓 **Mishuk's Educational Background:**\n\n${eduList}`,
+        text: `🎓 Mishuk's Educational Background:\n\n${eduList}`,
         category: 'education'
       };
     }
@@ -135,10 +135,10 @@ export const ElloChatWidget: React.FC<ElloChatProps> = ({
     // Work Experience inquiry
     if (q.includes('experience') || q.includes('work') || q.includes('job') || q.includes('career') || q.includes('company') || q.includes('robosuperior') || q.includes('history') || q.includes('obhiggota')) {
       const expList = portfolioData.experiences.map((exp, i) => 
-        `**${i + 1}. ${exp.role}** at **${exp.company} (RoboSuperior.org)** (${exp.period})\n   • *Type:* ${exp.type} | *Location:* ${exp.location}\n   • *Focus:* ${exp.description}\n   • *Tech Stack:* ${exp.technologies.join(', ')}`
+        `${i + 1}. Role: ${exp.role} at ${exp.company} (RoboSuperior.org) [${exp.period}]\n   Type: ${exp.type} | Location: ${exp.location}\n   Focus: ${exp.description}\n   Tech Stack: ${exp.technologies.join(', ')}`
       ).join('\n\n');
       return {
-        text: `💼 **Mishuk's Professional Work Experience:**\n\n${expList}`,
+        text: `💼 Mishuk's Professional Work Experience:\n\n${expList}`,
         category: 'experience'
       };
     }
@@ -146,10 +146,10 @@ export const ElloChatWidget: React.FC<ElloChatProps> = ({
     // Skills inquiry
     if (q.includes('skill') || q.includes('tech') || q.includes('stack') || q.includes('language') || q.includes('frontend') || q.includes('backend') || q.includes('database') || q.includes('react') || q.includes('node') || q.includes('tools') || q.includes('coding')) {
       const skillSummary = portfolioData.skills.map(cat => 
-        `• **${cat.category}:** ${cat.skills.map(s => `${s.name} [${s.status || 'Learning'}]`).join(', ')}`
+        `• ${cat.category}: ${cat.skills.map(s => `${s.name} [${s.status || 'Learning'}]`).join(', ')}`
       ).join('\n\n');
       return {
-        text: `⚡ **Coding Foundations & Technical Skills (Learning):**\n\n${skillSummary}\n\nFocused on mastering core computer science foundations, modern web engineering with React, TypeScript, Node.js, and software development at RoboSuperior.`,
+        text: `⚡ Coding Foundations & Technical Skills (Learning):\n\n${skillSummary}\n\nFocused on mastering core computer science foundations, modern web engineering with React, TypeScript, Node.js, and software development at RoboSuperior.`,
         category: 'skills'
       };
     }
@@ -157,10 +157,10 @@ export const ElloChatWidget: React.FC<ElloChatProps> = ({
     // Projects inquiry
     if (q.includes('project') || q.includes('projects') || q.includes('portfolio') || q.includes('build') || q.includes('apps') || q.includes('devhub') || q.includes('shopsphere') || q.includes('nexus')) {
       const projList = portfolioData.projects.slice(0, 4).map((p, i) => 
-        `**${i + 1}. ${p.title}** [${p.category}]\n   • *Summary:* ${p.tagline}\n   • *Stack:* ${p.tags.slice(0, 4).join(', ')}\n   • *Metric:* ${p.metrics || 'Production Ready'}`
+        `${i + 1}. ${p.title} [${p.category}]\n   Summary: ${p.tagline}\n   Stack: ${p.tags.slice(0, 4).join(', ')}\n   Metric: ${p.metrics || 'Production Ready'}`
       ).join('\n\n');
       return {
-        text: `🚀 **Featured Projects Built by Mishuk:**\n\n${projList}\n\nYou can click on any project in the portfolio to view the full system architecture and live demo!`,
+        text: `🚀 Featured Projects Built by Mishuk:\n\n${projList}\n\nYou can click on any project in the portfolio to view the full system architecture and live demo!`,
         category: 'projects'
       };
     }
@@ -168,7 +168,7 @@ export const ElloChatWidget: React.FC<ElloChatProps> = ({
     // Contact & Hiring inquiry
     if (q.includes('contact') || q.includes('email') || q.includes('hire') || q.includes('reach') || q.includes('phone') || q.includes('whatsapp') || q.includes('linkedin') || q.includes('github') || q.includes('location')) {
       return {
-        text: `📬 **How to Contact & Hire Mishuk:**\n\n• **Email:** [${portfolioData.developer.email}](mailto:${portfolioData.developer.email})\n• **Location:** ${portfolioData.developer.location}\n• **Status:** ${portfolioData.developer.status}\n• **WhatsApp:** [Chat Directly](${portfolioData.developer.socials.whatsapp})\n• **GitHub:** ${portfolioData.developer.socials.github}\n• **LinkedIn:** ${portfolioData.developer.socials.linkedin}\n\nYou can also submit a direct message using the contact form below!`,
+        text: `📬 How to Contact & Hire Mishuk:\n\n• Email: ${portfolioData.developer.email}\n• Location: ${portfolioData.developer.location}\n• Status: ${portfolioData.developer.status}\n• WhatsApp: @mishuk_babu_shoukhin\n• GitHub: ${portfolioData.developer.socials.github}\n• LinkedIn: ${portfolioData.developer.socials.linkedin}\n\nYou can also submit a direct message using the contact form below!`,
         category: 'contact'
       };
     }
@@ -176,14 +176,14 @@ export const ElloChatWidget: React.FC<ElloChatProps> = ({
     // About / Bio inquiry
     if (q.includes('about') || q.includes('who is') || q.includes('bio') || q.includes('mishuk') || q.includes('shoukhin') || q.includes('role')) {
       return {
-        text: `👋 **About Mishuk Babu Shoukhin:**\n\n${portfolioData.developer.bio.join('\n\n')}\n\n• **Role:** ${portfolioData.developer.role}\n• **Location:** ${portfolioData.developer.location}\n• **Core Philosophy:** Software craftsmanship, continuous learning, and clean code.`,
+        text: `👋 About Mishuk Babu Shoukhin:\n\n${portfolioData.developer.bio.join('\n\n')}\n\n• Role: ${portfolioData.developer.role}\n• Location: ${portfolioData.developer.location}\n• Core Philosophy: Software craftsmanship, continuous learning, and clean code.`,
         category: 'general'
       };
     }
 
     // Default friendly portfolio greeting
     return {
-      text: `Hello! I am **Ello**, Mishuk's portfolio assistant. I can give you detailed information about:\n\n1. 💼 **Work Experience & Past Roles**\n2. ⚡ **Technical Skills & Tools**\n3. 🎓 **Educational Background & Certifications**\n4. 🚀 **Featured Projects & Architecture**\n5. 📬 **Contact & Hiring Options**\n\nWhat would you like to explore?`,
+      text: `Hello! I am Ello, Mishuk's Personal Assistant. I can give you detailed information about:\n\n1. 💼 Work Experience & Past Roles\n2. ⚡ Technical Skills & Tools\n3. 🎓 Educational Background\n4. 🚀 Featured Projects & Architecture\n5. 📬 Contact & Hiring Options\n\nWhat would you like to explore?`,
       category: 'general'
     };
   };
@@ -195,7 +195,7 @@ export const ElloChatWidget: React.FC<ElloChatProps> = ({
     const userMsg: ChatMessage = {
       id: Date.now().toString(),
       sender: 'user',
-      text: query,
+      text: query.replace(/\*/g, ''),
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
@@ -208,7 +208,7 @@ export const ElloChatWidget: React.FC<ElloChatProps> = ({
       const elloMsg: ChatMessage = {
         id: (Date.now() + 1).toString(),
         sender: 'ello',
-        text: response.text,
+        text: response.text.replace(/\*/g, ''),
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         category: response.category
       };
@@ -222,7 +222,7 @@ export const ElloChatWidget: React.FC<ElloChatProps> = ({
       {
         id: 'welcome',
         sender: 'ello',
-        text: `Hello! 👋 I am **Ello**, Mishuk Babu Shoukhin's personal portfolio assistant.\n\nI can answer anything about Mishuk's **Skills**, **Projects**, **Work Experience**, **Educational Background**, or **Contact details**. How can I help you today?`,
+        text: `Hello! 👋 I am Ello, Mishuk Babu Shoukhin's Personal Assistant.\n\nI can answer anything about Mishuk's Skills, Projects, Work Experience, Educational Background, or Contact details. How can I help you today?`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         category: 'general'
       }
