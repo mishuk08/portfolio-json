@@ -423,8 +423,10 @@ export default function App() {
       <PortfolioEditorModal
         isOpen={isEditorModalOpen}
         onClose={() => setIsEditorModalOpen(false)}
-        data={data}
+        portfolioData={data}
         onSave={(updatedData) => setData(updatedData)}
+        onReset={() => setData(initialPortfolioData)}
+        themeMode={themeMode}
       />
     </div>
   );
