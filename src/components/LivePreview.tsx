@@ -32,6 +32,7 @@ import { motion } from 'motion/react';
 import { PortfolioData, ThemeMode } from '../types';
 import { ElloChatWidget } from './ElloChatWidget';
 import { downloadDeveloperCv } from '../utils/cvDownload';
+import avatarImg from '../assets/avatar.png';
 import confetti from 'canvas-confetti';
 
 interface LivePreviewProps {
@@ -58,8 +59,15 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
   const [imgFallbackIndex, setImgFallbackIndex] = useState(0);
   const [imageError, setImageError] = useState(false);
 
-  const avatarCandidates = ['/avatar.png', '/avatar_new.png', '/avatar.jpg', '/user_photo.jpg'];
-  const currentAvatar = avatarCandidates[imgFallbackIndex] || '/avatar.png';
+  const avatarCandidates = [
+    portfolioData.developer.avatar,
+    avatarImg,
+    '/avatar.png',
+    '/avatar.jpg',
+    '/avatar_new.png',
+    '/user_photo.jpg'
+  ].filter(Boolean) as string[];
+  const currentAvatar = avatarCandidates[imgFallbackIndex] || avatarImg || '/avatar.png';
 
   const handleAvatarError = () => {
     if (imgFallbackIndex < avatarCandidates.length - 1) {

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Sparkles, Terminal, Code2, Cpu, Check, MapPin, ShieldCheck, Zap } from 'lucide-react';
 import { ThemeMode } from '../types';
+import avatarImg from '../assets/avatar.png';
 
 interface OpeningAnimationProps {
   onFinish: () => void;
@@ -12,7 +13,7 @@ interface OpeningAnimationProps {
 export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
   onFinish,
   themeMode = 'dark',
-  avatarUrl = '/avatar.png',
+  avatarUrl,
   developerName = 'Mishuk Babu Shoukhin'
 }) => {
   const [progress, setProgress] = useState(0);
@@ -22,8 +23,15 @@ export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
   const [imgError, setImgError] = useState(false);
   const hasFinishedRef = useRef(false);
 
-  const avatarCandidates = [avatarUrl, '/avatar.png', '/avatar_new.png', '/avatar.jpg', '/user_photo.jpg'];
-  const currentAvatar = avatarCandidates[imgFallbackIndex] || '/avatar.png';
+  const avatarCandidates = [
+    avatarUrl,
+    avatarImg,
+    '/avatar.png',
+    '/avatar.jpg',
+    '/avatar_new.png',
+    '/user_photo.jpg'
+  ].filter(Boolean) as string[];
+  const currentAvatar = avatarCandidates[imgFallbackIndex] || avatarImg || '/avatar.png';
 
   const logs = [
     { text: 'Mounting Developer Environment & Core Modules...', tag: 'CORE' },

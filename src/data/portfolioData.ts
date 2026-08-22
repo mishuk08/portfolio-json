@@ -1,4 +1,5 @@
 import { PortfolioData } from '../types';
+import avatarImg from '../assets/avatar.png';
 
 export const portfolioData: PortfolioData = {
   developer: {
@@ -6,7 +7,7 @@ export const portfolioData: PortfolioData = {
     role: "Web & Software Developer",
     tagline: "Dedicated Web & Software Developer passionate about building clean, performant, and scalable applications.",
     status: "Available for Projects & Collaboration",
-    avatar: "/avatar.png",
+    avatar: avatarImg || "/avatar.png",
     email: "mdmishukbabu192@gmail.com",
     phone: "+880 1700-000000",
     location: "Rangpur, Bangladesh",
