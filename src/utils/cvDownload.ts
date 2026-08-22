@@ -162,7 +162,7 @@ export function downloadDeveloperCv(customData?: PortfolioData) {
       doc.setTextColor(15, 23, 42);
       doc.text(`${skillGroup.category}: `, margin, y);
 
-      const skillList = skillGroup.skills.map(s => `${s.name} (${s.experience})`).join(', ');
+      const skillList = skillGroup.skills.map(s => `${s.name} (${s.status || s.badge || 'Learning'})`).join(', ');
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(71, 85, 105);
       const skillLines = doc.splitTextToSize(skillList, contentWidth - 40);
@@ -272,13 +272,13 @@ ${data.experiences
   .join('\n\n')}
 
 ------------------------------------------------------------------------
-TECHNICAL SKILLS & PROFICIENCIES
+TECHNICAL SKILLS & CODING FOUNDATIONS
 ------------------------------------------------------------------------
 ${data.skills
   .map(
     (group) =>
       `• ${group.category.toUpperCase()}:\n  ${group.skills
-        .map((s) => `${s.name} (${s.experience} exp - ${s.level}%)`)
+        .map((s) => `${s.name} [${s.status || s.badge || 'Learning'}]`)
         .join(', ')}`
   )
   .join('\n\n')}

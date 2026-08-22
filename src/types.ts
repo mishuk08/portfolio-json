@@ -17,9 +17,10 @@ export interface SkillCategory {
   icon: string;
   skills: {
     name: string;
-    level: number; // 1-100
-    experience: string;
+    status?: string; // e.g. "Learning"
     badge?: string;
+    level?: number; // optional
+    experience?: string; // optional
   }[];
 }
 

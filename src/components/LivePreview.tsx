@@ -393,10 +393,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
             >
               <div className="text-emerald-400 font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
                 <Layers className="w-4 h-4" />
-                <span>Core Stack</span>
+                <span>Coding Foundations</span>
               </div>
               <h2 className={`text-2xl sm:text-3xl font-extrabold tracking-tight mt-1 ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>
-                Technical Proficiency & Tools
+                Core Technical Skills & Fundamentals
               </h2>
             </motion.div>
 
@@ -410,31 +410,34 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                   transition={{ duration: 0.45, delay: gIdx * 0.08 }}
                   className={`p-4 sm:p-5 rounded-2xl ${glassCardClass}`}
                 >
-                  <h3 className="text-sm font-bold text-amber-500 font-mono mb-4 flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-amber-500 font-mono mb-3.5 flex items-center justify-between">
                     <span>{group.category}</span>
                     <span className={`text-xs font-normal ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-                      {group.skills.length} technologies
+                      {group.skills.length} topics
                     </span>
                   </h3>
 
-                  <div className="space-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {group.skills.map((skill) => (
-                      <div key={skill.name}>
-                        <div className="flex items-center justify-between text-xs mb-1">
-                          <span className={`font-medium ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>{skill.name}</span>
-                          <div className="flex items-center gap-2">
-                            <span className={`text-[10px] font-mono ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{skill.experience}</span>
-                            <span className={`font-mono font-bold text-xs ${isDark ? 'text-cyan-400' : 'text-cyan-700'}`}>{skill.level}%</span>
-                          </div>
-                        </div>
-                        <div className={`w-full h-1.5 rounded-full overflow-hidden ${
-                          isDark ? 'bg-slate-800/80' : 'bg-slate-200'
+                      <div 
+                        key={skill.name}
+                        className={`p-2.5 rounded-xl border flex items-center justify-between gap-2 transition-all ${
+                          isDark 
+                            ? 'bg-[#10121b]/80 border-slate-800/80 hover:border-slate-700' 
+                            : 'bg-slate-50/90 border-slate-200/90 hover:border-slate-300'
+                        }`}
+                      >
+                        <span className={`text-xs font-medium truncate ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
+                          {skill.name}
+                        </span>
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold border shrink-0 ${
+                          isDark
+                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                            : 'bg-emerald-50 text-emerald-700 border-emerald-300'
                         }`}>
-                          <div
-                            className="h-full bg-gradient-to-r from-amber-500 to-emerald-400 rounded-full transition-all duration-1000"
-                            style={{ width: `${skill.level}%` }}
-                          />
-                        </div>
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                          <span>{skill.status || skill.badge || 'Learning'}</span>
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -457,7 +460,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
             >
               <div className="text-purple-400 font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
                 <Briefcase className="w-4 h-4" />
-                <span>Career Journey</span>
+                <span>Career & Experience</span>
               </div>
               <h2 className={`text-2xl sm:text-3xl font-extrabold tracking-tight mt-1 ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>
                 Professional Work Experience
@@ -480,7 +483,15 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                         {exp.role}
                       </h3>
                       <div className="flex flex-wrap items-center gap-2 mt-0.5 text-xs font-mono">
-                        <span className="text-amber-500 font-semibold">{exp.company}</span>
+                        <a 
+                          href="https://robosuperior.org" 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="text-amber-500 font-semibold hover:underline flex items-center gap-1"
+                        >
+                          <span>{exp.company} (RoboSuperior.org)</span>
+                          <ExternalLink className="w-3 h-3 text-amber-500/80" />
+                        </a>
                         <span className="text-slate-500">•</span>
                         <span className={isDark ? 'text-slate-400' : 'text-slate-600'}>{exp.location}</span>
                       </div>
@@ -548,10 +559,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
             >
               <div className="text-cyan-400 font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
                 <GraduationCap className="w-4 h-4" />
-                <span>Academic Credentials</span>
+                <span>Academic Journey</span>
               </div>
               <h2 className={`text-2xl sm:text-3xl font-extrabold tracking-tight mt-1 ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>
-                Educational Background & Certifications
+                Educational Background
               </h2>
             </motion.div>
 
@@ -564,66 +575,69 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-40px" }}
                   transition={{ duration: 0.45, delay: idx * 0.1 }}
-                  className={`p-5 rounded-2xl ${glassCardClass} space-y-3`}
+                  className={`p-5 rounded-2xl ${glassCardClass} space-y-3 flex flex-col justify-between`}
                 >
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shrink-0 shadow-xs">
-                      <GraduationCap className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h3 className={`text-base font-bold ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>
-                        {edu.degree}
-                      </h3>
-                      <p className="text-xs font-mono text-amber-500 font-semibold mt-0.5">
-                        {edu.institution}
-                      </p>
-                      <div className="flex items-center gap-2 mt-1 text-xs text-slate-400 font-mono">
-                        <span>{edu.period}</span>
-                        <span>•</span>
-                        <span>{edu.location}</span>
+                  <div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shrink-0 shadow-xs">
+                        <GraduationCap className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className={`text-base font-bold ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>
+                          {edu.degree}
+                        </h3>
+                        <p className="text-xs font-mono text-amber-500 font-semibold mt-0.5">
+                          {edu.institution}
+                        </p>
+                        <div className="flex items-center gap-2 mt-1 text-xs text-slate-400 font-mono">
+                          <span className="font-semibold text-cyan-400">{edu.period}</span>
+                          <span>•</span>
+                          <span>{edu.location}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <p className={`text-xs leading-relaxed pt-2 border-t ${isDark ? 'text-slate-300 border-white/5' : 'text-slate-600 border-slate-100'}`}>
-                    {edu.details}
-                  </p>
+                    <p className={`text-xs leading-relaxed pt-3 mt-3 border-t ${isDark ? 'text-slate-300 border-white/5' : 'text-slate-600 border-slate-100'}`}>
+                      {edu.details}
+                    </p>
+                  </div>
                 </motion.div>
               ))}
 
-              {/* Certifications Box */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-40px" }}
-                transition={{ duration: 0.45, delay: 0.2 }}
-                className={`p-5 rounded-2xl ${glassCardClass} space-y-3`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
-                    <Award className="w-4 h-4" />
-                  </div>
-                  <h3 className={`text-base font-bold ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>
-                    Industry Certifications
-                  </h3>
-                </div>
-
-                <div className="space-y-2.5 pt-1">
-                  {portfolioData.certifications.map((cert, cIdx) => (
-                    <div key={cIdx} className={`p-2.5 rounded-xl border flex items-center justify-between gap-2 backdrop-blur-md ${
-                      isDark ? 'bg-[#0f1118]/70 border-white/5' : 'bg-white/80 border-slate-200'
-                    }`}>
-                      <div>
-                        <div className={`text-xs font-semibold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>{cert.name}</div>
-                        <div className={`text-[10px] font-mono ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{cert.issuer}</div>
-                      </div>
-                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 border border-amber-500/30 shrink-0">
-                        {cert.year}
-                      </span>
+              {portfolioData.certifications && portfolioData.certifications.length > 0 && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.45, delay: 0.2 }}
+                  className={`p-5 rounded-2xl ${glassCardClass} space-y-3`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
+                      <Award className="w-4 h-4" />
                     </div>
-                  ))}
-                </div>
-              </motion.div>
+                    <h3 className={`text-base font-bold ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>
+                      Industry Certifications
+                    </h3>
+                  </div>
+
+                  <div className="space-y-2.5 pt-1">
+                    {portfolioData.certifications.map((cert, cIdx) => (
+                      <div key={cIdx} className={`p-2.5 rounded-xl border flex items-center justify-between gap-2 backdrop-blur-md ${
+                        isDark ? 'bg-[#0f1118]/70 border-white/5' : 'bg-white/80 border-slate-200'
+                      }`}>
+                        <div>
+                          <div className={`text-xs font-semibold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>{cert.name}</div>
+                          <div className={`text-[10px] font-mono ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{cert.issuer}</div>
+                        </div>
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 border border-amber-500/30 shrink-0">
+                          {cert.year}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
             </div>
           </div>
         </section>

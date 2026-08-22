@@ -338,28 +338,31 @@ export const CvPreviewModal: React.FC<CvPreviewModalProps> = ({
               </div>
             </div>
 
-            {/* Education & Certifications */}
+            {/* Education */}
             <div className="pt-5 space-y-3">
               <h2 className="text-xs font-bold uppercase tracking-wider text-amber-700 flex items-center gap-1.5">
                 <GraduationCap className="w-3.5 h-3.5" />
-                <span>Education & Certifications</span>
+                <span>Education</span>
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 {portfolioData.education.map((edu, idx) => (
-                  <div key={idx} className="space-y-0.5">
+                  <div key={idx} className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
                     <span className="font-bold text-slate-900 block">{edu.degree}</span>
-                    <span className="text-slate-600 block">{edu.institution} ({edu.location})</span>
-                    <span className="text-slate-500 text-[11px] block">{edu.period} • {edu.details}</span>
+                    <span className="text-amber-700 font-medium block">{edu.institution}</span>
+                    <span className="text-slate-500 text-[11px] block">{edu.period} • {edu.location}</span>
+                    <p className="text-slate-600 text-[11px] pt-1">{edu.details}</p>
                   </div>
                 ))}
-                <div className="space-y-1">
-                  <span className="font-bold text-slate-900 block">Credentials</span>
-                  {portfolioData.certifications.map((c, i) => (
-                    <div key={i} className="text-slate-600 text-[11px]">
-                      • {c.name} - {c.issuer} ({c.year})
-                    </div>
-                  ))}
-                </div>
+                {portfolioData.certifications && portfolioData.certifications.length > 0 && (
+                  <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
+                    <span className="font-bold text-slate-900 block">Credentials</span>
+                    {portfolioData.certifications.map((c, i) => (
+                      <div key={i} className="text-slate-600 text-[11px]">
+                        • {c.name} - {c.issuer} ({c.year})
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 

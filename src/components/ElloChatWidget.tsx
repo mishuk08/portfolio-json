@@ -122,33 +122,34 @@ export const ElloChatWidget: React.FC<ElloChatProps> = ({
     }
 
     // Education inquiry
-    if (q.includes('education') || q.includes('degree') || q.includes('university') || q.includes('study') || q.includes('college') || q.includes('academic') || q.includes('shikkha') || q.includes('certificate') || q.includes('cse')) {
-      const edu = portfolioData.education[0];
-      const certs = portfolioData.certifications.map(c => `• **${c.name}** (${c.issuer}, ${c.year})`).join('\n');
+    if (q.includes('education') || q.includes('degree') || q.includes('university') || q.includes('study') || q.includes('college') || q.includes('school') || q.includes('academic') || q.includes('shikkha') || q.includes('ssc') || q.includes('hsc')) {
+      const eduList = portfolioData.education.map(e => 
+        `• **${e.degree}**\n  *Institution:* ${e.institution} (${e.location})\n  *Timeline:* ${e.period}\n  *Details:* ${e.details}`
+      ).join('\n\n');
       return {
-        text: `🎓 **Mishuk's Educational Background:**\n\n• **Degree:** ${edu.degree}\n• **Institution:** ${edu.institution} (${edu.location})\n• **Timeline:** ${edu.period}\n• **Focus:** ${edu.details}\n\n🏆 **Key Certifications:**\n${certs}`,
+        text: `🎓 **Mishuk's Educational Background:**\n\n${eduList}`,
         category: 'education'
       };
     }
 
     // Work Experience inquiry
-    if (q.includes('experience') || q.includes('work') || q.includes('job') || q.includes('career') || q.includes('company') || q.includes('companies') || q.includes('history') || q.includes('obhiggota')) {
+    if (q.includes('experience') || q.includes('work') || q.includes('job') || q.includes('career') || q.includes('company') || q.includes('robosuperior') || q.includes('history') || q.includes('obhiggota')) {
       const expList = portfolioData.experiences.map((exp, i) => 
-        `**${i + 1}. ${exp.role}** at **${exp.company}** (${exp.period})\n   • *Type:* ${exp.type} | *Location:* ${exp.location}\n   • *Focus:* ${exp.description}\n   • *Tech:* ${exp.technologies.slice(0, 5).join(', ')}`
+        `**${i + 1}. ${exp.role}** at **${exp.company} (RoboSuperior.org)** (${exp.period})\n   • *Type:* ${exp.type} | *Location:* ${exp.location}\n   • *Focus:* ${exp.description}\n   • *Tech Stack:* ${exp.technologies.join(', ')}`
       ).join('\n\n');
       return {
-        text: `💼 **Mishuk's Professional Work Experience (${portfolioData.developer.yearsOfExperience}+ Years):**\n\n${expList}\n\nMishuk has led teams, migrated high-traffic architectures, and built high-performance web systems.`,
+        text: `💼 **Mishuk's Professional Work Experience:**\n\n${expList}`,
         category: 'experience'
       };
     }
 
     // Skills inquiry
-    if (q.includes('skill') || q.includes('tech') || q.includes('stack') || q.includes('language') || q.includes('frontend') || q.includes('backend') || q.includes('database') || q.includes('react') || q.includes('node') || q.includes('tools')) {
+    if (q.includes('skill') || q.includes('tech') || q.includes('stack') || q.includes('language') || q.includes('frontend') || q.includes('backend') || q.includes('database') || q.includes('react') || q.includes('node') || q.includes('tools') || q.includes('coding')) {
       const skillSummary = portfolioData.skills.map(cat => 
-        `• **${cat.category}:** ${cat.skills.map(s => `${s.name} (${s.level}%)`).join(', ')}`
+        `• **${cat.category}:** ${cat.skills.map(s => `${s.name} [${s.status || 'Learning'}]`).join(', ')}`
       ).join('\n\n');
       return {
-        text: `⚡ **Technical Skills & Stack:**\n\n${skillSummary}\n\nSpecialized in **Full-Stack JavaScript/TypeScript (React, Next.js, Node.js, Express)**, PostgreSQL, MongoDB, Redis, and modern DevOps.`,
+        text: `⚡ **Coding Foundations & Technical Skills (Learning):**\n\n${skillSummary}\n\nFocused on mastering core computer science foundations, modern web engineering with React, TypeScript, Node.js, and software development at RoboSuperior.`,
         category: 'skills'
       };
     }
