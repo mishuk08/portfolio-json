@@ -58,8 +58,10 @@ export interface PortfolioData {
       github: string;
       linkedin: string;
       facebook: string;
+      instagram: string;
       twitter: string;
       whatsapp: string;
+      whatsappUsername?: string;
       portfolio: string;
     };
   };

@@ -4,6 +4,7 @@ import {
   Terminal, 
   Briefcase, 
   Layers,
+  Mail,
   X
 } from 'lucide-react';
 import { EditorTabId, ThemeMode } from '../types';
@@ -67,7 +68,7 @@ export const TabBar: React.FC<TabBarProps> = ({
       id: 'contact.sh',
       index: 6,
       label: 'Contact.sh',
-      icon: <Terminal className="w-3.5 h-3.5 text-pink-500" />
+      icon: <Mail className="w-3.5 h-3.5 text-pink-500" />
     },
     {
       id: 'terminal',

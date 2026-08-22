@@ -11,6 +11,8 @@ import {
   Github, 
   Linkedin, 
   Mail, 
+  Facebook,
+  Instagram,
   Zap,
   Hash,
   X
@@ -183,10 +185,28 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <Github className="w-3.5 h-3.5" />
           </a>
           <a
+            href={portfolioData.developer.socials.facebook}
+            target="_blank"
+            rel="noreferrer"
+            className="p-1 rounded hover:text-blue-500 transition-colors"
+            title="Facebook"
+          >
+            <Facebook className="w-3.5 h-3.5" />
+          </a>
+          <a
+            href={portfolioData.developer.socials.instagram}
+            target="_blank"
+            rel="noreferrer"
+            className="p-1 rounded hover:text-pink-500 transition-colors"
+            title="Instagram"
+          >
+            <Instagram className="w-3.5 h-3.5" />
+          </a>
+          <a
             href={portfolioData.developer.socials.linkedin}
             target="_blank"
             rel="noreferrer"
-            className="p-1 rounded hover:text-amber-500 transition-colors"
+            className="p-1 rounded hover:text-cyan-500 transition-colors"
             title="LinkedIn"
           >
             <Linkedin className="w-3.5 h-3.5" />

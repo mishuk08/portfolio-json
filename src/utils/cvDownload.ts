@@ -1,10 +1,226 @@
 import { PortfolioData } from '../types';
 import { portfolioData as defaultPortfolioData } from '../data/portfolioData';
+import jsPDF from 'jspdf';
 import confetti from 'canvas-confetti';
 
+/**
+ * Generates and downloads a clean, professional vector PDF CV of the developer.
+ * 100% reliable across all browsers, iframes, and mobile devices.
+ */
 export function downloadDeveloperCv(customData?: PortfolioData) {
   const data = customData || defaultPortfolioData;
 
+  try {
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    const pageWidth = 210;
+    const pageHeight = 297;
+    const margin = 15;
+    const contentWidth = pageWidth - margin * 2;
+    let y = 18;
+
+    const checkPageBreak = (neededHeight: number) => {
+      if (y + neededHeight > pageHeight - margin) {
+        doc.addPage();
+        y = margin;
+      }
+    };
+
+    // Header Background Accent Bar
+    doc.setFillColor(15, 23, 42); // slate-900
+    doc.rect(margin, y, contentWidth, 26, 'F');
+
+    // Header Text
+    doc.setTextColor(245, 158, 11); // Amber
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(17);
+    doc.text(data.developer.name.toUpperCase(), margin + 5, y + 9);
+
+    doc.setTextColor(226, 232, 240); // Slate-200
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text(data.developer.role, margin + 5, y + 16);
+
+    doc.setFontSize(8.5);
+    doc.setTextColor(148, 163, 184); // Slate-400
+    doc.text(`${data.developer.location}  |  ${data.developer.email}  |  Exp: ${data.developer.yearsOfExperience}+ Years`, margin + 5, y + 22);
+
+    y += 32;
+
+    // Helper to draw section titles
+    const drawSectionTitle = (title: string) => {
+      checkPageBreak(12);
+      doc.setFillColor(245, 158, 11);
+      doc.rect(margin, y, 3.5, 6, 'F');
+
+      doc.setTextColor(15, 23, 42);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.text(title.toUpperCase(), margin + 6, y + 5);
+
+      doc.setDrawColor(226, 232, 240);
+      doc.setLineWidth(0.4);
+      doc.line(margin + 50, y + 3, margin + contentWidth, y + 3);
+      y += 9;
+    };
+
+    // 1. PROFESSIONAL SUMMARY
+    drawSectionTitle('Professional Summary');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8.5);
+    doc.setTextColor(51, 65, 85);
+    const summaryLines = doc.splitTextToSize(
+      `${data.developer.tagline} ${data.developer.bio[0] || ''}`,
+      contentWidth
+    );
+    checkPageBreak(summaryLines.length * 4.5);
+    doc.text(summaryLines, margin, y);
+    y += summaryLines.length * 4.2 + 4;
+
+    // 2. EDUCATION & CERTIFICATIONS
+    drawSectionTitle('Education & Qualifications');
+    data.education.forEach(edu => {
+      checkPageBreak(14);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9.5);
+      doc.setTextColor(15, 23, 42);
+      doc.text(edu.degree, margin, y);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor(100, 116, 139);
+      doc.text(`${edu.institution} (${edu.location})  •  ${edu.period}`, margin, y + 4.5);
+
+      doc.setTextColor(71, 85, 105);
+      const detailLines = doc.splitTextToSize(edu.details, contentWidth);
+      doc.text(detailLines, margin, y + 9);
+      y += detailLines.length * 4 + 11;
+    });
+
+    // Certifications
+    if (data.certifications && data.certifications.length > 0) {
+      checkPageBreak(10);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8.5);
+      doc.setTextColor(15, 23, 42);
+      doc.text('Key Certifications: ', margin, y);
+      
+      const certsText = data.certifications.map(c => `${c.name} (${c.issuer}, ${c.year})`).join('  |  ');
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(71, 85, 105);
+      const certLines = doc.splitTextToSize(certsText, contentWidth - 30);
+      doc.text(certLines, margin + 30, y);
+      y += certLines.length * 4 + 4;
+    }
+
+    // 3. WORK EXPERIENCE
+    drawSectionTitle('Work Experience');
+    data.experiences.forEach(exp => {
+      checkPageBreak(24);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9.5);
+      doc.setTextColor(15, 23, 42);
+      doc.text(`${exp.role} - ${exp.company}`, margin, y);
+
+      doc.setFont('helvetica', 'italic');
+      doc.setFontSize(8.5);
+      doc.setTextColor(100, 116, 139);
+      doc.text(`${exp.period}  |  ${exp.location}  |  ${exp.type}`, margin, y + 4.5);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(51, 65, 85);
+      const descLines = doc.splitTextToSize(exp.description, contentWidth);
+      doc.text(descLines, margin, y + 9);
+      y += descLines.length * 4 + 10;
+
+      // Key achievements bullet points
+      exp.achievements.forEach(ach => {
+        const achLines = doc.splitTextToSize(`• ${ach}`, contentWidth - 4);
+        checkPageBreak(achLines.length * 4);
+        doc.text(achLines, margin + 3, y);
+        y += achLines.length * 3.8 + 1;
+      });
+
+      // Tech used
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(7.5);
+      doc.setTextColor(245, 158, 11);
+      doc.text(`Stack: ${exp.technologies.join(', ')}`, margin + 3, y + 2);
+      y += 7;
+    });
+
+    // 4. CORE TECHNICAL SKILLS
+    drawSectionTitle('Core Technical Skills');
+    data.skills.forEach(skillGroup => {
+      checkPageBreak(10);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8.5);
+      doc.setTextColor(15, 23, 42);
+      doc.text(`${skillGroup.category}: `, margin, y);
+
+      const skillList = skillGroup.skills.map(s => `${s.name} (${s.experience})`).join(', ');
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(71, 85, 105);
+      const skillLines = doc.splitTextToSize(skillList, contentWidth - 40);
+      doc.text(skillLines, margin + 40, y);
+      y += skillLines.length * 4 + 3;
+    });
+    y += 3;
+
+    // 5. FEATURED PROJECTS
+    drawSectionTitle('Featured Software Projects');
+    data.projects.slice(0, 4).forEach((proj, idx) => {
+      checkPageBreak(16);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.setTextColor(15, 23, 42);
+      doc.text(`${idx + 1}. ${proj.title} [${proj.category}]`, margin, y);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(71, 85, 105);
+      const pDesc = doc.splitTextToSize(`${proj.description} (Tech: ${proj.tags.join(', ')})`, contentWidth);
+      doc.text(pDesc, margin, y + 4.5);
+      y += pDesc.length * 3.8 + 6;
+    });
+
+    // Footer
+    const pageCount = doc.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7.5);
+      doc.setTextColor(148, 163, 184);
+      doc.text(
+        `${data.developer.name} - Curriculum Vitae | Page ${i} of ${pageCount}`,
+        pageWidth / 2,
+        pageHeight - 8,
+        { align: 'center' }
+      );
+    }
+
+    // Trigger PDF download
+    const filename = `${data.developer.name.replace(/\s+/g, '_')}_CV.pdf`;
+    doc.save(filename);
+
+    confetti({
+      particleCount: 80,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+  } catch (err) {
+    console.error('Vector PDF generation error, downloading formatted text fallback:', err);
+    // Fallback: download txt formatted
+    downloadDeveloperCvText(data);
+  }
+}
+
+export function downloadDeveloperCvText(customData?: PortfolioData) {
+  const data = customData || defaultPortfolioData;
   const cvText = `========================================================================
 CURRICULUM VITAE - ${data.developer.name.toUpperCase()}
 ========================================================================
@@ -12,7 +228,6 @@ CURRICULUM VITAE - ${data.developer.name.toUpperCase()}
 Role: ${data.developer.role}
 Email: ${data.developer.email}
 Location: ${data.developer.location}
-Status: ${data.developer.status}
 Experience: ${data.developer.yearsOfExperience} Years
 
 GitHub: ${data.developer.socials.github}
@@ -79,20 +294,7 @@ ${data.projects
    Description: ${p.description}
    Tech Stack: ${p.tags.join(', ')}
    GitHub: ${p.githubUrl}
-   Live Demo: ${p.liveUrl}
-   Metrics / Uptime: ${p.metrics || 'Production Ready'}`
-  )
-  .join('\n\n')}
-
-------------------------------------------------------------------------
-ENGINEERING SERVICES & DELIVERABLES
-------------------------------------------------------------------------
-${data.services
-  .map(
-    (s) =>
-      `• ${s.title}:
-  ${s.description}
-  Deliverables: ${s.deliverables.join(' | ')}`
+   Live Demo: ${p.liveUrl}`
   )
   .join('\n\n')}
 
@@ -110,10 +312,4 @@ Generated dynamically from ${data.developer.name}'s Interactive Portfolio
   downloadAnchor.click();
   downloadAnchor.remove();
   URL.revokeObjectURL(url);
-
-  confetti({
-    particleCount: 70,
-    spread: 60,
-    origin: { y: 0.7 }
-  });
 }

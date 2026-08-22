@@ -7,9 +7,9 @@ export const portfolioData: PortfolioData = {
     tagline: "Crafting scalable web architectures, modern reactive frontends, and resilient backend systems.",
     status: "Available for full time",
     avatar: "/avatar.png",
-    email: "mdmishukbabu192@gmail.com",
+    email: "mishukbabushoukhin@gmail.com",
     phone: "+880 1700-000000",
-    location: "Dhaka, Bangladesh (Remote Friendly)",
+    location: "Rangpur, Bangladesh",
     yearsOfExperience: 4,
     bio: [
       "I am a passionate Web & Software Developer with a track record of designing, building, and deploying scalable full-stack applications.",
@@ -17,11 +17,13 @@ export const portfolioData: PortfolioData = {
       "Dedicated to writing clean, maintainable code, optimizing runtime performance, and delivering frictionless user experiences."
     ],
     socials: {
-      github: "https://github.com",
+      github: "https://www.github.com/mishuk08",
       linkedin: "https://linkedin.com",
-      facebook: "https://www.facebook.com/mdmishukbabu192",
+      facebook: "https://www.facebook.com/mishuk008",
+      instagram: "https://www.instagram.com/mi_sh_uk_008",
       twitter: "https://twitter.com",
-      whatsapp: "https://wa.me/?text=Hi%20Mishuk%2C%20I%20visited%20your%20portfolio",
+      whatsapp: "https://wa.me/?text=Hi%20Mishuk%20Babu%20Shoukhin%20(@mishuk_babu_shoukhin)%2C%20contacting%20from%20portfolio",
+      whatsappUsername: "mishuk_babu_shoukhin",
       portfolio: "https://mishuk-dev.io"
     }
   },

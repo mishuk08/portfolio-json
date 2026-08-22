@@ -1,63 +1,131 @@
 @import "tailwindcss";
 
 @layer base {
-  html, body {
-    overflow-x: hidden;
-    max-width: 100vw;
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  }
-
-  code, pre, .font-mono, .code-font {
-    font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-feature-settings: "calt" 1, "liga" 1;
+  body {
+    @apply font-sans antialiased selection:bg-amber-500/30 selection:text-amber-200;
   }
 }
 
-/* Hide scrollbar for cleaner horizontal list experiences */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-/* Custom IDE-style Scrollbar */
+/* Custom modern scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(15, 17, 23, 0.6);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.28);
+  background: rgba(245, 158, 11, 0.5);
 }
 
-/* Smooth blinking cursor */
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
-.animate-cursor {
-  animation: blink 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* Code Syntax Highlighting colors */
-.syn-key { color: #f59e0b; }       /* Amber / Orange */
-.syn-string { color: #34d399; }    /* Emerald Green */
-.syn-number { color: #60a5fa; }    /* Blue */
-.syn-boolean { color: #f472b6; }   /* Pink / Rose */
-.syn-bracket { color: #f59e0b; }   /* Orange braces { } */
+/* Syntax Highlighting for Editor */
+.syn-key { color: #38bdf8; }         /* Sky Blue */
+.syn-string { color: #4ade80; }      /* Emerald Green */
+.syn-number { color: #f59e0b; }      /* Amber */
+.syn-boolean { color: #ec4899; }     /* Pink */
+.syn-null { color: #94a3b8; }        /* Slate */
+.syn-colon { color: #cbd5e1; }       /* Light Slate */
+.syn-comma { color: #64748b; }       /* Muted Slate */
+.syn-brace { color: #eab308; }       /* Yellow */
+.syn-bracket { color: #a855f7; }     /* Purple */
 .syn-bracket-inner { color: #38bdf8; } /* Cyan braces [ ] */
 .syn-comment { color: #64748b; font-style: italic; } /* Slate */
 .syn-tag { color: #a78bfa; }       /* Purple */
 .syn-prop { color: #93c5fd; }      /* Light Blue */
+
+/* Smooth Progressive Theme Switch Blur & Wave Animations */
+@keyframes theme-blur-in {
+  0% {
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    background-color: transparent;
+    opacity: 0;
+  }
+  100% {
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    background-color: rgba(10, 11, 16, 0.45);
+    opacity: 1;
+  }
+}
+
+@keyframes theme-blur-out {
+  0% {
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    background-color: rgba(10, 11, 16, 0.45);
+    opacity: 1;
+  }
+  100% {
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    background-color: transparent;
+    opacity: 0;
+  }
+}
+
+.theme-blur-in {
+  animation: theme-blur-in 0.2s cubic-bezier(0.3, 0, 0.2, 1) forwards;
+}
+
+.theme-blur-out {
+  animation: theme-blur-out 0.3s cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
+}
+
+/* Luminous Theme Wave Animation */
+@keyframes theme-wave-expand {
+  0% {
+    transform: scale(0.1);
+    opacity: 0.9;
+  }
+  40% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+@keyframes theme-wave-shimmer {
+  0% {
+    transform: rotate(0deg) scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: rotate(180deg) scale(2.5);
+    opacity: 0;
+  }
+}
+
+.theme-wave-circle {
+  animation: theme-wave-expand 0.65s cubic-bezier(0.15, 0.85, 0.35, 1) forwards;
+}
+
+.theme-wave-ring {
+  animation: theme-wave-shimmer 0.75s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+}
+
+/* Ultra-sleek Glassmorphism Utility Classes */
+.glass-card-dark {
+  background: rgba(13, 16, 29, 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.28);
+}
+
+.glass-card-light {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 8px 28px 0 rgba(148, 163, 184, 0.14);
+}

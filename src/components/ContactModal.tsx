@@ -1,5 +1,18 @@
 import React, { useState } from 'react';
-import { X, Send, Mail, CheckCircle, Copy, Check, Sparkles, MessageSquare } from 'lucide-react';
+import { 
+  X, 
+  Send, 
+  Mail, 
+  CheckCircle, 
+  Copy, 
+  Check, 
+  Sparkles, 
+  MessageSquare, 
+  MapPin, 
+  Facebook, 
+  Instagram, 
+  Github 
+} from 'lucide-react';
 import { portfolioData } from '../data/portfolioData';
 import confetti from 'canvas-confetti';
 
@@ -54,19 +67,39 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
 
         {/* Modal Body */}
         <div className="p-6 space-y-4">
-          {/* Quick Email Copy Chip */}
-          <div className="bg-[#0b0c10] p-3 rounded-xl border border-[#22273d] flex items-center justify-between">
-            <div className="flex items-center gap-2 truncate">
-              <Mail className="w-4 h-4 text-amber-400 shrink-0" />
-              <span className="text-xs font-mono text-slate-300 truncate">{portfolioData.developer.email}</span>
+          {/* Quick Contact & Location Bar */}
+          <div className="space-y-2">
+            <div className="bg-[#0b0c10] p-3 rounded-xl border border-[#22273d] flex items-center justify-between">
+              <div className="flex items-center gap-2 truncate">
+                <Mail className="w-4 h-4 text-amber-400 shrink-0" />
+                <span className="text-xs font-mono text-slate-300 truncate">{portfolioData.developer.email}</span>
+              </div>
+              <button
+                onClick={handleCopyEmail}
+                className="px-2.5 py-1 text-xs rounded bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center gap-1 shrink-0 cursor-pointer"
+              >
+                {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copied ? 'Copied' : 'Copy'}</span>
+              </button>
             </div>
-            <button
-              onClick={handleCopyEmail}
-              className="px-2.5 py-1 text-xs rounded bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center gap-1 shrink-0 cursor-pointer"
-            >
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copied ? 'Copied' : 'Copy'}</span>
-            </button>
+
+            {/* Direct Connect Chips */}
+            <div className="grid grid-cols-2 gap-2 text-[11px] font-mono">
+              <a
+                href={portfolioData.developer.socials.whatsapp}
+                target="_blank"
+                rel="noreferrer"
+                className="p-2 rounded-lg bg-[#0b0c10] border border-[#22273d] hover:border-emerald-500/40 text-emerald-400 flex items-center gap-1.5 transition-colors"
+              >
+                <MessageSquare className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">WhatsApp: @mishuk_babu_shoukhin</span>
+              </a>
+
+              <div className="p-2 rounded-lg bg-[#0b0c10] border border-[#22273d] text-slate-300 flex items-center gap-1.5 truncate">
+                <MapPin className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <span className="truncate">{portfolioData.developer.location}</span>
+              </div>
+            </div>
           </div>
 
           {submitted ? (

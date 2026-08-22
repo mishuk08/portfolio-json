@@ -20,6 +20,7 @@ import { LivePreview } from './components/LivePreview';
 import { ProjectModal } from './components/ProjectModal';
 import { ContactModal } from './components/ContactModal';
 import { PortfolioEditorModal } from './components/PortfolioEditorModal';
+import { CvPreviewModal } from './components/CvPreviewModal';
 import { OpeningAnimation } from './components/OpeningAnimation';
 import { ModeTransitionOverlay } from './components/ModeTransitionOverlay';
 import { portfolioData as initialPortfolioData } from './data/portfolioData';
@@ -44,6 +45,7 @@ export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [isContactOpen, setIsContactOpen] = useState<boolean>(false);
+  const [isCvModalOpen, setIsCvModalOpen] = useState<boolean>(false);
   const [isEditorModalOpen, setIsEditorModalOpen] = useState<boolean>(false);
   const [terminalCommand, setTerminalCommand] = useState<string>('');
   const [isTerminalBottomOpen, setIsTerminalBottomOpen] = useState<boolean>(false);
@@ -51,18 +53,38 @@ export default function App() {
   // Opening animation state
   const [isAppLoading, setIsAppLoading] = useState<boolean>(true);
 
-  // Theme switch blur effect
-  const [isThemeBlurring, setIsThemeBlurring] = useState<boolean>(false);
+  // Progressive theme switch blur effect (subtle to deep, imperceptible theme switch, wave animation, then smooth reveal)
+  const [themeBlurState, setThemeBlurState] = useState<'idle' | 'in' | 'out'>('idle');
+  const [showThemeWave, setShowThemeWave] = useState<boolean>(false);
 
   // Full-screen mode transition (JSON <-> GUI) with 0-100% circle progress
   const [transitioningMode, setTransitioningMode] = useState<ViewMode | null>(null);
 
   const toggleThemeMode = () => {
-    setIsThemeBlurring(true);
-    setThemeMode(prev => (prev === 'dark' ? 'light' : 'dark'));
+    if (themeBlurState !== 'idle') return;
+    // Step 1: Start progressive frosted glass blur
+    setThemeBlurState('in');
+    
+    // Step 2: At peak blur (200ms), switch theme behind frosted glass and fire wave ripple
     setTimeout(() => {
-      setIsThemeBlurring(false);
-    }, 450);
+      setThemeMode(prev => (prev === 'dark' ? 'light' : 'dark'));
+      setShowThemeWave(true);
+
+      // Step 3: Wait until DOM has fully rendered the new theme before dissolving the blur
+      setTimeout(() => {
+        setThemeBlurState('out');
+
+        // Step 4: Clear blur state after smooth dissipation
+        setTimeout(() => {
+          setThemeBlurState('idle');
+        }, 320);
+      }, 90);
+    }, 200);
+
+    // Step 5: Clear wave animation overlay
+    setTimeout(() => {
+      setShowThemeWave(false);
+    }, 800);
   };
 
   const handleRequestViewMode = (newMode: ViewMode) => {
@@ -277,6 +299,7 @@ export default function App() {
                     portfolioData={data}
                     onOpenProject={(id) => setSelectedProjectId(id)}
                     onOpenContact={() => setIsContactOpen(true)}
+                    onOpenCvPreview={() => setIsCvModalOpen(true)}
                     onOpenEditor={() => setIsEditorModalOpen(true)}
                     onExportJson={handleExportJson}
                     themeMode={themeMode}
@@ -311,12 +334,26 @@ export default function App() {
         <OpeningAnimation
           onFinish={() => setIsAppLoading(false)}
           themeMode={themeMode}
+          avatarUrl={data.developer.avatar || '/avatar.png'}
+          developerName={data.developer.name}
         />
       )}
 
-      {/* Light / Dark Mode Blur Animation Overlay */}
-      {isThemeBlurring && (
-        <div className="fixed inset-0 z-50 pointer-events-none backdrop-blur-md bg-black/10 dark:bg-white/5 transition-opacity duration-300 animate-pulse" />
+      {/* Light / Dark Mode Progressive Blur Animation Overlay */}
+      {themeBlurState !== 'idle' && (
+        <div
+          className={`fixed inset-0 z-50 pointer-events-none ${
+            themeBlurState === 'in' ? 'theme-blur-in' : 'theme-blur-out'
+          }`}
+        />
+      )}
+
+      {/* Luminous Expanding Wave Animation Overlay */}
+      {showThemeWave && (
+        <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center overflow-hidden">
+          <div className="theme-wave-circle w-96 h-96 rounded-full bg-gradient-to-r from-amber-400/40 via-yellow-300/30 to-cyan-400/40 blur-2xl" />
+          <div className="theme-wave-ring absolute w-[500px] h-[500px] rounded-full border-4 border-amber-400/50 shadow-[0_0_80px_rgba(245,158,11,0.6)]" />
+        </div>
       )}
 
       {/* Fullscreen JSON <-> GUI Mode Transition Circular Loading Animation */}
@@ -324,6 +361,11 @@ export default function App() {
         <ModeTransitionOverlay
           targetMode={transitioningMode}
           themeMode={themeMode}
+          onApplyMode={() => {
+            if (transitioningMode) {
+              setViewMode(transitioningMode);
+            }
+          }}
           onComplete={handleModeTransitionComplete}
         />
       )}
@@ -338,6 +380,13 @@ export default function App() {
       <ContactModal
         isOpen={isContactOpen}
         onClose={() => setIsContactOpen(false)}
+      />
+
+      <CvPreviewModal
+        isOpen={isCvModalOpen}
+        onClose={() => setIsCvModalOpen(false)}
+        portfolioData={data}
+        themeMode={themeMode}
       />
 
       <PortfolioEditorModal

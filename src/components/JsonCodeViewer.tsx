@@ -107,10 +107,11 @@ export const JsonCodeViewer: React.FC<JsonCodeViewerProps> = ({
               triggerConfetti();
               onOpenContact();
             }}
-            className="p-1.5 rounded-lg bg-amber-500 text-slate-950 hover:bg-amber-400 transition-all cursor-pointer shadow-xs"
-            title="Open Contact / Message"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500 text-slate-950 hover:bg-amber-400 font-semibold text-xs transition-all cursor-pointer shadow-xs active:scale-95"
+            title="Open Contact / Send Email"
           >
-            <Mail className="w-3.5 h-3.5 fill-slate-950" />
+            <Mail className="w-3.5 h-3.5 text-slate-950 stroke-[2.2]" />
+            <span className="hidden sm:inline font-mono text-[11px]">Email</span>
           </button>
 
           <button
