@@ -20,6 +20,7 @@ import {
   Calendar,
   Award,
   ChevronRight,
+  ChevronLeft,
   MessageSquare,
   Facebook,
   Instagram,
@@ -28,13 +29,15 @@ import {
   Globe,
   Heart
 } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { PortfolioData, ThemeMode } from '../types';
 import { ElloChatWidget } from './ElloChatWidget';
 import { RangpurDivisionMap } from './RangpurDivisionMap';
 import { downloadDeveloperCv } from '../utils/cvDownload';
-import avatarImg from '../assets/avatar.png';
+import avatar1 from '../assets/drive_avatar_1.png';
+import avatar2 from '../assets/drive_avatar_2.webp';
 import confetti from 'canvas-confetti';
+import { syncGoogleDrivePhotos, getCachedPhotos, DEFAULT_PHOTOS } from '../services/driveSync';
 
 interface LivePreviewProps {
   portfolioData: PortfolioData;
@@ -57,25 +60,64 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [contactSubmitted, setContactSubmitted] = useState(false);
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
-  const [imgFallbackIndex, setImgFallbackIndex] = useState(0);
-  const [imageError, setImageError] = useState(false);
+  const [activePhotoIdx, setActivePhotoIdx] = useState(0);
+  const [isPhotoPaused, setIsPhotoPaused] = useState(false);
+  const [syncedPhotos, setSyncedPhotos] = useState<string[]>(() => {
+    const cached = getCachedPhotos();
+    return cached.length > 0 ? cached : [
+      avatar1 || '/drive_avatar_1.png',
+      avatar2 || '/drive_avatar_2.webp'
+    ];
+  });
 
-  const avatarCandidates = [
-    portfolioData.developer.avatar,
-    avatarImg,
-    '/avatar.png',
-    '/avatar.jpg',
-    '/user_photo.jpg'
-  ].filter(Boolean) as string[];
-  const currentAvatar = portfolioData.developer.avatar || avatarCandidates[imgFallbackIndex] || avatarImg || '/avatar.png';
+  // Dynamic Google Drive Folder Real-time Synchronizer
+  useEffect(() => {
+    let isMounted = true;
 
-  const handleAvatarError = () => {
-    if (imgFallbackIndex < avatarCandidates.length - 1) {
-      setImgFallbackIndex(prev => prev + 1);
-    } else {
-      setImageError(true);
-    }
-  };
+    const doSync = async () => {
+      try {
+        const latest = await syncGoogleDrivePhotos();
+        if (isMounted && latest && latest.length > 0) {
+          setSyncedPhotos(prev => {
+            // Check if lists are different
+            if (JSON.stringify(prev) !== JSON.stringify(latest)) {
+              return latest;
+            }
+            return prev;
+          });
+        }
+      } catch (err) {
+        console.info('Drive sync background check completed');
+      }
+    };
+
+    // Initial background sync
+    doSync();
+
+    // Auto sync on window focus (e.g. when user switches tabs after uploading to Drive)
+    window.addEventListener('focus', doSync);
+
+    // Periodic live sync every 45 seconds
+    const syncInterval = setInterval(doSync, 45000);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener('focus', doSync);
+      clearInterval(syncInterval);
+    };
+  }, []);
+
+  // Combined active photo playlist
+  const photoList = (syncedPhotos.length > 0 ? syncedPhotos : DEFAULT_PHOTOS).filter(Boolean);
+
+  // Animated cyclic transition through Drive photos (each photo stays 8 seconds)
+  useEffect(() => {
+    if (photoList.length <= 1 || isPhotoPaused) return;
+    const interval = setInterval(() => {
+      setActivePhotoIdx((prev) => (prev + 1) % photoList.length);
+    }, 8000);
+    return () => clearInterval(interval);
+  }, [photoList.length, isPhotoPaused]);
 
   // Guarantee the page starts at the very top on load
   useEffect(() => {
@@ -281,11 +323,15 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                 </div>
               </div>
 
-              {/* Right: Round Profile Picture with Glowing Ring */}
-              <div className="shrink-0 relative group flex flex-col items-center">
+              {/* Right: Round Profile Picture with Glowing Ring & Blur Transition Auto-Changing Photos */}
+              <div 
+                className="shrink-0 relative group flex flex-col items-center select-none"
+                onMouseEnter={() => setIsPhotoPaused(true)}
+                onMouseLeave={() => setIsPhotoPaused(false)}
+              >
                 <div className="relative">
                   {/* Ambient glowing halo */}
-                  <div className="absolute -inset-1.5 rounded-full bg-gradient-to-r from-amber-500 via-yellow-400 to-cyan-500 opacity-60 blur-md group-hover:opacity-90 transition duration-500 animate-pulse" />
+                  <div className="absolute -inset-1.5 rounded-full bg-gradient-to-r from-amber-500 via-yellow-400 to-cyan-500 opacity-60 blur-md group-hover:opacity-95 transition duration-500 animate-pulse" />
                   
                   {/* Circular container */}
                   <div 
@@ -295,24 +341,18 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                         : 'bg-white/90 border-amber-400 shadow-amber-400/20'
                     }`}
                   >
-                    {!imageError ? (
-                      <img
-                        src={currentAvatar}
-                        alt={portfolioData.developer.name}
-                        onError={handleAvatarError}
-                        className="w-full h-full object-cover rounded-full shadow-inner transition-transform duration-300 group-hover:scale-105"
+                    <AnimatePresence mode="wait">
+                      <motion.img
+                        key={activePhotoIdx}
+                        src={photoList[activePhotoIdx] || photoList[0]}
+                        alt={`${portfolioData.developer.name} - Photo ${activePhotoIdx + 1}`}
+                        initial={{ opacity: 0, filter: 'blur(16px)', scale: 1.05 }}
+                        animate={{ opacity: 1, filter: 'blur(0px)', scale: 1 }}
+                        exit={{ opacity: 0, filter: 'blur(16px)', scale: 0.95 }}
+                        transition={{ duration: 1.5, ease: [0.4, 0, 0.2, 1] }}
+                        className="w-full h-full object-cover rounded-full shadow-inner"
                       />
-                    ) : (
-                      <div className="w-full h-full rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex flex-col items-center justify-center text-slate-950 font-bold text-2xl shadow-inner">
-                        <span>MB</span>
-                        <span className="text-[10px] font-mono font-normal mt-0.5">Shoukhin</span>
-                      </div>
-                    )}
-
-                    {/* Floating verified badge */}
-                    <div className="absolute bottom-1 right-1 p-1.5 rounded-full bg-amber-500 text-slate-950 shadow-lg border-2 border-white dark:border-[#0e1017] pointer-events-none">
-                      <Sparkles className="w-3.5 h-3.5 fill-slate-950" />
-                    </div>
+                    </AnimatePresence>
                   </div>
                 </div>
               </div>

@@ -162,23 +162,26 @@ export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
           <span className="font-semibold uppercase tracking-wider text-[10px]">Loading Device Environment</span>
         </div>
 
-        {/* Permanent Photo with High-Tech Biometric Circular Ring */}
+        {/* Photo Container with High-Tech Biometric Circular Ring */}
         <div className="relative mb-5 group">
+          {/* Subtle Ambient Halo */}
+          <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-amber-500/20 via-yellow-400/20 to-cyan-500/20 blur-md" />
+
           {/* Circular SVG Progress Ring */}
-          <svg className="w-32 h-32 sm:w-36 sm:h-36 -rotate-90">
+          <svg className="w-32 h-32 sm:w-36 sm:h-36 -rotate-90 relative z-10">
             <circle
               cx="50%"
               cy="50%"
               r="44%"
-              className={`stroke-current fill-none ${isDark ? 'text-slate-800' : 'text-slate-200'}`}
-              strokeWidth="4"
+              className={`stroke-current fill-none ${isDark ? 'text-slate-800/80' : 'text-slate-200'}`}
+              strokeWidth="3.5"
             />
             <circle
               cx="50%"
               cy="50%"
               r="44%"
-              className="stroke-current text-amber-500 fill-none transition-all duration-75"
-              strokeWidth="4"
+              className="stroke-current text-amber-400 fill-none transition-all duration-75"
+              strokeWidth="3.5"
               strokeDasharray="276"
               strokeDashoffset={276 - (276 * progress) / 100}
               strokeLinecap="round"
@@ -186,10 +189,10 @@ export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
           </svg>
 
           {/* Centered Photo Container */}
-          <div className="absolute inset-0 flex items-center justify-center p-3">
-            <div className={`w-full h-full rounded-full p-1 border-2 overflow-hidden flex items-center justify-center shadow-xl ${
+          <div className="absolute inset-0 flex items-center justify-center p-3.5 z-10">
+            <div className={`w-full h-full rounded-full p-0.5 border-2 overflow-hidden flex items-center justify-center shadow-xl ${
               isDark 
-                ? 'bg-[#0f1118] border-amber-500/50 shadow-amber-500/20' 
+                ? 'bg-[#0f1118] border-amber-500/40 shadow-amber-500/20' 
                 : 'bg-white border-amber-400 shadow-amber-300/30'
             }`}>
               {!imgError ? (
@@ -197,7 +200,7 @@ export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
                   src={currentAvatar}
                   alt={developerName}
                   onError={handleImgError}
-                  className="w-full h-full object-cover rounded-full"
+                  className="w-full h-full object-cover rounded-full shadow-inner"
                 />
               ) : (
                 <div className="w-full h-full rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center text-slate-950 font-black text-xl">
@@ -205,11 +208,6 @@ export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
                 </div>
               )}
             </div>
-          </div>
-
-          {/* Floating verified badge */}
-          <div className="absolute bottom-1 right-1 p-1.5 rounded-full bg-amber-500 text-slate-950 shadow-md border-2 border-white dark:border-[#08090d]">
-            <Sparkles className="w-3 h-3 fill-slate-950" />
           </div>
         </div>
 

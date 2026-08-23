@@ -50,6 +50,7 @@ export interface PortfolioData {
     tagline: string;
     status: string;
     avatar?: string;
+    avatars?: string[];
     email: string;
     phone: string;
     location: string;

@@ -1,5 +1,6 @@
 import { PortfolioData } from '../types';
-import avatarImg from '../assets/avatar.png';
+import avatar1 from '../assets/drive_avatar_1.png';
+import avatar2 from '../assets/drive_avatar_2.webp';
 
 export const portfolioData: PortfolioData = {
   developer: {
@@ -7,7 +8,11 @@ export const portfolioData: PortfolioData = {
     role: "Web & Software Developer",
     tagline: "Dedicated Web & Software Developer passionate about building clean, performant, and scalable applications.",
     status: "Available for Projects & Collaboration",
-    avatar: avatarImg || "/avatar.png",
+    avatar: avatar1 || "/drive_avatar_1.png",
+    avatars: [
+      avatar1 || "/drive_avatar_1.png",
+      avatar2 || "/drive_avatar_2.webp"
+    ],
     email: "mdmishukbabu192@gmail.com",
     phone: "+880 1700-000000",
     location: "Rangpur, Bangladesh",
