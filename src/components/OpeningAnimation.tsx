@@ -28,10 +28,9 @@ export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
     avatarImg,
     '/avatar.png',
     '/avatar.jpg',
-    '/avatar_new.png',
     '/user_photo.jpg'
   ].filter(Boolean) as string[];
-  const currentAvatar = avatarCandidates[imgFallbackIndex] || avatarImg || '/avatar.png';
+  const currentAvatar = avatarUrl || avatarCandidates[imgFallbackIndex] || avatarImg || '/avatar.png';
 
   const logs = [
     { text: 'Mounting Developer Environment & Core Modules...', tag: 'CORE' },
@@ -55,25 +54,24 @@ export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
     setIsFadingOut(true);
     setTimeout(() => {
       onFinish();
-    }, 320);
+    }, 280);
   };
 
   useEffect(() => {
     let isReadyOnDevice = false;
 
-    // Check device readiness: fonts, DOM ready, image preload
+    // Fast device readiness check: fonts, DOM, and instant image preloading
     const checkReadiness = async () => {
       try {
         if (document.fonts?.ready) {
           await document.fonts.ready;
         }
-        // Preload avatar image
         const img = new Image();
         img.src = currentAvatar;
         await new Promise((resolve) => {
           img.onload = resolve;
           img.onerror = resolve;
-          setTimeout(resolve, 600);
+          setTimeout(resolve, 400);
         });
       } catch {
         // Continue safely
@@ -83,29 +81,34 @@ export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
 
     checkReadiness();
 
-    const minDuration = 1600; // 1.6s pleasant onboarding
+    const totalDuration = 1450; // 1.45s ultra-crisp opening
     const startTime = performance.now();
     let animationFrameId: number;
 
-    const tick = (now: number) => {
-      const elapsed = now - startTime;
-      let targetProgress = (elapsed / minDuration) * 100;
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 
-      // Hold near 90% if device assets are still fetching/parsing
-      if (targetProgress > 90 && !isReadyOnDevice && elapsed < 2800) {
-        targetProgress = 90;
+    const tick = (now: number) => {
+      const elapsed = Math.max(0, now - startTime);
+      const rawProgress = Math.min(1, elapsed / totalDuration);
+      
+      // Smooth high-refresh rate eased progress
+      const easedProgress = easeOutCubic(rawProgress) * 100;
+      
+      let finalProgress = easedProgress;
+      if (rawProgress > 0.9 && !isReadyOnDevice && elapsed < 2200) {
+        finalProgress = 90;
       }
 
-      const currentPct = Math.min(100, Math.round(targetProgress));
-      setProgress(currentPct);
+      const clampedPct = Math.min(100, Math.round(finalProgress));
+      setProgress(clampedPct);
 
-      if (currentPct < 22) setLogIndex(0);
-      else if (currentPct < 48) setLogIndex(1);
-      else if (currentPct < 72) setLogIndex(2);
-      else if (currentPct < 94) setLogIndex(3);
+      if (clampedPct < 22) setLogIndex(0);
+      else if (clampedPct < 48) setLogIndex(1);
+      else if (clampedPct < 72) setLogIndex(2);
+      else if (clampedPct < 94) setLogIndex(3);
       else setLogIndex(4);
 
-      if (currentPct >= 100) {
+      if (rawProgress >= 1 || (clampedPct >= 100 && isReadyOnDevice)) {
         finishAnimation();
       } else {
         animationFrameId = requestAnimationFrame(tick);

@@ -54,6 +54,39 @@ export default function App() {
   // Opening animation state
   const [isAppLoading, setIsAppLoading] = useState<boolean>(true);
 
+  // Load custom photo from localStorage if user previously uploaded one
+  useEffect(() => {
+    try {
+      const savedAvatar = localStorage.getItem('mishuk_custom_avatar');
+      if (savedAvatar) {
+        setData(prev => ({
+          ...prev,
+          developer: {
+            ...prev.developer,
+            avatar: savedAvatar
+          }
+        }));
+      }
+    } catch {
+      // Local storage unavailable
+    }
+  }, []);
+
+  const handleUpdateAvatar = (newAvatarDataUrl: string) => {
+    try {
+      localStorage.setItem('mishuk_custom_avatar', newAvatarDataUrl);
+    } catch {
+      // ignore
+    }
+    setData(prev => ({
+      ...prev,
+      developer: {
+        ...prev.developer,
+        avatar: newAvatarDataUrl
+      }
+    }));
+  };
+
   // Progressive theme switch blur effect (subtle to deep, imperceptible theme switch, wave animation, then smooth reveal)
   const [themeBlurState, setThemeBlurState] = useState<'idle' | 'in' | 'out'>('idle');
   const [showThemeWave, setShowThemeWave] = useState<boolean>(false);

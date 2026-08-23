@@ -65,10 +65,9 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
     avatarImg,
     '/avatar.png',
     '/avatar.jpg',
-    '/avatar_new.png',
     '/user_photo.jpg'
   ].filter(Boolean) as string[];
-  const currentAvatar = avatarCandidates[imgFallbackIndex] || avatarImg || '/avatar.png';
+  const currentAvatar = portfolioData.developer.avatar || avatarCandidates[imgFallbackIndex] || avatarImg || '/avatar.png';
 
   const handleAvatarError = () => {
     if (imgFallbackIndex < avatarCandidates.length - 1) {
@@ -283,17 +282,19 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
               </div>
 
               {/* Right: Round Profile Picture with Glowing Ring */}
-              <div className="shrink-0 relative group">
+              <div className="shrink-0 relative group flex flex-col items-center">
                 <div className="relative">
                   {/* Ambient glowing halo */}
                   <div className="absolute -inset-1.5 rounded-full bg-gradient-to-r from-amber-500 via-yellow-400 to-cyan-500 opacity-60 blur-md group-hover:opacity-90 transition duration-500 animate-pulse" />
                   
                   {/* Circular container */}
-                  <div className={`relative w-36 h-36 sm:w-44 sm:h-44 md:w-48 md:h-48 rounded-full p-1.5 border-2 shadow-2xl backdrop-blur-xl flex items-center justify-center ${
-                    isDark 
-                      ? 'bg-[#0e1017]/90 border-amber-500/60 shadow-amber-500/20' 
-                      : 'bg-white/90 border-amber-400 shadow-amber-400/20'
-                  }`}>
+                  <div 
+                    className={`relative w-36 h-36 sm:w-44 sm:h-44 md:w-48 md:h-48 rounded-full p-1.5 border-2 shadow-2xl backdrop-blur-xl flex items-center justify-center overflow-hidden ${
+                      isDark 
+                        ? 'bg-[#0e1017]/90 border-amber-500/60 shadow-amber-500/20' 
+                        : 'bg-white/90 border-amber-400 shadow-amber-400/20'
+                    }`}
+                  >
                     {!imageError ? (
                       <img
                         src={currentAvatar}
@@ -309,7 +310,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                     )}
 
                     {/* Floating verified badge */}
-                    <div className="absolute bottom-1 right-1 p-1.5 rounded-full bg-amber-500 text-slate-950 shadow-lg border-2 border-white dark:border-[#0e1017]">
+                    <div className="absolute bottom-1 right-1 p-1.5 rounded-full bg-amber-500 text-slate-950 shadow-lg border-2 border-white dark:border-[#0e1017] pointer-events-none">
                       <Sparkles className="w-3.5 h-3.5 fill-slate-950" />
                     </div>
                   </div>

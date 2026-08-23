@@ -2,12 +2,62 @@ import { PortfolioData } from '../types';
 import { portfolioData as defaultPortfolioData } from '../data/portfolioData';
 import jsPDF from 'jspdf';
 import confetti from 'canvas-confetti';
+import avatarImg from '../assets/avatar.png';
 
 /**
- * Generates and downloads a clean, professional vector PDF CV of the developer.
+ * Loads an image from multiple candidate sources and returns a base64 DataURL
+ * suitable for embedding directly into jsPDF or canvas rendering.
+ */
+async function loadPhotoDataUrl(photoSrc?: string): Promise<string | null> {
+  const candidateUrls = [
+    photoSrc,
+    avatarImg,
+    '/avatar.png',
+    '/avatar.jpg',
+    '/user_photo.jpg'
+  ].filter(Boolean) as string[];
+
+  for (const src of candidateUrls) {
+    try {
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          try {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.naturalWidth || img.width || 280;
+            canvas.height = img.naturalHeight || img.height || 280;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+              reject(new Error('Canvas context unavailable'));
+              return;
+            }
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/png', 0.95));
+          } catch (err) {
+            reject(err);
+          }
+        };
+        img.onerror = () => reject(new Error(`Failed to load ${src}`));
+        img.src = src;
+      });
+
+      if (dataUrl && dataUrl.startsWith('data:image')) {
+        return dataUrl;
+      }
+    } catch {
+      // Try next candidate
+    }
+  }
+  return null;
+}
+
+/**
+ * Generates and downloads a clean, professional vector PDF CV of the developer
+ * with developer profile photo embedded in the header.
  * 100% reliable across all browsers, iframes, and mobile devices.
  */
-export function downloadDeveloperCv(customData?: PortfolioData) {
+export async function downloadDeveloperCv(customData?: PortfolioData) {
   const data = customData || defaultPortfolioData;
 
   try {
@@ -21,7 +71,10 @@ export function downloadDeveloperCv(customData?: PortfolioData) {
     const pageHeight = 297;
     const margin = 15;
     const contentWidth = pageWidth - margin * 2;
-    let y = 18;
+    let y = 16;
+
+    // Load photo before generating PDF
+    const photoDataUrl = await loadPhotoDataUrl(data.developer.avatar);
 
     const checkPageBreak = (neededHeight: number) => {
       if (y + neededHeight > pageHeight - margin) {
@@ -31,41 +84,71 @@ export function downloadDeveloperCv(customData?: PortfolioData) {
     };
 
     // Header Background Accent Bar
+    const headerHeight = 28;
     doc.setFillColor(15, 23, 42); // slate-900
-    doc.rect(margin, y, contentWidth, 26, 'F');
+    doc.rect(margin, y, contentWidth, headerHeight, 'F');
 
-    // Header Text
+    // Header Golden Edge Accent Line
+    doc.setFillColor(245, 158, 11); // Amber
+    doc.rect(margin, y, 2.5, headerHeight, 'F');
+
+    // Embed Developer Photo if available
+    const hasPhoto = Boolean(photoDataUrl);
+    const photoSize = 22; // 22mm x 22mm
+    const photoX = margin + contentWidth - photoSize - 3;
+    const photoY = y + (headerHeight - photoSize) / 2;
+
+    if (hasPhoto && photoDataUrl) {
+      try {
+        // Photo border background
+        doc.setFillColor(245, 158, 11); // Amber gold border
+        doc.roundedRect(photoX - 0.7, photoY - 0.7, photoSize + 1.4, photoSize + 1.4, 1.5, 1.5, 'F');
+        doc.addImage(photoDataUrl, 'PNG', photoX, photoY, photoSize, photoSize, undefined, 'FAST');
+      } catch (imgErr) {
+        console.warn('PDF image rendering skipped:', imgErr);
+      }
+    }
+
+    // Header Text Layout (adjusted if photo exists)
+    const textMaxWidth = hasPhoto ? contentWidth - photoSize - 12 : contentWidth - 8;
+
     doc.setTextColor(245, 158, 11); // Amber
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(17);
-    doc.text(data.developer.name.toUpperCase(), margin + 5, y + 9);
+    doc.setFontSize(16);
+    doc.text(data.developer.name.toUpperCase(), margin + 6, y + 9);
 
     doc.setTextColor(226, 232, 240); // Slate-200
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9.5);
+    doc.text(data.developer.role, margin + 6, y + 15.5);
+
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
-    doc.text(data.developer.role, margin + 5, y + 16);
-
-    doc.setFontSize(8.5);
+    doc.setFontSize(8);
     doc.setTextColor(148, 163, 184); // Slate-400
-    doc.text(`${data.developer.location}  |  ${data.developer.email}  |  github.com/mishuk08`, margin + 5, y + 22);
+    doc.text(
+      `${data.developer.location}  |  ${data.developer.email}  |  github.com/mishuk08`,
+      margin + 6,
+      y + 22,
+      { maxWidth: textMaxWidth }
+    );
 
-    y += 32;
+    y += headerHeight + 6;
 
     // Helper to draw section titles
     const drawSectionTitle = (title: string) => {
       checkPageBreak(12);
       doc.setFillColor(245, 158, 11);
-      doc.rect(margin, y, 3.5, 6, 'F');
+      doc.rect(margin, y, 3, 5.5, 'F');
 
       doc.setTextColor(15, 23, 42);
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(11);
-      doc.text(title.toUpperCase(), margin + 6, y + 5);
+      doc.setFontSize(10.5);
+      doc.text(title.toUpperCase(), margin + 5.5, y + 4.5);
 
       doc.setDrawColor(226, 232, 240);
       doc.setLineWidth(0.4);
-      doc.line(margin + 50, y + 3, margin + contentWidth, y + 3);
-      y += 9;
+      doc.line(margin + 52, y + 3, margin + contentWidth, y + 3);
+      y += 8.5;
     };
 
     // 1. PROFESSIONAL SUMMARY

@@ -1,9 +1,30 @@
 @import "tailwindcss";
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   body {
     @apply font-sans antialiased selection:bg-amber-500/30 selection:text-amber-200;
+    overflow-x: hidden;
   }
+
+  /* GPU acceleration for butter-smooth 60/90/120/144Hz interactions */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* High performance smooth rendering */
+.smooth-gpu {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform, opacity;
 }
 
 /* Custom modern scrollbars */

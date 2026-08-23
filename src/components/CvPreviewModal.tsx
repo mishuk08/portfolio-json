@@ -54,10 +54,9 @@ export const CvPreviewModal: React.FC<CvPreviewModalProps> = ({
     avatarImg,
     '/avatar.png',
     '/avatar.jpg',
-    '/avatar_new.png',
     '/user_photo.jpg'
   ].filter(Boolean) as string[];
-  const currentAvatar = avatarSources[imgFallbackIndex] || avatarImg || '/avatar.png';
+  const currentAvatar = portfolioData.developer.avatar || avatarSources[imgFallbackIndex] || avatarImg || '/avatar.png';
 
   const handleImageError = () => {
     if (imgFallbackIndex < avatarSources.length - 1) {
