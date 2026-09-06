@@ -53,16 +53,16 @@ export const ThemeSwitchAnimation: React.FC<ThemeSwitchAnimationProps> = ({
           className="fixed inset-0 z-[100] pointer-events-none overflow-hidden select-none"
           aria-hidden="true"
         >
-          {/* Progressive Water Frosted Blur Layer (অ্যানিমেশনের সময় ব্লার হবে এবং ফুল সুইচের পর ব্লার মসৃণভাবে কমে যাবে) */}
+          {/* Progressive Water Frosted Blur Layer */}
           <div
             className={`absolute inset-0 water-theme-blur-overlay pointer-events-none ${
               isTargetLight
-                ? 'bg-sky-200/15'
-                : 'bg-slate-950/25'
+                ? 'bg-sky-100/10'
+                : 'bg-slate-950/15'
             }`}
           />
 
-          {/* Liquid Water Sheet Expansion (Expands like water covering a surface with refraction) */}
+          {/* Liquid Water Sheet Expansion (Translucent water wave that lets the blurred page shine through) */}
           <motion.div
             initial={{
               clipPath: `circle(0px at ${clickX}px ${clickY}px)`,
@@ -70,20 +70,20 @@ export const ThemeSwitchAnimation: React.FC<ThemeSwitchAnimationProps> = ({
             }}
             animate={{
               clipPath: `circle(160vmax at ${clickX}px ${clickY}px)`,
-              opacity: [0.95, 0.9, 0.45, 0]
+              opacity: [0.95, 0.75, 0.35, 0]
             }}
             exit={{
               opacity: 0
             }}
             transition={{
-              duration: 0.84,
+              duration: 0.8,
               ease: [0.16, 1, 0.3, 1],
               times: [0, 0.25, 0.7, 1]
             }}
-            className={`absolute inset-0 backdrop-blur-md ${
+            className={`absolute inset-0 ${
               isTargetLight
-                ? 'bg-gradient-to-br from-cyan-100/75 via-amber-50/70 to-white/90'
-                : 'bg-gradient-to-br from-[#051329]/85 via-[#0a1020]/80 to-[#07090e]/90'
+                ? 'bg-gradient-to-br from-cyan-400/25 via-sky-200/15 to-transparent'
+                : 'bg-gradient-to-br from-cyan-500/25 via-indigo-900/20 to-transparent'
             }`}
           />
 

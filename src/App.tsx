@@ -88,7 +88,8 @@ export default function App() {
     }));
   };
 
-  // Brand New Modern Theme Switch Ripple & Eclipse Transition
+  // Brand New Modern Theme Switch Ripple & Water Blur Transition
+  const [isThemeBlurring, setIsThemeBlurring] = useState<boolean>(false);
   const [themeTransition, setThemeTransition] = useState<{
     isActive: boolean;
     targetTheme: ThemeMode;
@@ -136,22 +137,30 @@ export default function App() {
     const nextTheme: ThemeMode = themeMode === 'dark' ? 'light' : 'dark';
     const origin = e ? { x: e.clientX, y: e.clientY } : undefined;
 
-    // Trigger realistic water wave ripples
+    // 1. Trigger water wave ripple animation and initiate progressive screen blur
     setThemeTransition({
       isActive: true,
       targetTheme: nextTheme,
       origin
     });
+    setIsThemeBlurring(true);
 
-    // Seamlessly swap the theme palette midway through the water wave expansion
+    // 2. Exactly when blur reaches its peak (300ms): Swap the theme from dark to light or light to dark!
+    // "Jokhon blur hoy tokhon dark theke light ba light theke dark Hobe"
     setTimeout(() => {
       setThemeMode(nextTheme);
-    }, 280);
+    }, 300);
 
-    // After water wave ripples fully dissipate, cleanly stop the animation
+    // 3. Immediately after swapping under heavy blur (380ms), reduce blur back to crystal clear
+    // "then blur kome poriskar Hobe"
+    setTimeout(() => {
+      setIsThemeBlurring(false);
+    }, 380);
+
+    // 4. After water ripples fully dissipate (820ms), cleanly end the animation state
     setTimeout(() => {
       setThemeTransition(prev => ({ ...prev, isActive: false }));
-    }, 880);
+    }, 820);
   };
 
   const handleRequestViewMode = (newMode: ViewMode) => {
@@ -312,86 +321,98 @@ export default function App() {
     <div className={`h-screen w-screen max-w-full flex flex-col overflow-x-hidden overflow-y-hidden font-sans transition-colors duration-200 ${
       isDark ? 'bg-[#0d0e13] text-slate-200' : 'bg-slate-50 text-slate-800'
     }`}>
-      {/* Top Application Bar with macOS Window Buttons, GUI/JSON mode switch, and Dark/Light toggle */}
-      <HeaderBar
-        viewMode={viewMode}
-        setViewMode={handleRequestViewMode}
-        isSidebarOpen={isSidebarOpen}
-        setIsSidebarOpen={setIsSidebarOpen}
-        openContact={() => setIsContactOpen(true)}
-        handleExportJson={handleExportJson}
-        activeFileName={activeTab}
-        themeMode={themeMode}
-        toggleThemeMode={toggleThemeMode}
-        onOpenTerminal={handleOpenTerminalFromHeader}
-      />
+      {/* Visual Content Wrapper with synchronized water blur & clear transitions */}
+      <div 
+        className={`flex-1 flex flex-col overflow-hidden w-full transition-all ${
+          isThemeBlurring 
+            ? 'filter blur-[12px] opacity-90 scale-[0.996]' 
+            : 'filter-none opacity-100 scale-100'
+        }`}
+        style={{
+          transition: 'filter 0.32s cubic-bezier(0.16, 1, 0.3, 1), transform 0.32s ease, opacity 0.32s ease'
+        }}
+      >
+        {/* Top Application Bar with macOS Window Buttons, GUI/JSON mode switch, and Dark/Light toggle */}
+        <HeaderBar
+          viewMode={viewMode}
+          setViewMode={handleRequestViewMode}
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
+          openContact={() => setIsContactOpen(true)}
+          handleExportJson={handleExportJson}
+          activeFileName={activeTab}
+          themeMode={themeMode}
+          toggleThemeMode={toggleThemeMode}
+          onOpenTerminal={handleOpenTerminalFromHeader}
+        />
 
-      {/* Main Container */}
-      <div className="flex-1 flex flex-col md:flex-row overflow-hidden w-full max-w-full relative">
-        {/* Collapsible Left File Explorer (Shown only in JSON / IDE mode) */}
-        {viewMode === 'editor' && isSidebarOpen && (
-          <div className="w-full md:w-auto shrink-0 z-30">
-            <Sidebar
-              activeTab={activeTab}
-              setActiveTab={handleOpenTab}
-              openContact={() => setIsContactOpen(true)}
-              onScrollToSection={handleScrollToSection}
-              themeMode={themeMode}
-              onClose={() => setIsSidebarOpen(false)}
-            />
-          </div>
-        )}
-
-        {/* View Content Area */}
-        <div className={`flex-1 flex flex-col overflow-hidden w-full max-w-full ${
-          isDark ? 'bg-[#0d0e13]' : 'bg-white'
-        }`}>
-          {/* Top Tab Bar (in JSON/Code mode) */}
-          {viewMode === 'editor' && (
-            <TabBar
-              activeTab={activeTab}
-              setActiveTab={handleOpenTab}
-              openTabs={openTabs}
-              closeTab={handleCloseTab}
-              themeMode={themeMode}
-            />
+        {/* Main Container */}
+        <div className="flex-1 flex flex-col md:flex-row overflow-hidden w-full max-w-full relative">
+          {/* Collapsible Left File Explorer (Shown only in JSON / IDE mode) */}
+          {viewMode === 'editor' && isSidebarOpen && (
+            <div className="w-full md:w-auto shrink-0 z-30">
+              <Sidebar
+                activeTab={activeTab}
+                setActiveTab={handleOpenTab}
+                openContact={() => setIsContactOpen(true)}
+                onScrollToSection={handleScrollToSection}
+                themeMode={themeMode}
+                onClose={() => setIsSidebarOpen(false)}
+              />
+            </div>
           )}
 
-          {/* Main View Display: GUI Mode (Live App) or JSON Mode (IDE Code Viewer) */}
-          <div className="flex-1 overflow-hidden flex flex-col w-full max-w-full">
-            <div className="flex-1 overflow-hidden w-full max-w-full">
-              {viewMode === 'preview' ? (
-                <div className="h-full w-full overflow-hidden">
-                  <LivePreview
-                    portfolioData={data}
+          {/* View Content Area */}
+          <div className={`flex-1 flex flex-col overflow-hidden w-full max-w-full ${
+            isDark ? 'bg-[#0d0e13]' : 'bg-white'
+          }`}>
+            {/* Top Tab Bar (in JSON/Code mode) */}
+            {viewMode === 'editor' && (
+              <TabBar
+                activeTab={activeTab}
+                setActiveTab={handleOpenTab}
+                openTabs={openTabs}
+                closeTab={handleCloseTab}
+                themeMode={themeMode}
+              />
+            )}
+
+            {/* Main View Display: GUI Mode (Live App) or JSON Mode (IDE Code Viewer) */}
+            <div className="flex-1 overflow-hidden flex flex-col w-full max-w-full">
+              <div className="flex-1 overflow-hidden w-full max-w-full">
+                {viewMode === 'preview' ? (
+                  <div className="h-full w-full overflow-hidden">
+                    <LivePreview
+                      portfolioData={data}
+                      onOpenProject={(id) => setSelectedProjectId(id)}
+                      onOpenContact={() => setIsContactOpen(true)}
+                      onOpenCvPreview={() => setIsCvModalOpen(true)}
+                      onOpenEditor={() => setIsEditorModalOpen(true)}
+                      onExportJson={handleExportJson}
+                      themeMode={themeMode}
+                    />
+                  </div>
+                ) : (
+                  <div className="h-full w-full overflow-hidden flex flex-col">
+                    {renderCodeEditor()}
+                  </div>
+                )}
+              </div>
+
+              {/* Bottom Overlay Terminal (When opened, occupies a sleek lower portion of the screen with close & fullscreen controls) */}
+              {isTerminalBottomOpen && (
+                <div className="w-full shrink-0 z-40">
+                  <TerminalComponent
                     onOpenProject={(id) => setSelectedProjectId(id)}
                     onOpenContact={() => setIsContactOpen(true)}
-                    onOpenCvPreview={() => setIsCvModalOpen(true)}
-                    onOpenEditor={() => setIsEditorModalOpen(true)}
-                    onExportJson={handleExportJson}
+                    initialCommand={terminalCommand}
                     themeMode={themeMode}
+                    isOverlay={true}
+                    onClose={() => setIsTerminalBottomOpen(false)}
                   />
-                </div>
-              ) : (
-                <div className="h-full w-full overflow-hidden flex flex-col">
-                  {renderCodeEditor()}
                 </div>
               )}
             </div>
-
-            {/* Bottom Overlay Terminal (When opened, occupies a sleek lower portion of the screen with close & fullscreen controls) */}
-            {isTerminalBottomOpen && (
-              <div className="w-full shrink-0 z-40">
-                <TerminalComponent
-                  onOpenProject={(id) => setSelectedProjectId(id)}
-                  onOpenContact={() => setIsContactOpen(true)}
-                  initialCommand={terminalCommand}
-                  themeMode={themeMode}
-                  isOverlay={true}
-                  onClose={() => setIsTerminalBottomOpen(false)}
-                />
-              </div>
-            )}
           </div>
         </div>
       </div>
