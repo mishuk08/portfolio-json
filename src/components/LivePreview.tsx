@@ -98,15 +98,23 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
     // Initial background sync
     doSync();
 
-    // Auto sync on window focus (e.g. when user switches tabs after uploading to Drive)
-    window.addEventListener('focus', doSync);
+    // Auto sync on window focus & tab visibility (e.g. when user returns after uploading to Google Drive)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        doSync();
+      }
+    };
 
-    // Periodic live sync every 45 seconds
-    const syncInterval = setInterval(doSync, 45000);
+    window.addEventListener('focus', doSync);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Periodic live sync every 25 seconds for real-time automatic detection
+    const syncInterval = setInterval(doSync, 25000);
 
     return () => {
       isMounted = false;
       window.removeEventListener('focus', doSync);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       clearInterval(syncInterval);
     };
   }, []);
@@ -125,12 +133,12 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
     });
   }, [photoList]);
 
-  // Animated cyclic transition through Drive photos (each photo stays 8 seconds)
+  // Animated cyclic transition through Drive photos (each photo stays 4.5 seconds)
   useEffect(() => {
     if (photoList.length <= 1 || isPhotoPaused) return;
     const interval = setInterval(() => {
       setActivePhotoIdx((prev) => (prev + 1) % photoList.length);
-    }, 8000);
+    }, 4500);
     return () => clearInterval(interval);
   }, [photoList.length, isPhotoPaused]);
 
@@ -395,7 +403,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                 </div>
               </div>
 
-              {/* Right: Round Profile Picture with Glowing Ring & Blur Transition Auto-Changing Photos */}
+              {/* Right: Round Profile Picture with Glowing Ring & Smooth Dissolve Transition Auto-Changing Photos */}
               <div 
                 className="shrink-0 relative group flex flex-col items-center select-none"
                 onMouseEnter={() => setIsPhotoPaused(true)}
@@ -413,26 +421,54 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                         : 'bg-white/90 border-amber-400 shadow-amber-400/20'
                     }`}
                   >
-                    <AnimatePresence mode="wait">
+                    <AnimatePresence>
                       <motion.img
                         key={activePhotoIdx}
-                        src={photoList[activePhotoIdx] || avatar1Opt || avatar1 || '/avatar_optimized.webp'}
+                        src={photoList[activePhotoIdx] || '/drive_photo_1.png'}
                         alt={`${portfolioData.developer.name} - Photo ${activePhotoIdx + 1}`}
                         referrerPolicy="no-referrer"
                         onError={(e) => {
-                          // Resilient auto-fallback to local optimized avatar if remote link fails
+                          // Fallback to local drive photo if remote url fails
                           const target = e.currentTarget;
-                          if (target.src !== (avatar1Opt || avatar1)) {
-                            target.src = avatar1Opt || avatar1 || '/avatar_optimized.webp';
+                          if (!target.src.includes('drive_photo_1.png')) {
+                            target.src = '/drive_photo_1.png';
                           }
                         }}
-                        initial={{ opacity: 0, filter: 'blur(16px)', scale: 1.05 }}
-                        animate={{ opacity: 1, filter: 'blur(0px)', scale: 1 }}
-                        exit={{ opacity: 0, filter: 'blur(16px)', scale: 0.95 }}
-                        transition={{ duration: 1.5, ease: [0.4, 0, 0.2, 1] }}
-                        className="w-full h-full object-cover rounded-full shadow-inner"
+                        initial={{ opacity: 0, scale: 1.08, filter: 'blur(8px)' }}
+                        animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                        exit={{ opacity: 0, scale: 0.95, filter: 'blur(8px)' }}
+                        transition={{ duration: 1.0, ease: [0.4, 0, 0.2, 1] }}
+                        className="absolute inset-0 w-full h-full object-cover rounded-full shadow-inner"
                       />
                     </AnimatePresence>
+
+                    {/* Quick navigation arrows on hover */}
+                    {photoList.length > 1 && (
+                      <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-auto">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActivePhotoIdx((prev) => (prev - 1 + photoList.length) % photoList.length);
+                          }}
+                          className="w-7 h-7 rounded-full bg-black/60 text-white hover:bg-black/90 flex items-center justify-center backdrop-blur-xs transition-transform active:scale-90 shadow-md cursor-pointer"
+                          title="Previous Photo"
+                        >
+                          <ChevronLeft className="w-4 h-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActivePhotoIdx((prev) => (prev + 1) % photoList.length);
+                          }}
+                          className="w-7 h-7 rounded-full bg-black/60 text-white hover:bg-black/90 flex items-center justify-center backdrop-blur-xs transition-transform active:scale-90 shadow-md cursor-pointer"
+                          title="Next Photo"
+                        >
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
