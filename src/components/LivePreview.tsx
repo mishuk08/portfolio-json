@@ -11,6 +11,7 @@ import {
   Copy, 
   Check, 
   ArrowRight,
+  ArrowUp,
   Zap,
   MapPin,
   GraduationCap,
@@ -21,6 +22,7 @@ import {
   Award,
   ChevronRight,
   ChevronLeft,
+  ChevronDown,
   MessageSquare,
   Facebook,
   Instagram,
@@ -155,6 +157,38 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
     setTimeout(() => setContactSubmitted(false), 5000);
   };
 
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [activeSection, setActiveSection] = useState('hero');
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const target = e.currentTarget;
+    const scrollTop = target.scrollTop;
+    const scrollHeight = target.scrollHeight - target.clientHeight;
+    const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+    setScrollProgress(progress);
+    setShowScrollTop(scrollTop > 260);
+
+    const sections = ['about', 'skills', 'experience', 'education', 'projects', 'ello', 'contact'];
+    for (let i = sections.length - 1; i >= 0; i--) {
+      const el = document.getElementById(`section-${sections[i]}`);
+      if (el) {
+        const top = el.offsetTop - 220;
+        if (scrollTop >= top) {
+          setActiveSection(sections[i]);
+          break;
+        }
+      }
+    }
+  };
+
+  const scrollToTop = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -172,11 +206,25 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
     : 'backdrop-blur-2xl bg-white/55 border border-white/70 shadow-[0_8px_30px_rgba(148,163,184,0.14)]';
 
   return (
-    <div className={`h-full w-full max-w-full overflow-y-auto overflow-x-hidden antialiased transition-colors duration-200 relative ${
+    <div 
+      ref={scrollContainerRef}
+      onScroll={handleScroll}
+      className={`h-full w-full max-w-full overflow-y-auto overflow-x-hidden antialiased transition-colors duration-200 relative scroll-smooth ${
       isDark 
         ? 'bg-[#08090d] text-slate-200 selection:bg-amber-500/30 selection:text-amber-300' 
         : 'bg-[#f4f6fa] text-slate-800 selection:bg-amber-500/30 selection:text-amber-900'
     }`}>
+      {/* Interactive Sticky Scroll Progress Bar */}
+      <div className="sticky top-0 left-0 right-0 z-50 h-1 bg-transparent pointer-events-none">
+        <motion.div
+          style={{ width: `${scrollProgress}%` }}
+          className={`h-full transition-all duration-75 ${
+            isDark
+              ? 'bg-gradient-to-r from-amber-500 via-yellow-400 to-cyan-400 shadow-[0_0_12px_rgba(245,158,11,0.8)]'
+              : 'bg-gradient-to-r from-amber-500 via-orange-400 to-amber-600 shadow-[0_0_10px_rgba(245,158,11,0.5)]'
+          }`}
+        />
+      </div>
       
       {/* Background ambient lighting with dynamic floating animations */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -240,24 +288,35 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                 <span className="truncate">{portfolioData.developer.location}</span>
               </div>
 
-              {/* Quick Navigation Links */}
-              <div className="flex items-center gap-1.5 overflow-x-auto text-xs font-mono">
-                {['about', 'skills', 'experience', 'education', 'projects'].map((sec) => (
-                  <button
-                    key={sec}
-                    onClick={() => scrollToSection(`section-${sec}`)}
-                    className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer capitalize ${
-                      isDark 
-                        ? 'hover:bg-white/10 text-slate-400 hover:text-slate-100' 
-                        : 'hover:bg-black/5 text-slate-600 hover:text-slate-950'
-                    }`}
-                  >
-                    {sec}
-                  </button>
-                ))}
+              {/* Quick Navigation Links with Active Scrollspy Highlighting */}
+              <div className="flex items-center gap-1.5 overflow-x-auto text-xs font-mono py-1">
+                {['about', 'skills', 'experience', 'education', 'projects'].map((sec) => {
+                  const isActive = activeSection === sec;
+                  return (
+                    <button
+                      key={sec}
+                      onClick={() => scrollToSection(`section-${sec}`)}
+                      className={`relative px-2.5 py-1 rounded-lg transition-all cursor-pointer capitalize font-medium ${
+                        isActive
+                          ? (isDark 
+                              ? 'text-amber-400 bg-amber-500/15 border border-amber-500/30 font-bold shadow-xs' 
+                              : 'text-amber-800 bg-amber-100 border border-amber-300 font-bold shadow-xs')
+                          : (isDark 
+                              ? 'hover:bg-white/10 text-slate-400 hover:text-slate-100' 
+                              : 'hover:bg-black/5 text-slate-600 hover:text-slate-950')
+                      }`}
+                    >
+                      {sec}
+                    </button>
+                  );
+                })}
                 <button
                   onClick={() => scrollToSection('section-ello')}
-                  className="px-2.5 py-1 rounded-lg bg-amber-500/15 text-amber-500 font-bold border border-amber-500/30 hover:bg-amber-500/25 transition-colors cursor-pointer flex items-center gap-1"
+                  className={`px-2.5 py-1 rounded-lg font-bold border transition-colors cursor-pointer flex items-center gap-1 ${
+                    activeSection === 'ello'
+                      ? 'bg-amber-500 text-slate-950 border-amber-400'
+                      : 'bg-amber-500/15 text-amber-500 border-amber-500/30 hover:bg-amber-500/25'
+                  }`}
                 >
                   <Bot className="w-3.5 h-3.5" />
                   <span>Ask Ello</span>
@@ -403,6 +462,30 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                 <div className="text-lg sm:text-xl font-bold text-purple-400 font-mono">Problem Solver</div>
                 <div className={`text-[11px] sm:text-xs mt-0.5 font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Clean Architecture</div>
               </div>
+            </motion.div>
+
+            {/* Scroll to Explore Bouncing Indicator */}
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+              className="pt-2 flex flex-col items-center justify-center cursor-pointer group select-none"
+              onClick={() => scrollToSection('section-about')}
+            >
+              <span className={`text-[11px] font-mono tracking-widest uppercase transition-colors flex items-center gap-1 ${
+                isDark ? 'text-slate-500 group-hover:text-amber-400' : 'text-slate-400 group-hover:text-amber-600'
+              }`}>
+                <span>Scroll to explore</span>
+              </span>
+              <motion.div
+                animate={{ y: [0, 5, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                className={`mt-0.5 p-1 rounded-full ${
+                  isDark ? 'text-amber-400/80 group-hover:text-amber-400' : 'text-amber-600/80 group-hover:text-amber-600'
+                }`}
+              >
+                <ChevronDown className="w-4 h-4" />
+              </motion.div>
             </motion.div>
           </div>
         </section>
@@ -1220,6 +1303,49 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
           </motion.div>
         </section>
       </div>
+
+      {/* Scroll to Top Floating Button with Circular Progress Indicator */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ scale: 0, opacity: 0, y: 15 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0, opacity: 0, y: 15 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.92 }}
+            onClick={scrollToTop}
+            className={`fixed bottom-20 right-6 z-40 w-11 h-11 rounded-full shadow-xl backdrop-blur-xl border flex items-center justify-center cursor-pointer transition-colors group ${
+              isDark
+                ? 'bg-[#10121d]/90 border-amber-500/40 text-amber-400 shadow-amber-500/15 hover:border-amber-400 hover:bg-[#181c2e]'
+                : 'bg-white/95 border-amber-400/60 text-amber-600 shadow-amber-400/20 hover:bg-amber-50'
+            }`}
+            title="Back to Top"
+            aria-label="Scroll back to top"
+          >
+            {/* SVG Radial Scroll Progress Ring */}
+            <svg className="absolute inset-0 w-full h-full -rotate-90 p-0.5" viewBox="0 0 36 36">
+              <circle
+                cx="18"
+                cy="18"
+                r="15"
+                className={`fill-none stroke-current ${isDark ? 'text-slate-800' : 'text-slate-200'}`}
+                strokeWidth="2.5"
+              />
+              <circle
+                cx="18"
+                cy="18"
+                r="15"
+                className={`fill-none stroke-current transition-all duration-75 ${isDark ? 'text-amber-400' : 'text-amber-500'}`}
+                strokeWidth="2.5"
+                strokeDasharray="94.25"
+                strokeDashoffset={94.25 - (94.25 * scrollProgress) / 100}
+                strokeLinecap="round"
+              />
+            </svg>
+            <ArrowUp className="w-4 h-4 relative z-10 group-hover:-translate-y-0.5 transition-transform" />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* Floating Ello AI Launcher Button */}
       <motion.button

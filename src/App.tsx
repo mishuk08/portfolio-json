@@ -136,17 +136,22 @@ export default function App() {
     const nextTheme: ThemeMode = themeMode === 'dark' ? 'light' : 'dark';
     const origin = e ? { x: e.clientX, y: e.clientY } : undefined;
 
-    // Trigger expanding ripple and celestial HUD
+    // Trigger realistic water wave ripples
     setThemeTransition({
       isActive: true,
       targetTheme: nextTheme,
       origin
     });
 
-    // Seamlessly swap the theme palette midway through the ripple expansion
+    // Seamlessly swap the theme palette midway through the water wave expansion
     setTimeout(() => {
       setThemeMode(nextTheme);
-    }, 180);
+    }, 280);
+
+    // After water wave ripples fully dissipate, cleanly stop the animation
+    setTimeout(() => {
+      setThemeTransition(prev => ({ ...prev, isActive: false }));
+    }, 880);
   };
 
   const handleRequestViewMode = (newMode: ViewMode) => {

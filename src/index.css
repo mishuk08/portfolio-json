@@ -75,6 +75,34 @@
   animation: spin-slow 12s linear infinite;
 }
 
+/* Water Wave Theme Switch Progressive Frosted Blur */
+@keyframes water-theme-blur {
+  0% {
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    opacity: 0;
+  }
+  28% {
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    opacity: 1;
+  }
+  45% {
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    opacity: 0.95;
+  }
+  100% {
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    opacity: 0;
+  }
+}
+
+.water-theme-blur-overlay {
+  animation: water-theme-blur 0.86s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 /* Ultra-sleek Glassmorphism Utility Classes */
 .glass-card-dark {
   background: rgba(13, 16, 29, 0.45);
