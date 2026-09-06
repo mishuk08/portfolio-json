@@ -52,8 +52,8 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
       <div className={`flex items-center justify-between px-2.5 sm:px-4 py-2 border-b transition-colors duration-200 gap-2 w-full max-w-full ${
         isDark ? 'border-[#1b1d27]' : 'border-slate-200'
       }`}>
-        {/* Left: Window controls & Name with distance */}
-        <div className="flex items-center gap-2 min-w-0">
+        {/* Left: Window controls & Name */}
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           {/* Smaller macOS Window Control Dots */}
           <div className="flex items-center gap-1.5 shrink-0">
             <span className="w-2.5 h-2.5 rounded-full bg-[#ef4444] border border-[#dc2626]/50 inline-block transition-transform hover:scale-125 cursor-pointer shadow-xs" title="Close" />
@@ -61,8 +61,8 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             <span className="w-2.5 h-2.5 rounded-full bg-[#10b981] border border-[#059669]/50 inline-block transition-transform hover:scale-125 cursor-pointer shadow-xs" title="Maximize" />
           </div>
 
-          {/* Name: Bigger, bolder, separated from icons */}
-          <div className="flex items-center ml-2 sm:ml-4 min-w-0">
+          {/* Name: Bold and prominent */}
+          <div className="flex items-center ml-1 sm:ml-2 min-w-0">
             <span className={`font-mono font-extrabold text-sm sm:text-base md:text-lg tracking-tight truncate ${
               isDark ? 'text-slate-100' : 'text-slate-950 font-black'
             }`}>

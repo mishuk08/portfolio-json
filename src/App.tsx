@@ -27,6 +27,7 @@ import { ThemeSwitchAnimation } from './components/ThemeSwitchAnimation';
 import { portfolioData as initialPortfolioData } from './data/portfolioData';
 import { EditorTabId, ViewMode, ThemeMode, Project, PortfolioData } from './types';
 import { syncGithubProjects } from './utils/githubSync';
+import { useAnimatedFavicon } from './hooks/useAnimatedFavicon';
 import confetti from 'canvas-confetti';
 
 export default function App() {
@@ -51,6 +52,9 @@ export default function App() {
   const [isEditorModalOpen, setIsEditorModalOpen] = useState<boolean>(false);
   const [terminalCommand, setTerminalCommand] = useState<string>('');
   const [isTerminalBottomOpen, setIsTerminalBottomOpen] = useState<boolean>(false);
+
+  // Dynamic animated browser tab favicon with user's photo and glowing neon aura
+  useAnimatedFavicon(data.developer.avatar || '/avatar.png');
 
   // Opening animation state
   const [isAppLoading, setIsAppLoading] = useState<boolean>(true);
