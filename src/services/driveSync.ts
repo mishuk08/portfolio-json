@@ -1,3 +1,5 @@
+import avatar1Opt from '../assets/avatar_optimized.webp';
+import avatar2Opt from '../assets/avatar2_optimized.webp';
 import avatar1 from '../assets/drive_avatar_1.png';
 import avatar2 from '../assets/drive_avatar_2.webp';
 
@@ -5,19 +7,22 @@ export const GOOGLE_DRIVE_FOLDER_ID = '1CpcBC-OJAPng_p1tlfu_X2V1VvteIDOu';
 export const GOOGLE_DRIVE_FOLDER_URL = `https://drive.google.com/drive/folders/${GOOGLE_DRIVE_FOLDER_ID}`;
 
 // Pre-bundled static fallbacks to guarantee 100% immediate render on any environment/Vercel
-export const DEFAULT_PHOTOS = [
-  avatar1 || '/drive_avatar_1.png',
-  avatar2 || '/drive_avatar_2.webp',
-  `https://lh3.googleusercontent.com/d/1rb6Rc1Pc6DRiUhtWYzczXyIUv5rtdT5k`,
-  `https://lh3.googleusercontent.com/d/1U474vuPMNFDoIu8ex-57Q6oS6kPVupEy`
-];
+export const DEFAULT_PHOTOS: string[] = [
+  avatar1Opt || avatar1 || '/avatar_optimized.webp',
+  avatar2Opt || avatar2 || '/avatar2_optimized.webp'
+].filter(Boolean);
 
-// LocalStorage cache key
-const CACHE_KEY = 'mishuk_drive_synced_photos_v2';
+// LocalStorage cache key (v4 to bust any corrupt previously cached string URLs)
+const CACHE_KEY = 'mishuk_drive_synced_photos_v4';
 const LAST_SYNC_KEY = 'mishuk_drive_last_sync_ts';
 
 export function getCachedPhotos(): string[] {
   try {
+    // Purge outdated v1/v2 cache keys that might contain broken URLs
+    localStorage.removeItem('mishuk_drive_synced_photos');
+    localStorage.removeItem('mishuk_drive_synced_photos_v2');
+    localStorage.removeItem('mishuk_drive_synced_photos_v3');
+
     const raw = localStorage.getItem(CACHE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
@@ -28,13 +33,15 @@ export function getCachedPhotos(): string[] {
   } catch (e) {
     console.warn('Failed to read photo cache:', e);
   }
-  return [DEFAULT_PHOTOS[0], DEFAULT_PHOTOS[1]];
+  return [...DEFAULT_PHOTOS];
 }
 
 export function saveCachedPhotos(photos: string[]): void {
   try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify(photos));
-    localStorage.setItem(LAST_SYNC_KEY, Date.now().toString());
+    if (Array.isArray(photos) && photos.length > 0) {
+      localStorage.setItem(CACHE_KEY, JSON.stringify(photos));
+      localStorage.setItem(LAST_SYNC_KEY, Date.now().toString());
+    }
   } catch (e) {
     console.warn('Failed to save photo cache:', e);
   }
@@ -92,7 +99,7 @@ export async function syncGoogleDrivePhotos(): Promise<string[]> {
     for (const proxyUrl of proxies) {
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 6000);
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
         
         const response = await fetch(proxyUrl, {
           signal: controller.signal,
@@ -109,19 +116,18 @@ export async function syncGoogleDrivePhotos(): Promise<string[]> {
           }
         }
       } catch {
-        // Try next proxy
+        // Continue to fallback or next proxy
       }
     }
 
     if (foundIds.length > 0) {
       const dynamicPhotos = foundIds.map(id => getDriveDirectImageUrl(id));
-      // Deduplicate and save
       const unique = Array.from(new Set(dynamicPhotos));
       saveCachedPhotos(unique);
       return unique;
     }
   } catch (error) {
-    console.info('Using pre-cached Google Drive photo bundle:', error);
+    console.info('Using reliable pre-cached photo bundle:', error);
   }
 
   return getCachedPhotos();

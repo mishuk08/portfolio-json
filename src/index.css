@@ -61,77 +61,18 @@
 .syn-tag { color: #a78bfa; }       /* Purple */
 .syn-prop { color: #93c5fd; }      /* Light Blue */
 
-/* Smooth Progressive Theme Switch Blur & Wave Animations */
-@keyframes theme-blur-in {
-  0% {
-    backdrop-filter: blur(0px);
-    -webkit-backdrop-filter: blur(0px);
-    background-color: transparent;
-    opacity: 0;
+/* Spin slow animation for theme sunburst */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
   }
-  100% {
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    background-color: rgba(10, 11, 16, 0.45);
-    opacity: 1;
+  to {
+    transform: rotate(360deg);
   }
 }
 
-@keyframes theme-blur-out {
-  0% {
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    background-color: rgba(10, 11, 16, 0.45);
-    opacity: 1;
-  }
-  100% {
-    backdrop-filter: blur(0px);
-    -webkit-backdrop-filter: blur(0px);
-    background-color: transparent;
-    opacity: 0;
-  }
-}
-
-.theme-blur-in {
-  animation: theme-blur-in 0.12s cubic-bezier(0.2, 0, 0.2, 1) forwards;
-}
-
-.theme-blur-out {
-  animation: theme-blur-out 0.28s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
-}
-
-/* Luminous Theme Wave Animation */
-@keyframes theme-wave-expand {
-  0% {
-    transform: scale(0.1);
-    opacity: 0.9;
-  }
-  40% {
-    opacity: 0.7;
-  }
-  100% {
-    transform: scale(2.8);
-    opacity: 0;
-  }
-}
-
-@keyframes theme-wave-shimmer {
-  0% {
-    transform: rotate(0deg) scale(0.8);
-    opacity: 0.8;
-  }
-  100% {
-    transform: rotate(180deg) scale(2.5);
-    opacity: 0;
-  }
-}
-
-.theme-wave-circle {
-  animation: theme-wave-expand 0.65s cubic-bezier(0.15, 0.85, 0.35, 1) forwards;
-}
-
-.theme-wave-ring {
-  animation: theme-wave-shimmer 0.75s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+.animate-spin-slow {
+  animation: spin-slow 12s linear infinite;
 }
 
 /* Ultra-sleek Glassmorphism Utility Classes */

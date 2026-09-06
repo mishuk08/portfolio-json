@@ -34,6 +34,8 @@ import { PortfolioData, ThemeMode } from '../types';
 import { ElloChatWidget } from './ElloChatWidget';
 import { RangpurDivisionMap } from './RangpurDivisionMap';
 import { downloadDeveloperCv } from '../utils/cvDownload';
+import avatar1Opt from '../assets/avatar_optimized.webp';
+import avatar2Opt from '../assets/avatar2_optimized.webp';
 import avatar1 from '../assets/drive_avatar_1.png';
 import avatar2 from '../assets/drive_avatar_2.webp';
 import confetti from 'canvas-confetti';
@@ -109,6 +111,17 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
 
   // Combined active photo playlist
   const photoList = (syncedPhotos.length > 0 ? syncedPhotos : DEFAULT_PHOTOS).filter(Boolean);
+
+  // Preload photos in browser cache for instant instant-switch rendering
+  useEffect(() => {
+    photoList.forEach(url => {
+      if (url && typeof window !== 'undefined') {
+        const img = new Image();
+        img.referrerPolicy = 'no-referrer';
+        img.src = url;
+      }
+    });
+  }, [photoList]);
 
   // Animated cyclic transition through Drive photos (each photo stays 8 seconds)
   useEffect(() => {
@@ -344,8 +357,16 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                     <AnimatePresence mode="wait">
                       <motion.img
                         key={activePhotoIdx}
-                        src={photoList[activePhotoIdx] || photoList[0]}
+                        src={photoList[activePhotoIdx] || avatar1Opt || avatar1 || '/avatar_optimized.webp'}
                         alt={`${portfolioData.developer.name} - Photo ${activePhotoIdx + 1}`}
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          // Resilient auto-fallback to local optimized avatar if remote link fails
+                          const target = e.currentTarget;
+                          if (target.src !== (avatar1Opt || avatar1)) {
+                            target.src = avatar1Opt || avatar1 || '/avatar_optimized.webp';
+                          }
+                        }}
                         initial={{ opacity: 0, filter: 'blur(16px)', scale: 1.05 }}
                         animate={{ opacity: 1, filter: 'blur(0px)', scale: 1 }}
                         exit={{ opacity: 0, filter: 'blur(16px)', scale: 0.95 }}

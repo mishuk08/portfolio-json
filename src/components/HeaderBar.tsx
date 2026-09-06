@@ -9,6 +9,7 @@ import {
   Sun,
   Moon
 } from 'lucide-react';
+import { motion } from 'motion/react';
 import { ViewMode, ThemeMode } from '../types';
 
 interface HeaderBarProps {
@@ -20,7 +21,7 @@ interface HeaderBarProps {
   handleExportJson: () => void;
   activeFileName: string;
   themeMode: ThemeMode;
-  toggleThemeMode: () => void;
+  toggleThemeMode: (e?: React.MouseEvent) => void;
   onOpenTerminal: () => void;
 }
 
@@ -92,8 +93,8 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
 
           {/* Light / Dark Mode Toggle Button */}
           <button
-            onClick={toggleThemeMode}
-            className={`p-1.5 sm:px-2 sm:py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer border ${
+            onClick={(e) => toggleThemeMode(e)}
+            className={`p-1.5 sm:px-2 sm:py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer border active:scale-95 ${
               isDark
                 ? 'bg-slate-800/80 border-slate-700/70 text-amber-300 hover:bg-slate-700 hover:text-amber-200'
                 : 'bg-amber-100/80 border-amber-300 text-amber-900 hover:bg-amber-200'
@@ -102,12 +103,26 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           >
             {isDark ? (
               <>
-                <Sun className="w-3.5 h-3.5 text-amber-400" />
+                <motion.div
+                  key="dark-sun"
+                  initial={{ rotate: -90, scale: 0.8 }}
+                  animate={{ rotate: 0, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Sun className="w-3.5 h-3.5 text-amber-400" />
+                </motion.div>
                 <span className="hidden md:inline text-[11px] font-mono">Light</span>
               </>
             ) : (
               <>
-                <Moon className="w-3.5 h-3.5 text-slate-800" />
+                <motion.div
+                  key="light-moon"
+                  initial={{ rotate: 90, scale: 0.8 }}
+                  animate={{ rotate: 0, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Moon className="w-3.5 h-3.5 text-slate-800" />
+                </motion.div>
                 <span className="hidden md:inline text-[11px] font-mono">Dark</span>
               </>
             )}

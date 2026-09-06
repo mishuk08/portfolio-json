@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Sparkles, Terminal, Code2, Cpu, Check, MapPin, ShieldCheck, Zap } from 'lucide-react';
 import { ThemeMode } from '../types';
-import avatarImg from '../assets/avatar.png';
+import avatarImgOpt from '../assets/avatar_optimized.webp';
+import avatarImg from '../assets/drive_avatar_1.png';
 
 interface OpeningAnimationProps {
   onFinish: () => void;
@@ -25,12 +26,14 @@ export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
 
   const avatarCandidates = [
     avatarUrl,
+    avatarImgOpt,
     avatarImg,
+    '/avatar_optimized.webp',
+    '/drive_avatar_1.png',
     '/avatar.png',
-    '/avatar.jpg',
-    '/user_photo.jpg'
+    '/avatar.jpg'
   ].filter(Boolean) as string[];
-  const currentAvatar = avatarUrl || avatarCandidates[imgFallbackIndex] || avatarImg || '/avatar.png';
+  const currentAvatar = avatarUrl || avatarCandidates[imgFallbackIndex] || avatarImgOpt || avatarImg || '/avatar.png';
 
   const logs = [
     { text: 'Mounting Developer Environment & Core Modules...', tag: 'CORE' },
@@ -199,6 +202,7 @@ export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
                 <img
                   src={currentAvatar}
                   alt={developerName}
+                  referrerPolicy="no-referrer"
                   onError={handleImgError}
                   className="w-full h-full object-cover rounded-full shadow-inner"
                 />

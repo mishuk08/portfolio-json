@@ -23,6 +23,7 @@ import { PortfolioEditorModal } from './components/PortfolioEditorModal';
 import { CvPreviewModal } from './components/CvPreviewModal';
 import { OpeningAnimation } from './components/OpeningAnimation';
 import { ModeTransitionOverlay } from './components/ModeTransitionOverlay';
+import { ThemeSwitchAnimation } from './components/ThemeSwitchAnimation';
 import { portfolioData as initialPortfolioData } from './data/portfolioData';
 import { EditorTabId, ViewMode, ThemeMode, Project, PortfolioData } from './types';
 import { syncGithubProjects } from './utils/githubSync';
@@ -87,9 +88,15 @@ export default function App() {
     }));
   };
 
-  // Progressive theme switch blur effect (subtle to deep, imperceptible theme switch, wave animation, then smooth reveal)
-  const [themeBlurState, setThemeBlurState] = useState<'idle' | 'in' | 'out'>('idle');
-  const [showThemeWave, setShowThemeWave] = useState<boolean>(false);
+  // Brand New Modern Theme Switch Ripple & Eclipse Transition
+  const [themeTransition, setThemeTransition] = useState<{
+    isActive: boolean;
+    targetTheme: ThemeMode;
+    origin?: { x: number; y: number };
+  }>({
+    isActive: false,
+    targetTheme: 'dark'
+  });
 
   // Full-screen mode transition (JSON <-> GUI) with 0-100% circle progress
   const [transitioningMode, setTransitioningMode] = useState<ViewMode | null>(null);
@@ -123,32 +130,23 @@ export default function App() {
     };
   }, []);
 
-  const toggleThemeMode = () => {
-    if (themeBlurState !== 'idle') return;
+  const toggleThemeMode = (e?: React.MouseEvent) => {
+    if (themeTransition.isActive) return;
     
-    // Step 1: Immediately apply fast frosted glass blur
-    setThemeBlurState('in');
-    
-    // Step 2: At 120ms (when blur fully covers the screen), switch theme & trigger wave
+    const nextTheme: ThemeMode = themeMode === 'dark' ? 'light' : 'dark';
+    const origin = e ? { x: e.clientX, y: e.clientY } : undefined;
+
+    // Trigger expanding ripple and celestial HUD
+    setThemeTransition({
+      isActive: true,
+      targetTheme: nextTheme,
+      origin
+    });
+
+    // Seamlessly swap the theme palette midway through the ripple expansion
     setTimeout(() => {
-      setThemeMode(prev => (prev === 'dark' ? 'light' : 'dark'));
-      setShowThemeWave(true);
-
-      // Step 3: Now smoothly reduce/fade out the blur (blur-out) to reveal the new theme
-      setTimeout(() => {
-        setThemeBlurState('out');
-
-        // Step 4: Reset blur state to idle once blur is completely gone
-        setTimeout(() => {
-          setThemeBlurState('idle');
-        }, 280);
-      }, 50);
-    }, 120);
-
-    // Step 5: Clear wave animation overlay
-    setTimeout(() => {
-      setShowThemeWave(false);
-    }, 700);
+      setThemeMode(nextTheme);
+    }, 180);
   };
 
   const handleRequestViewMode = (newMode: ViewMode) => {
@@ -403,22 +401,13 @@ export default function App() {
         />
       )}
 
-      {/* Light / Dark Mode Progressive Blur Animation Overlay */}
-      {themeBlurState !== 'idle' && (
-        <div
-          className={`fixed inset-0 z-50 pointer-events-none ${
-            themeBlurState === 'in' ? 'theme-blur-in' : 'theme-blur-out'
-          }`}
-        />
-      )}
-
-      {/* Luminous Expanding Wave Animation Overlay */}
-      {showThemeWave && (
-        <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center overflow-hidden">
-          <div className="theme-wave-circle w-96 h-96 rounded-full bg-gradient-to-r from-amber-400/40 via-yellow-300/30 to-cyan-400/40 blur-2xl" />
-          <div className="theme-wave-ring absolute w-[500px] h-[500px] rounded-full border-4 border-amber-400/50 shadow-[0_0_80px_rgba(245,158,11,0.6)]" />
-        </div>
-      )}
+      {/* Brand New Modern Theme Switch Radial Ripple & Celestial HUD Animation */}
+      <ThemeSwitchAnimation
+        isActive={themeTransition.isActive}
+        targetTheme={themeTransition.targetTheme}
+        origin={themeTransition.origin}
+        onComplete={() => setThemeTransition(prev => ({ ...prev, isActive: false }))}
+      />
 
       {/* Fullscreen JSON <-> GUI Mode Transition Circular Loading Animation */}
       {transitioningMode && (
