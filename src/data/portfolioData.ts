@@ -1,8 +1,6 @@
 import { PortfolioData } from '../types';
 import avatar1Opt from '../assets/avatar_optimized.webp';
 import avatar2Opt from '../assets/avatar2_optimized.webp';
-import avatar1 from '../assets/drive_avatar_1.png';
-import avatar2 from '../assets/drive_avatar_2.webp';
 
 export const portfolioData: PortfolioData = {
   developer: {
@@ -10,13 +8,12 @@ export const portfolioData: PortfolioData = {
     role: "Web & Software Developer",
     tagline: "Dedicated Web & Software Developer passionate about building clean, performant, and scalable applications.",
     status: "Available for Projects & Collaboration",
-    avatar: avatar1Opt || avatar1 || "/avatar_optimized.webp",
+    avatar: avatar1Opt || "/avatar_optimized.webp",
     avatars: [
-      avatar1Opt || avatar1 || "/avatar_optimized.webp",
-      avatar2Opt || avatar2 || "/avatar2_optimized.webp"
+      avatar1Opt || "/avatar_optimized.webp",
+      avatar2Opt || "/avatar2_optimized.webp"
     ],
     email: "mdmishukbabu192@gmail.com",
-    phone: "+880 1700-000000",
     location: "Rangpur, Bangladesh",
     yearsOfExperience: 1,
     bio: [
@@ -26,10 +23,10 @@ export const portfolioData: PortfolioData = {
     ],
     socials: {
       github: "https://www.github.com/mishuk08",
-      linkedin: "https://linkedin.com",
+      linkedin: "https://bd.linkedin.com/in/md-mishuk-babu-shoukhin-1a11793ab",
       facebook: "https://www.facebook.com/mishuk008",
       instagram: "https://www.instagram.com/mi_sh_uk_008",
-      twitter: "https://twitter.com",
+      twitter: "https://x.com/mishuk_008",
       whatsapp: "https://wa.me/?text=Hi%20Mishuk%20Babu%20Shoukhin%20(@mishuk_babu_shoukhin)%2C%20contacting%20from%20portfolio",
       whatsappUsername: "mishuk_babu_shoukhin",
       portfolio: "https://robosuperior.org"

@@ -29,9 +29,9 @@
       "purpose": "maskable"
     },
     {
-      "src": "/avatar.png",
-      "sizes": "1053x1056",
-      "type": "image/png",
+      "src": "/avatar_optimized.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
       "purpose": "any"
     }
   ],

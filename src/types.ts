@@ -52,7 +52,6 @@ export interface PortfolioData {
     avatar?: string;
     avatars?: string[];
     email: string;
-    phone: string;
     location: string;
     yearsOfExperience: number;
     bio: string[];

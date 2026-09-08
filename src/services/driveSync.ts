@@ -2,20 +2,19 @@ export const GOOGLE_DRIVE_FOLDER_ID = '1CpcBC-OJAPng_p1tlfu_X2V1VvteIDOu';
 export const GOOGLE_DRIVE_FOLDER_URL = `https://drive.google.com/drive/folders/${GOOGLE_DRIVE_FOLDER_ID}`;
 
 // Pre-cached verified photos from Google Drive folder 1CpcBC-OJAPng_p1tlfu_X2V1VvteIDOu:
-// 1. avatar 2.png -> 1FRtuWXH54F4rURwn-mIa7XdNoBYH1NKC
-// 2. avatar.png -> 1rb6Rc1Pc6DRiUhtWYzczXyIUv5rtdT5k
-// 3. IMG_20250619_231216_578.jpg -> 1U474vuPMNFDoIu8ex-57Q6oS6kPVupEy
+// 1. Photo 1 -> 1FRtuWXH54F4rURwn-mIa7XdNoBYH1NKC
+// 2. Photo 2 -> 1rb6Rc1Pc6DRiUhtWYzczXyIUv5rtdT5k
+// 3. Photo 3 -> 1U474vuPMNFDoIu8ex-57Q6oS6kPVupEy
 export const VERIFIED_DRIVE_PHOTOS: string[] = [
-  '/drive_photo_1.png',
-  '/drive_photo_2.png',
-  '/drive_photo_3.jpg'
+  'https://lh3.googleusercontent.com/d/1FRtuWXH54F4rURwn-mIa7XdNoBYH1NKC',
+  'https://lh3.googleusercontent.com/d/1rb6Rc1Pc6DRiUhtWYzczXyIUv5rtdT5k',
+  'https://lh3.googleusercontent.com/d/1U474vuPMNFDoIu8ex-57Q6oS6kPVupEy'
 ];
 
 export const DEFAULT_PHOTOS: string[] = [
   ...VERIFIED_DRIVE_PHOTOS,
-  'https://lh3.googleusercontent.com/d/1FRtuWXH54F4rURwn-mIa7XdNoBYH1NKC',
-  'https://lh3.googleusercontent.com/d/1rb6Rc1Pc6DRiUhtWYzczXyIUv5rtdT5k',
-  'https://lh3.googleusercontent.com/d/1U474vuPMNFDoIu8ex-57Q6oS6kPVupEy'
+  '/avatar_optimized.webp',
+  '/avatar2_optimized.webp'
 ];
 
 // LocalStorage cache keys

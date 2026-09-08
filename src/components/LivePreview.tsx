@@ -38,8 +38,6 @@ import { RangpurDivisionMap } from './RangpurDivisionMap';
 import { downloadDeveloperCv } from '../utils/cvDownload';
 import avatar1Opt from '../assets/avatar_optimized.webp';
 import avatar2Opt from '../assets/avatar2_optimized.webp';
-import avatar1 from '../assets/drive_avatar_1.png';
-import avatar2 from '../assets/drive_avatar_2.webp';
 import confetti from 'canvas-confetti';
 import { syncGoogleDrivePhotos, getCachedPhotos, DEFAULT_PHOTOS } from '../services/driveSync';
 
@@ -69,8 +67,8 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
   const [syncedPhotos, setSyncedPhotos] = useState<string[]>(() => {
     const cached = getCachedPhotos();
     return cached.length > 0 ? cached : [
-      avatar1 || '/drive_avatar_1.png',
-      avatar2 || '/drive_avatar_2.webp'
+      avatar1Opt || '/avatar_optimized.webp',
+      avatar2Opt || '/avatar2_optimized.webp'
     ];
   });
 
@@ -424,14 +422,14 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                     <AnimatePresence>
                       <motion.img
                         key={activePhotoIdx}
-                        src={photoList[activePhotoIdx] || '/drive_photo_1.png'}
+                        src={photoList[activePhotoIdx] || '/avatar_optimized.webp'}
                         alt={`${portfolioData.developer.name} - Photo ${activePhotoIdx + 1}`}
                         referrerPolicy="no-referrer"
                         onError={(e) => {
-                          // Fallback to local drive photo if remote url fails
+                          // Fallback to local optimized photo if remote url fails
                           const target = e.currentTarget;
-                          if (!target.src.includes('drive_photo_1.png')) {
-                            target.src = '/drive_photo_1.png';
+                          if (!target.src.includes('avatar_optimized.webp')) {
+                            target.src = '/avatar_optimized.webp';
                           }
                         }}
                         initial={{ opacity: 0, scale: 1.08, filter: 'blur(8px)' }}
@@ -1246,6 +1244,57 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
           >
             {/* Left: Social Media Channel Glass Buttons */}
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5">
+              {portfolioData.developer.socials.github && (
+                <a
+                  href={portfolioData.developer.socials.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer backdrop-blur-md ${
+                    isDark 
+                      ? 'bg-[#141622]/80 hover:bg-[#1f2338] text-slate-300 border-white/10' 
+                      : 'bg-white/90 hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs'
+                  }`}
+                  title="GitHub Repositories"
+                >
+                  <Github className="w-4 h-4" />
+                  <span>GitHub</span>
+                </a>
+              )}
+
+              {portfolioData.developer.socials.linkedin && (
+                <a
+                  href={portfolioData.developer.socials.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer backdrop-blur-md ${
+                    isDark 
+                      ? 'bg-[#141622]/80 hover:bg-[#1f2338] text-cyan-400 border-cyan-500/30 shadow-xs' 
+                      : 'bg-white/90 hover:bg-cyan-50 text-cyan-600 border-cyan-200 shadow-xs'
+                  }`}
+                  title="LinkedIn Profile"
+                >
+                  <Linkedin className="w-4 h-4" />
+                  <span>LinkedIn</span>
+                </a>
+              )}
+
+              {portfolioData.developer.socials.twitter && (
+                <a
+                  href={portfolioData.developer.socials.twitter}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer backdrop-blur-md ${
+                    isDark 
+                      ? 'bg-[#141622]/80 hover:bg-[#1f2338] text-sky-400 border-sky-500/30 shadow-xs' 
+                      : 'bg-white/90 hover:bg-sky-50 text-sky-600 border-sky-200 shadow-xs'
+                  }`}
+                  title="X (Twitter) Profile"
+                >
+                  <Twitter className="w-4 h-4" />
+                  <span>X (Twitter)</span>
+                </a>
+              )}
+
               {portfolioData.developer.socials.facebook && (
                 <a
                   href={portfolioData.developer.socials.facebook}
@@ -1277,23 +1326,6 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                 >
                   <Instagram className="w-4 h-4" />
                   <span>Instagram</span>
-                </a>
-              )}
-
-              {portfolioData.developer.socials.github && (
-                <a
-                  href={portfolioData.developer.socials.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer backdrop-blur-md ${
-                    isDark 
-                      ? 'bg-[#141622]/80 hover:bg-[#1f2338] text-slate-300 border-white/10' 
-                      : 'bg-white/90 hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs'
-                  }`}
-                  title="GitHub Repositories"
-                >
-                  <Github className="w-4 h-4" />
-                  <span>GitHub</span>
                 </a>
               )}
 

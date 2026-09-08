@@ -10,6 +10,7 @@ import {
   Terminal,
   Github, 
   Linkedin, 
+  Twitter,
   Mail, 
   Facebook,
   Instagram,
@@ -178,16 +179,25 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <a
             href={portfolioData.developer.socials.github}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="p-1 rounded hover:text-amber-500 transition-colors"
             title="GitHub"
           >
             <Github className="w-3.5 h-3.5" />
           </a>
           <a
+            href={portfolioData.developer.socials.twitter}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-1 rounded hover:text-sky-400 transition-colors"
+            title="X (Twitter)"
+          >
+            <Twitter className="w-3.5 h-3.5" />
+          </a>
+          <a
             href={portfolioData.developer.socials.facebook}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="p-1 rounded hover:text-blue-500 transition-colors"
             title="Facebook"
           >
@@ -196,7 +206,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <a
             href={portfolioData.developer.socials.instagram}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="p-1 rounded hover:text-pink-500 transition-colors"
             title="Instagram"
           >
@@ -205,7 +215,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <a
             href={portfolioData.developer.socials.linkedin}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="p-1 rounded hover:text-cyan-500 transition-colors"
             title="LinkedIn"
           >

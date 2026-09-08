@@ -2,7 +2,7 @@ import { PortfolioData } from '../types';
 import { portfolioData as defaultPortfolioData } from '../data/portfolioData';
 import jsPDF from 'jspdf';
 import confetti from 'canvas-confetti';
-import avatarImg from '../assets/avatar.png';
+import avatarImg from '../assets/avatar_optimized.webp';
 
 /**
  * Loads an image from multiple candidate sources and returns a base64 DataURL
@@ -12,9 +12,8 @@ async function loadPhotoDataUrl(photoSrc?: string): Promise<string | null> {
   const candidateUrls = [
     photoSrc,
     avatarImg,
-    '/avatar.png',
-    '/avatar.jpg',
-    '/user_photo.jpg'
+    '/avatar_optimized.webp',
+    '/avatar2_optimized.webp'
   ].filter(Boolean) as string[];
 
   for (const src of candidateUrls) {

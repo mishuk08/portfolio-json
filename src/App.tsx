@@ -54,7 +54,7 @@ export default function App() {
   const [isTerminalBottomOpen, setIsTerminalBottomOpen] = useState<boolean>(false);
 
   // Dynamic animated browser tab favicon with user's photo and glowing neon aura
-  useAnimatedFavicon(data.developer.avatar || '/avatar.png');
+  useAnimatedFavicon(data.developer.avatar || '/avatar_optimized.webp');
 
   // Opening animation state
   const [isAppLoading, setIsAppLoading] = useState<boolean>(true);
@@ -426,7 +426,7 @@ export default function App() {
         <OpeningAnimation
           onFinish={() => setIsAppLoading(false)}
           themeMode={themeMode}
-          avatarUrl={data.developer.avatar || '/avatar.png'}
+          avatarUrl={data.developer.avatar || '/avatar_optimized.webp'}
           developerName={data.developer.name}
         />
       )}

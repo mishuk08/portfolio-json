@@ -230,7 +230,7 @@ export const JsonCodeViewer: React.FC<JsonCodeViewerProps> = ({
                 <a 
                   href={val} 
                   target="_blank" 
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className={`inline-flex items-center gap-1 underline cursor-pointer truncate max-w-[280px] sm:max-w-md ${
                     isDark ? 'text-cyan-400 hover:text-cyan-300' : 'text-cyan-700 hover:text-cyan-800'
                   }`}

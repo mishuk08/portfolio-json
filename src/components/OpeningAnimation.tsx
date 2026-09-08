@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Sparkles, Terminal, Code2, Cpu, Check, MapPin, ShieldCheck, Zap } from 'lucide-react';
 import { ThemeMode } from '../types';
 import avatarImgOpt from '../assets/avatar_optimized.webp';
-import avatarImg from '../assets/drive_avatar_1.png';
+import avatar2ImgOpt from '../assets/avatar2_optimized.webp';
 
 interface OpeningAnimationProps {
   onFinish: () => void;
@@ -27,13 +27,11 @@ export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
   const avatarCandidates = [
     avatarUrl,
     avatarImgOpt,
-    avatarImg,
+    avatar2ImgOpt,
     '/avatar_optimized.webp',
-    '/drive_avatar_1.png',
-    '/avatar.png',
-    '/avatar.jpg'
+    '/avatar2_optimized.webp'
   ].filter(Boolean) as string[];
-  const currentAvatar = avatarUrl || avatarCandidates[imgFallbackIndex] || avatarImgOpt || avatarImg || '/avatar.png';
+  const currentAvatar = avatarUrl || avatarCandidates[imgFallbackIndex] || avatarImgOpt || '/avatar_optimized.webp';
 
   const logs = [
     { text: 'Mounting Developer Environment & Core Modules...', tag: 'CORE' },

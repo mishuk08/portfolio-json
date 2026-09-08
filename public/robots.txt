@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mishuk-info.vercel.app/sitemap.xml
