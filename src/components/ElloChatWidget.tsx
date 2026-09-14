@@ -15,7 +15,6 @@ import {
   Mail
 } from 'lucide-react';
 import { PortfolioData, ThemeMode } from '../types';
-import { motion } from 'motion/react';
 
 interface ElloChatProps {
   portfolioData: PortfolioData;
@@ -281,12 +280,9 @@ export const ElloChatWidget: React.FC<ElloChatProps> = ({
       {/* Messages Scroll Area */}
       <div ref={chatScrollRef} className="flex-1 p-4 overflow-y-auto space-y-4">
         {messages.map((msg) => (
-          <motion.div
+          <div
             key={msg.id}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className={`flex flex-col gpu-layer ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
+            className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
           >
             <div className="flex items-start gap-2 max-w-[90%] sm:max-w-[85%]">
               {msg.sender === 'ello' && (
@@ -310,7 +306,7 @@ export const ElloChatWidget: React.FC<ElloChatProps> = ({
             <span className={`text-[10px] mt-1 px-2 font-mono ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
               {msg.timestamp}
             </span>
-          </motion.div>
+          </div>
         ))}
 
         {isTyping && (

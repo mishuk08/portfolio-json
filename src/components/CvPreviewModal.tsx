@@ -22,7 +22,6 @@ import {
   Loader2
 } from 'lucide-react';
 import { PortfolioData, ThemeMode } from '../types';
-import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -125,16 +124,10 @@ export const CvPreviewModal: React.FC<CvPreviewModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-xs overflow-y-auto">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.96 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.96 }}
-        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-        className={`relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-2xl shadow-2xl border transition-colors overflow-hidden gpu-layer ${
-          isDark ? 'bg-[#0f111a] border-[#252a3d] text-slate-200' : 'bg-slate-100 border-slate-300 text-slate-800'
-        }`}
-      >
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/85 backdrop-blur-md animate-in fade-in overflow-y-auto">
+      <div className={`relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-2xl shadow-2xl border transition-colors overflow-hidden ${
+        isDark ? 'bg-[#0f111a] border-[#252a3d] text-slate-200' : 'bg-slate-100 border-slate-300 text-slate-800'
+      }`}>
         
         {/* Top Control Bar */}
         <div className={`flex items-center justify-between px-4 sm:px-6 py-3 border-b shrink-0 ${
@@ -153,7 +146,7 @@ export const CvPreviewModal: React.FC<CvPreviewModalProps> = ({
             <button
               onClick={handleDownloadPdf}
               disabled={isGeneratingPdf}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-colors duration-150 shadow-xs active:scale-95 cursor-pointer disabled:opacity-50"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-all shadow-xs active:scale-95 cursor-pointer disabled:opacity-50"
               title="Download CV as PDF file"
             >
               {isGeneratingPdf ? (
@@ -442,7 +435,7 @@ export const CvPreviewModal: React.FC<CvPreviewModalProps> = ({
           </div>
         </div>
 
-      </motion.div>
+      </div>
     </div>
   );
 };

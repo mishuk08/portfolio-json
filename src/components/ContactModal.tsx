@@ -13,7 +13,6 @@ import {
   Instagram, 
   Github 
 } from 'lucide-react';
-import { motion } from 'motion/react';
 import { portfolioData } from '../data/portfolioData';
 import confetti from 'canvas-confetti';
 
@@ -50,14 +49,8 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-        className="bg-[#11131c] border border-amber-500/30 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl text-slate-200 gpu-layer"
-      >
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
+      <div className="bg-[#11131c] border border-amber-500/30 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl text-slate-200">
         {/* Modal Top Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-[#202538] bg-[#141724]">
           <div className="flex items-center gap-2">
@@ -165,7 +158,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
 
                 <button
                   type="submit"
-                  className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-lg flex items-center gap-1.5 transition-colors duration-150 cursor-pointer shadow-md"
+                  className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-lg flex items-center gap-1.5 transition-all cursor-pointer shadow-md"
                 >
                   <Send className="w-3.5 h-3.5" />
                   <span>Send Message</span>
@@ -174,7 +167,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
             </form>
           )}
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

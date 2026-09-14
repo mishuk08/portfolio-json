@@ -272,7 +272,7 @@ export const TerminalComponent: React.FC<TerminalProps> = ({
 
   return (
     <div 
-      className={`flex flex-col font-mono text-xs sm:text-sm select-text overflow-hidden transition-colors duration-200 ${
+      className={`flex flex-col font-mono text-xs sm:text-sm select-text overflow-hidden transition-all duration-200 ${
         isFullScreen 
           ? 'fixed inset-0 z-50 shadow-2xl' 
           : isOverlay 

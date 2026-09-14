@@ -82,21 +82,21 @@ export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
 
     checkReadiness();
 
-    const totalDuration = 780; // Crisp, responsive 780ms opening (<= 800ms limit)
+    const totalDuration = 1450; // 1.45s ultra-crisp opening
     const startTime = performance.now();
     let animationFrameId: number;
 
-    const easeOutButter = (t: number) => 1 - Math.pow(1 - t, 3.5);
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 
     const tick = (now: number) => {
       const elapsed = Math.max(0, now - startTime);
       const rawProgress = Math.min(1, elapsed / totalDuration);
       
       // Smooth high-refresh rate eased progress
-      const easedProgress = easeOutButter(rawProgress) * 100;
+      const easedProgress = easeOutCubic(rawProgress) * 100;
       
       let finalProgress = easedProgress;
-      if (rawProgress > 0.9 && !isReadyOnDevice && elapsed < 1200) {
+      if (rawProgress > 0.9 && !isReadyOnDevice && elapsed < 2200) {
         finalProgress = 90;
       }
 
@@ -136,8 +136,8 @@ export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
   return (
     <div
       onClick={finishAnimation}
-      className={`fixed inset-0 z-50 flex flex-col items-center justify-center cursor-pointer select-none gpu-layer transition-opacity duration-200 ${
-        isFadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100'
+      className={`fixed inset-0 z-50 flex flex-col items-center justify-center cursor-pointer select-none transition-all duration-300 ${
+        isFadingOut ? 'opacity-0 scale-[1.02] pointer-events-none' : 'opacity-100 scale-100'
       } ${
         isDark ? 'bg-[#08090d] text-slate-100' : 'bg-[#f4f6fa] text-slate-900'
       }`}
@@ -181,7 +181,7 @@ export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
               cx="50%"
               cy="50%"
               r="44%"
-              className="stroke-current text-amber-400 fill-none"
+              className="stroke-current text-amber-400 fill-none transition-all duration-75"
               strokeWidth="3.5"
               strokeDasharray="276"
               strokeDashoffset={276 - (276 * progress) / 100}
@@ -247,17 +247,13 @@ export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
           </div>
         </div>
 
-        {/* Linear Progress Bar (transform scaleX for zero layout-reflow 60fps) */}
+        {/* Linear Progress Bar */}
         <div className={`h-1.5 w-full rounded-full overflow-hidden ${
           isDark ? 'bg-slate-800' : 'bg-slate-200'
         }`}>
           <div
-            className="h-full w-full bg-gradient-to-r from-amber-500 via-yellow-400 to-cyan-400 rounded-full gpu-layer"
-            style={{
-              transform: `scaleX(${progress / 100})`,
-              transformOrigin: 'left',
-              willChange: progress < 100 ? 'transform' : 'auto'
-            }}
+            className="h-full bg-gradient-to-r from-amber-500 via-yellow-400 to-cyan-400 transition-all duration-75 rounded-full"
+            style={{ width: `${progress}%` }}
           />
         </div>
 

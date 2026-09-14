@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { ViewMode, ThemeMode } from '../types';
 import { Code2, Layout, Sparkles, CheckCircle2 } from 'lucide-react';
-import { motion } from 'motion/react';
 
 interface ModeTransitionOverlayProps {
   targetMode: ViewMode;
@@ -32,7 +31,7 @@ export const ModeTransitionOverlay: React.FC<ModeTransitionOverlayProps> = ({
   }, [onApplyMode, onComplete]);
 
   useEffect(() => {
-    const duration = 320; // Snappy 320ms 60fps monotonic progression
+    const duration = 800; // 800ms ultra-smooth 0-100% uninterrupted progression
     const startTime = performance.now();
     let animationFrameId: number;
 
@@ -40,8 +39,10 @@ export const ModeTransitionOverlay: React.FC<ModeTransitionOverlayProps> = ({
       const elapsed = now - startTime;
       const progressRatio = Math.min(1, Math.max(0, elapsed / duration));
       
-      // Smooth natural curve (ease-out cubic for responsive 0-100%)
-      const eased = 1 - Math.pow(1 - progressRatio, 3);
+      // Smooth natural curve (ease-in-out quad for steady monotonic 0-100%)
+      const eased = progressRatio < 0.5
+        ? 2 * progressRatio * progressRatio
+        : 1 - Math.pow(-2 * progressRatio + 2, 2) / 2;
 
       const currentPct = Math.min(100, Math.round(eased * 100));
       setProgress(currentPct);
@@ -59,7 +60,7 @@ export const ModeTransitionOverlay: React.FC<ModeTransitionOverlayProps> = ({
         setIsFadingOut(true);
         setTimeout(() => {
           onCompleteRef.current();
-        }, 160);
+        }, 220);
       }
     };
 
@@ -77,8 +78,8 @@ export const ModeTransitionOverlay: React.FC<ModeTransitionOverlayProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex flex-col items-center justify-center select-none backdrop-blur-md gpu-layer transition-opacity duration-150 ${
-        isFadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100'
+      className={`fixed inset-0 z-50 flex flex-col items-center justify-center select-none backdrop-blur-2xl transition-all duration-300 ${
+        isFadingOut ? 'opacity-0 scale-105 pointer-events-none' : 'opacity-100 scale-100'
       } ${
         isDark 
           ? 'bg-[#08090ee6] text-slate-100' 
@@ -87,10 +88,10 @@ export const ModeTransitionOverlay: React.FC<ModeTransitionOverlayProps> = ({
     >
       {/* Background ambient radial glowing orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full blur-[90px] opacity-30 gpu-layer ${
+        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-[120px] opacity-35 transition-all ${
           isDark ? 'bg-amber-500' : 'bg-amber-300'
         }`} />
-        <div className={`absolute bottom-1/4 right-1/4 w-72 h-72 rounded-full blur-[80px] opacity-25 gpu-layer ${
+        <div className={`absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full blur-[110px] opacity-30 ${
           isDark ? 'bg-cyan-500' : 'bg-cyan-300'
         }`} />
       </div>
@@ -98,7 +99,7 @@ export const ModeTransitionOverlay: React.FC<ModeTransitionOverlayProps> = ({
       <div className="relative z-10 flex flex-col items-center max-w-sm px-6 text-center">
         
         {/* Mode Icon Badge */}
-        <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono mb-6 border shadow-sm transition-colors duration-150 backdrop-blur-md ${
+        <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono mb-6 border shadow-sm transition-all backdrop-blur-md ${
           isDark ? 'bg-[#121522]/90 border-amber-500/30 text-amber-400' : 'bg-white/90 border-amber-300 text-amber-800'
         }`}>
           {isSwitchingToGui ? (
@@ -135,6 +136,7 @@ export const ModeTransitionOverlay: React.FC<ModeTransitionOverlayProps> = ({
               strokeDashoffset={strokeDashoffset}
               strokeLinecap="round"
               fill="transparent"
+              className="transition-all duration-75 ease-out"
             />
             <defs>
               <linearGradient id="mode-gradient-ring" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -152,14 +154,7 @@ export const ModeTransitionOverlay: React.FC<ModeTransitionOverlayProps> = ({
                 {progress}<span className="text-sm font-semibold text-amber-500 font-mono">%</span>
               </span>
             ) : (
-              <motion.div
-                initial={{ scale: 0.6, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                className="gpu-layer"
-              >
-                <CheckCircle2 className="w-9 h-9 text-emerald-400" />
-              </motion.div>
+              <CheckCircle2 className="w-9 h-9 text-emerald-400 animate-in zoom-in-50 duration-200" />
             )}
           </div>
         </div>

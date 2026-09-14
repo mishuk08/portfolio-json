@@ -1,7 +1,6 @@
 import React from 'react';
 import { X, Palette, Type, Check, RefreshCw, Sun, Moon } from 'lucide-react';
 import { EditorTheme } from '../types';
-import { motion } from 'motion/react';
 
 interface SettingsDrawerProps {
   isOpen: boolean;
@@ -58,14 +57,8 @@ export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/60 backdrop-blur-xs">
-      <motion.div
-        initial={{ x: '100%' }}
-        animate={{ x: 0 }}
-        exit={{ x: '100%' }}
-        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-        className="bg-[#12141c] border-l border-[#202538] w-full max-w-sm h-full overflow-y-auto shadow-2xl text-slate-200 p-6 flex flex-col justify-between gpu-layer"
-      >
+    <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/60 backdrop-blur-xs animate-in fade-in">
+      <div className="bg-[#12141c] border-l border-[#202538] w-full max-w-sm h-full overflow-y-auto shadow-2xl text-slate-200 p-6 flex flex-col justify-between">
         <div className="space-y-6">
           <div className="flex items-center justify-between pb-4 border-b border-[#202538]">
             <div className="flex items-center gap-2">
@@ -90,7 +83,7 @@ export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
                 <button
                   key={t.id}
                   onClick={() => setTheme(t.id)}
-                  className={`w-full p-3 rounded-xl border text-left transition-colors duration-150 flex items-center justify-between cursor-pointer ${
+                  className={`w-full p-3 rounded-xl border text-left transition-all flex items-center justify-between cursor-pointer ${
                     theme === t.id
                       ? 'bg-amber-500/10 border-amber-500/50 text-slate-100'
                       : 'bg-[#0a0b10] border-[#1f2334] text-slate-400 hover:border-slate-700'
@@ -144,7 +137,7 @@ export const SettingsDrawer: React.FC<SettingsDrawerProps> = ({
             Portfolio v2.4.0 • Mishuk Babu Shoukhin
           </p>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

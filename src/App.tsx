@@ -325,13 +325,16 @@ export default function App() {
     <div className={`h-screen w-screen max-w-full flex flex-col overflow-x-hidden overflow-y-hidden font-sans transition-colors duration-200 ${
       isDark ? 'bg-[#0d0e13] text-slate-200' : 'bg-slate-50 text-slate-800'
     }`}>
-      {/* Visual Content Wrapper with 60fps GPU acceleration */}
+      {/* Visual Content Wrapper with synchronized water blur & clear transitions */}
       <div 
-        className={`flex-1 flex flex-col overflow-hidden w-full gpu-layer transition-opacity duration-200 ${
+        className={`flex-1 flex flex-col overflow-hidden w-full transition-all ${
           isThemeBlurring 
-            ? 'opacity-90' 
-            : 'opacity-100'
+            ? 'filter blur-[12px] opacity-90 scale-[0.996]' 
+            : 'filter-none opacity-100 scale-100'
         }`}
+        style={{
+          transition: 'filter 0.32s cubic-bezier(0.16, 1, 0.3, 1), transform 0.32s ease, opacity 0.32s ease'
+        }}
       >
         {/* Top Application Bar with macOS Window Buttons, GUI/JSON mode switch, and Dark/Light toggle */}
         <HeaderBar

@@ -93,7 +93,7 @@ export const TabBar: React.FC<TabBarProps> = ({
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`group relative flex items-center gap-2 px-3.5 py-2.5 text-xs font-mono border-r transition-colors duration-150 cursor-pointer ${
+              className={`group relative flex items-center gap-2 px-3.5 py-2.5 text-xs font-mono border-r transition-all cursor-pointer ${
                 isDark ? 'border-[#1b1d28]' : 'border-slate-200'
               } ${
                 isActive

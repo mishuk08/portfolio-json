@@ -51,8 +51,6 @@ interface LivePreviewProps {
   themeMode?: ThemeMode;
 }
 
-const BUTTER_EASE = [0.16, 1, 0.3, 1] as const;
-
 export const LivePreview: React.FC<LivePreviewProps> = ({
   portfolioData,
   onOpenProject,
@@ -169,59 +167,27 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
   const [scrollProgress, setScrollProgress] = useState(0);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
-  const scrollRafRef = React.useRef<number | null>(null);
 
-  // 60fps Section Spy with IntersectionObserver (replaces heavy synchronous scroll queries)
-  useEffect(() => {
-    const sections = ['about', 'skills', 'experience', 'education', 'projects', 'ello', 'contact'];
-    const elements = sections
-      .map((id) => document.getElementById(`section-${id}`))
-      .filter(Boolean) as HTMLElement[];
-
-    if (elements.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const secId = entry.target.id.replace('section-', '');
-            setActiveSection(secId);
-          }
-        }
-      },
-      {
-        root: scrollContainerRef.current,
-        rootMargin: '-15% 0px -50% 0px',
-        threshold: 0.05
-      }
-    );
-
-    elements.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
-
-  // Throttled scroll handling with requestAnimationFrame (zero layout thrashing)
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    if (scrollRafRef.current !== null) return;
     const target = e.currentTarget;
     const scrollTop = target.scrollTop;
     const scrollHeight = target.scrollHeight - target.clientHeight;
+    const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+    setScrollProgress(progress);
+    setShowScrollTop(scrollTop > 260);
 
-    scrollRafRef.current = requestAnimationFrame(() => {
-      scrollRafRef.current = null;
-      const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
-      setScrollProgress(progress);
-      setShowScrollTop(scrollTop > 260);
-    });
-  };
-
-  useEffect(() => {
-    return () => {
-      if (scrollRafRef.current !== null) {
-        cancelAnimationFrame(scrollRafRef.current);
+    const sections = ['about', 'skills', 'experience', 'education', 'projects', 'ello', 'contact'];
+    for (let i = sections.length - 1; i >= 0; i--) {
+      const el = document.getElementById(`section-${sections[i]}`);
+      if (el) {
+        const top = el.offsetTop - 220;
+        if (scrollTop >= top) {
+          setActiveSection(sections[i]);
+          break;
+        }
       }
-    };
-  }, []);
+    }
+  };
 
   const scrollToTop = () => {
     if (scrollContainerRef.current) {
@@ -236,14 +202,14 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
     }
   };
 
-  // Glassmorphism styling classes - optimized for 60fps compositor performance
+  // Glassmorphism styling classes - enhanced transparency and crystal glass look
   const glassCardClass = isDark
-    ? 'backdrop-blur-md bg-[#0d101e]/60 border border-white/10 shadow-md hover:border-amber-500/50 hover:bg-[#141829]/75 hover:shadow-lg hover:shadow-amber-500/5 hover:-translate-y-0.5 transition-[border-color,background-color,box-shadow,transform] duration-200 ease-out gpu-layer'
-    : 'backdrop-blur-md bg-white/70 border border-white/70 shadow-sm hover:border-amber-400/70 hover:bg-white/85 hover:shadow-md hover:shadow-amber-500/5 hover:-translate-y-0.5 transition-[border-color,background-color,box-shadow,transform] duration-200 ease-out gpu-layer';
+    ? 'backdrop-blur-2xl bg-[#0d101e]/45 border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.28)] hover:border-amber-500/50 hover:bg-[#141829]/60 hover:shadow-[0_12px_40px_rgba(245,158,11,0.1)] transition-all duration-300'
+    : 'backdrop-blur-2xl bg-white/55 border border-white/70 shadow-[0_8px_30px_rgba(148,163,184,0.14)] hover:border-amber-400/70 hover:bg-white/75 hover:shadow-[0_12px_36px_rgba(245,158,11,0.12)] transition-all duration-300';
 
   const glassCardStatic = isDark
-    ? 'backdrop-blur-md bg-[#0d101e]/60 border border-white/10 shadow-md gpu-layer'
-    : 'backdrop-blur-md bg-white/70 border border-white/70 shadow-sm gpu-layer';
+    ? 'backdrop-blur-2xl bg-[#0d101e]/45 border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.28)]'
+    : 'backdrop-blur-2xl bg-white/55 border border-white/70 shadow-[0_8px_30px_rgba(148,163,184,0.14)]';
 
   return (
     <div 
@@ -254,15 +220,11 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         ? 'bg-[#08090d] text-slate-200 selection:bg-amber-500/30 selection:text-amber-300' 
         : 'bg-[#f4f6fa] text-slate-800 selection:bg-amber-500/30 selection:text-amber-900'
     }`}>
-      {/* Interactive Sticky Scroll Progress Bar (transform scaleX for zero layout-reflow 60fps) */}
-      <div className="sticky top-0 left-0 right-0 z-50 h-1 bg-transparent pointer-events-none overflow-hidden">
-        <div
-          style={{
-            transform: `scaleX(${scrollProgress / 100})`,
-            transformOrigin: 'left',
-            willChange: scrollProgress > 0 && scrollProgress < 100 ? 'transform' : 'auto'
-          }}
-          className={`h-full w-full gpu-layer ${
+      {/* Interactive Sticky Scroll Progress Bar */}
+      <div className="sticky top-0 left-0 right-0 z-50 h-1 bg-transparent pointer-events-none">
+        <motion.div
+          style={{ width: `${scrollProgress}%` }}
+          className={`h-full transition-all duration-75 ${
             isDark
               ? 'bg-gradient-to-r from-amber-500 via-yellow-400 to-cyan-400 shadow-[0_0_12px_rgba(245,158,11,0.8)]'
               : 'bg-gradient-to-r from-amber-500 via-orange-400 to-amber-600 shadow-[0_0_10px_rgba(245,158,11,0.5)]'
@@ -270,20 +232,38 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         />
       </div>
       
-      {/* Background ambient lighting with optimized GPU layer (zero CPU re-rendering) */}
+      {/* Background ambient lighting with dynamic floating animations */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div 
-          className={`absolute -top-36 -left-36 w-[420px] h-[420px] rounded-full blur-[80px] opacity-20 gpu-layer ${
+        <motion.div 
+          animate={{ 
+            x: [0, 40, 0], 
+            y: [0, -30, 0],
+            scale: [1, 1.2, 1] 
+          }}
+          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+          className={`absolute -top-40 -left-40 w-[480px] h-[480px] rounded-full blur-[140px] opacity-25 ${
             isDark ? 'bg-amber-500' : 'bg-amber-300'
           }`} 
         />
-        <div 
-          className={`absolute top-1/3 -right-36 w-[450px] h-[450px] rounded-full blur-[90px] opacity-15 gpu-layer ${
+        <motion.div 
+          animate={{ 
+            x: [0, -50, 0], 
+            y: [0, 40, 0],
+            scale: [1, 1.25, 1] 
+          }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          className={`absolute top-1/3 -right-40 w-[500px] h-[500px] rounded-full blur-[160px] opacity-20 ${
             isDark ? 'bg-cyan-500' : 'bg-cyan-300'
           }`} 
         />
-        <div 
-          className={`absolute bottom-20 left-1/4 w-[400px] h-[400px] rounded-full blur-[90px] opacity-15 gpu-layer ${
+        <motion.div 
+          animate={{ 
+            x: [0, 35, 0], 
+            y: [0, -45, 0],
+            scale: [1, 1.15, 1] 
+          }}
+          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut", delay: 4 }}
+          className={`absolute bottom-20 left-1/4 w-[460px] h-[460px] rounded-full blur-[150px] opacity-20 ${
             isDark ? 'bg-purple-600' : 'bg-purple-300'
           }`} 
         />
@@ -300,10 +280,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
             
             {/* Top Navigation & Status Bar */}
             <motion.div 
-              initial={{ opacity: 0, y: -8 }}
+              initial={{ opacity: 0, y: -12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.28, ease: BUTTER_EASE }}
-              className="flex flex-wrap items-center justify-between gap-2 gpu-layer"
+              transition={{ duration: 0.45 }}
+              className="flex flex-wrap items-center justify-between gap-2"
             >
               <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono border backdrop-blur-md ${
                 isDark
@@ -322,7 +302,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                     <button
                       key={sec}
                       onClick={() => scrollToSection(`section-${sec}`)}
-                      className={`relative px-2.5 py-1 rounded-lg transition-colors duration-150 cursor-pointer capitalize font-medium ${
+                      className={`relative px-2.5 py-1 rounded-lg transition-all cursor-pointer capitalize font-medium ${
                         isActive
                           ? (isDark 
                               ? 'text-amber-400 bg-amber-500/15 border border-amber-500/30 font-bold shadow-xs' 
@@ -352,10 +332,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
 
             {/* Profile Identity & User's Permanent Photo (Circular / Rounded) */}
             <motion.div 
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, ease: BUTTER_EASE, delay: 0.05 }}
-              className="flex flex-col-reverse md:flex-row items-center md:items-start justify-between gap-6 sm:gap-8 pt-2 gpu-layer"
+              transition={{ duration: 0.55, delay: 0.1 }}
+              className="flex flex-col-reverse md:flex-row items-center md:items-start justify-between gap-6 sm:gap-8 pt-2"
             >
               {/* Left Bio Info */}
               <div className="space-y-3.5 flex-1 text-center md:text-left">
@@ -382,7 +362,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                       confetti({ particleCount: 80, spread: 60 });
                       onOpenContact();
                     }}
-                    className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm transition-colors duration-150 flex items-center gap-2 shadow-lg shadow-amber-500/25 cursor-pointer active:scale-95"
+                    className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm transition-all flex items-center gap-2 shadow-lg shadow-amber-500/25 cursor-pointer active:scale-95"
                   >
                     <Sparkles className="w-4 h-4 fill-slate-950" />
                     <span>Hire Me / Contact</span>
@@ -390,7 +370,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
 
                   <button
                     onClick={() => scrollToSection('section-ello')}
-                    className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-colors duration-150 flex items-center gap-2 cursor-pointer border backdrop-blur-md active:scale-95 ${
+                    className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer border backdrop-blur-md active:scale-95 ${
                       isDark 
                         ? 'bg-[#141624]/80 hover:bg-[#1e2238] text-cyan-400 border-cyan-500/30 shadow-md shadow-cyan-950/20' 
                         : 'bg-white/90 hover:bg-cyan-50 text-cyan-800 border-cyan-300 shadow-xs'
@@ -408,7 +388,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                         downloadDeveloperCv(portfolioData);
                       }
                     }}
-                    className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-colors duration-150 flex items-center gap-2 cursor-pointer border backdrop-blur-md shadow-xs active:scale-95 ${
+                    className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer border backdrop-blur-md shadow-xs active:scale-95 ${
                       isDark 
                         ? 'bg-[#141724]/80 hover:bg-[#1f2438] text-amber-400 border-amber-500/30' 
                         : 'bg-white/90 hover:bg-amber-50 text-amber-800 border-amber-300 shadow-xs'
@@ -452,11 +432,11 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                             target.src = '/avatar_optimized.webp';
                           }
                         }}
-                        initial={{ opacity: 0, scale: 1.04 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.98 }}
-                        transition={{ duration: 0.3, ease: BUTTER_EASE }}
-                        className="absolute inset-0 w-full h-full object-cover rounded-full shadow-inner gpu-layer"
+                        initial={{ opacity: 0, scale: 1.08, filter: 'blur(8px)' }}
+                        animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                        exit={{ opacity: 0, scale: 0.95, filter: 'blur(8px)' }}
+                        transition={{ duration: 1.0, ease: [0.4, 0, 0.2, 1] }}
+                        className="absolute inset-0 w-full h-full object-cover rounded-full shadow-inner"
                       />
                     </AnimatePresence>
 
@@ -494,10 +474,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
 
             {/* Quick Highlights Bar with Frosted Glass Cards */}
             <motion.div 
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-30px" }}
-              transition={{ duration: 0.28, ease: BUTTER_EASE, delay: 0.06 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.5, delay: 0.15 }}
               className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3.5 pt-4 w-full"
             >
               <div className={`p-4 rounded-2xl ${glassCardClass}`}>
@@ -520,10 +500,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
 
             {/* Scroll to Explore Bouncing Indicator */}
             <motion.div
-              initial={{ opacity: 0, y: -6 }}
+              initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.28, ease: BUTTER_EASE }}
-              className="pt-2 flex flex-col items-center justify-center cursor-pointer group select-none gpu-layer"
+              transition={{ delay: 0.6, duration: 0.5 }}
+              className="pt-2 flex flex-col items-center justify-center cursor-pointer group select-none"
               onClick={() => scrollToSection('section-about')}
             >
               <span className={`text-[11px] font-mono tracking-widest uppercase transition-colors flex items-center gap-1 ${
@@ -550,11 +530,11 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         }`}>
           <div className="max-w-5xl mx-auto space-y-7">
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-30px" }}
-              transition={{ duration: 0.28, ease: BUTTER_EASE }}
-              className="space-y-1.5 gpu-layer"
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5 }}
+              className="space-y-1.5"
             >
               <div className="text-amber-500 font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
                 <Sparkles className="w-4 h-4" />
@@ -567,10 +547,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <motion.div 
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-30px" }}
-                transition={{ duration: 0.28, ease: BUTTER_EASE, delay: 0.05 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5, delay: 0.1 }}
                 className="md:col-span-2 space-y-3.5 text-xs sm:text-sm leading-relaxed"
               >
                 {portfolioData.developer.bio.map((para, pIdx) => (
@@ -583,10 +563,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
               </motion.div>
 
               <motion.div 
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-30px" }}
-                transition={{ duration: 0.28, ease: BUTTER_EASE, delay: 0.1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5, delay: 0.2 }}
                 className={`p-5 sm:p-6 rounded-2xl ${glassCardClass} space-y-4 h-fit`}
               >
                 <h3 className="font-bold font-mono text-xs text-amber-500 uppercase tracking-wider">Professional Profile</h3>
@@ -619,11 +599,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         }`}>
           <div className="max-w-5xl mx-auto space-y-6">
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-30px" }}
-              transition={{ duration: 0.28, ease: BUTTER_EASE }}
-              className="gpu-layer"
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5 }}
             >
               <div className="text-emerald-400 font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
                 <Layers className="w-4 h-4" />
@@ -638,10 +617,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
               {portfolioData.skills.map((group, gIdx) => (
                 <motion.div 
                   key={group.category} 
-                  initial={{ opacity: 0, y: 14 }}
+                  initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-30px" }}
-                  transition={{ duration: 0.28, delay: gIdx * 0.05, ease: BUTTER_EASE }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.45, delay: gIdx * 0.08 }}
                   className={`p-4 sm:p-5 rounded-2xl ${glassCardClass} flex flex-col justify-between`}
                 >
                   <div>
@@ -656,7 +635,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                       {group.skills.map((skill) => (
                         <div 
                           key={skill.name}
-                          className={`p-2.5 rounded-xl border flex items-center justify-between gap-2 transition-colors duration-150 ${
+                          className={`p-2.5 rounded-xl border flex items-center justify-between gap-2 transition-all ${
                             isDark 
                               ? 'bg-[#10121b]/80 border-slate-800/80 hover:border-amber-500/40 hover:bg-[#151928]' 
                               : 'bg-slate-50/90 border-slate-200/90 hover:border-amber-400 hover:bg-amber-50/30'
@@ -689,11 +668,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         }`}>
           <div className="max-w-5xl mx-auto space-y-6">
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-30px" }}
-              transition={{ duration: 0.28, ease: BUTTER_EASE }}
-              className="gpu-layer"
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5 }}
             >
               <div className="text-purple-400 font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
                 <Briefcase className="w-4 h-4" />
@@ -708,10 +686,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
               {portfolioData.experiences.map((exp, idx) => (
                 <motion.div
                   key={idx}
-                  initial={{ opacity: 0, y: 14 }}
+                  initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-30px" }}
-                  transition={{ duration: 0.28, delay: idx * 0.05, ease: BUTTER_EASE }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.5, delay: idx * 0.1 }}
                   className={`p-5 sm:p-6 rounded-2xl ${glassCardClass}`}
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
@@ -789,11 +767,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         }`}>
           <div className="max-w-5xl mx-auto space-y-6">
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-30px" }}
-              transition={{ duration: 0.28, ease: BUTTER_EASE }}
-              className="gpu-layer"
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5 }}
             >
               <div className="text-cyan-400 font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
                 <GraduationCap className="w-4 h-4" />
@@ -809,10 +786,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
               {portfolioData.education.map((edu, idx) => (
                 <motion.div
                   key={idx}
-                  initial={{ opacity: 0, y: 14 }}
+                  initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-30px" }}
-                  transition={{ duration: 0.28, delay: idx * 0.05, ease: BUTTER_EASE }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.45, delay: idx * 0.1 }}
                   className={`p-5 rounded-2xl ${glassCardClass} space-y-3 flex flex-col justify-between`}
                 >
                   <div>
@@ -844,10 +821,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
 
               {portfolioData.certifications && portfolioData.certifications.length > 0 && (
                 <motion.div 
-                  initial={{ opacity: 0, y: 14 }}
+                  initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-40px" }}
-                  transition={{ duration: 0.28, delay: 0.1, ease: BUTTER_EASE }}
+                  transition={{ duration: 0.45, delay: 0.2 }}
                   className={`p-5 rounded-2xl ${glassCardClass} space-y-3`}
                 >
                   <div className="flex items-center gap-2.5">
@@ -886,11 +863,11 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         }`}>
           <div className="max-w-5xl mx-auto space-y-6">
             <motion.div 
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-30px" }}
-              transition={{ duration: 0.28, ease: BUTTER_EASE }}
-              className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 gpu-layer"
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5 }}
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
             >
               <div>
                 <div className="text-amber-500 font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
@@ -918,7 +895,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors duration-150 cursor-pointer whitespace-nowrap ${
+                    className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer whitespace-nowrap ${
                       selectedCategory === cat
                         ? 'bg-amber-500 text-slate-950 font-bold shadow-xs'
                         : (isDark ? 'text-slate-400 hover:text-slate-200' : 'text-slate-600 hover:text-slate-900')
@@ -935,10 +912,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
               {filteredProjects.map((project, pIdx) => (
                 <motion.div
                   key={project.id}
-                  initial={{ opacity: 0, y: 14 }}
+                  initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-30px" }}
-                  transition={{ duration: 0.28, delay: pIdx * 0.04, ease: BUTTER_EASE }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.45, delay: pIdx * 0.08 }}
                   className={`p-4 sm:p-5 rounded-2xl ${glassCardClass} group flex flex-col justify-between`}
                 >
                   <div>
@@ -1041,11 +1018,11 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         }`}>
           <div className="max-w-5xl mx-auto space-y-6">
             <motion.div 
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-30px" }}
-              transition={{ duration: 0.28, ease: BUTTER_EASE }}
-              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 gpu-layer"
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5 }}
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3"
             >
               <div>
                 <div className="text-amber-500 font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
@@ -1063,11 +1040,11 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
 
             {/* Embedded Ello Chat Interface with Frosted Glass Container */}
             <motion.div
-              initial={{ opacity: 0, y: 14 }}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-30px" }}
-              transition={{ duration: 0.28, ease: BUTTER_EASE }}
-              className="rounded-2xl overflow-hidden shadow-2xl gpu-layer"
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.5 }}
+              className="rounded-2xl overflow-hidden shadow-2xl"
             >
               <ElloChatWidget
                 portfolioData={portfolioData}
@@ -1085,11 +1062,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         }`}>
           <div className="max-w-5xl mx-auto space-y-6">
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-30px" }}
-              transition={{ duration: 0.28, ease: BUTTER_EASE }}
-              className="gpu-layer"
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5 }}
             >
               <div className="text-purple-400 font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
                 <Zap className="w-4 h-4" />
@@ -1104,10 +1080,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
               {portfolioData.services.map((srv, sIdx) => (
                 <motion.div 
                   key={srv.title} 
-                  initial={{ opacity: 0, y: 14 }}
+                  initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-30px" }}
-                  transition={{ duration: 0.28, delay: sIdx * 0.05, ease: BUTTER_EASE }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.45, delay: sIdx * 0.1 }}
                   className={`p-5 rounded-2xl ${glassCardClass} space-y-3`}
                 >
                   <h3 className={`text-base font-bold ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>{srv.title}</h3>
@@ -1130,11 +1106,11 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         <section className="px-3 sm:px-6 lg:px-8 py-10 sm:py-14 w-full max-w-full overflow-hidden">
           <div className="max-w-5xl mx-auto">
             <motion.div 
-              initial={{ opacity: 0, y: 14 }}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-30px" }}
-              transition={{ duration: 0.28, ease: BUTTER_EASE }}
-              className={`p-5 sm:p-8 rounded-3xl border space-y-6 backdrop-blur-2xl gpu-layer ${
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.5 }}
+              className={`p-5 sm:p-8 rounded-3xl border space-y-6 backdrop-blur-2xl ${
                 isDark 
                   ? 'bg-[#121424]/80 border-amber-500/40 shadow-[0_12px_40px_rgba(0,0,0,0.45)]' 
                   : 'bg-white/85 border-amber-300/80 shadow-[0_12px_36px_rgba(245,158,11,0.12)]'
@@ -1223,7 +1199,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                   <div className="sm:col-span-2 flex flex-wrap items-center gap-3">
                     <button
                       type="submit"
-                      className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl flex items-center gap-2 transition-colors duration-150 cursor-pointer shadow-lg shadow-amber-500/25 active:scale-95"
+                      className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl flex items-center gap-2 transition-all cursor-pointer shadow-lg shadow-amber-500/25 active:scale-95"
                     >
                       <Send className="w-3.5 h-3.5" />
                       <span>Send Message to Mishuk</span>
@@ -1247,11 +1223,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
 
             {/* Stylized Rangpur Division Map */}
             <motion.div
-              initial={{ opacity: 0, y: 14 }}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-30px" }}
-              transition={{ duration: 0.28, delay: 0.05, ease: BUTTER_EASE }}
-              className="gpu-layer"
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.5, delay: 0.1 }}
             >
               <RangpurDivisionMap themeMode={themeMode} />
             </motion.div>
@@ -1262,8 +1237,8 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.28, ease: BUTTER_EASE }}
-            className={`mt-12 pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-6 gpu-layer ${
+            transition={{ duration: 0.5 }}
+            className={`mt-12 pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-6 ${
               isDark ? 'border-[#202538]/70' : 'border-slate-200/70'
             }`}
           >
@@ -1274,7 +1249,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                   href={portfolioData.developer.socials.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-colors duration-150 cursor-pointer backdrop-blur-md ${
+                  className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer backdrop-blur-md ${
                     isDark 
                       ? 'bg-[#141622]/80 hover:bg-[#1f2338] text-slate-300 border-white/10' 
                       : 'bg-white/90 hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs'
@@ -1291,7 +1266,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                   href={portfolioData.developer.socials.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-colors duration-150 cursor-pointer backdrop-blur-md ${
+                  className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer backdrop-blur-md ${
                     isDark 
                       ? 'bg-[#141622]/80 hover:bg-[#1f2338] text-cyan-400 border-cyan-500/30 shadow-xs' 
                       : 'bg-white/90 hover:bg-cyan-50 text-cyan-600 border-cyan-200 shadow-xs'
@@ -1308,7 +1283,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                   href={portfolioData.developer.socials.twitter}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-colors duration-150 cursor-pointer backdrop-blur-md ${
+                  className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer backdrop-blur-md ${
                     isDark 
                       ? 'bg-[#141622]/80 hover:bg-[#1f2338] text-sky-400 border-sky-500/30 shadow-xs' 
                       : 'bg-white/90 hover:bg-sky-50 text-sky-600 border-sky-200 shadow-xs'
@@ -1325,7 +1300,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                   href={portfolioData.developer.socials.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-colors duration-150 cursor-pointer backdrop-blur-md ${
+                  className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer backdrop-blur-md ${
                     isDark 
                       ? 'bg-[#141622]/80 hover:bg-[#1f2338] text-blue-400 border-blue-500/30 shadow-xs' 
                       : 'bg-white/90 hover:bg-blue-50 text-blue-600 border-blue-200 shadow-xs'
@@ -1342,7 +1317,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                   href={portfolioData.developer.socials.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-colors duration-150 cursor-pointer backdrop-blur-md ${
+                  className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer backdrop-blur-md ${
                     isDark 
                       ? 'bg-[#141622]/80 hover:bg-[#1f2338] text-pink-400 border-pink-500/30 shadow-xs' 
                       : 'bg-white/90 hover:bg-pink-50 text-pink-600 border-pink-200 shadow-xs'
@@ -1359,7 +1334,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                   href={portfolioData.developer.socials.whatsapp}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-colors duration-150 cursor-pointer backdrop-blur-md ${
+                  className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer backdrop-blur-md ${
                     isDark 
                       ? 'bg-[#141622]/80 hover:bg-[#1f2338] text-emerald-400 border-emerald-500/30' 
                       : 'bg-white/90 hover:bg-emerald-50 text-emerald-700 border-emerald-200 shadow-xs'
@@ -1382,7 +1357,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                   href={portfolioData.developer.socials.facebook || "https://www.facebook.com/mdmishukbabu192"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-extrabold text-amber-500 hover:text-amber-400 inline-flex items-center gap-1 group underline underline-offset-4 decoration-amber-500/40 hover:decoration-amber-400 transition-colors duration-150 cursor-pointer"
+                  className="font-extrabold text-amber-500 hover:text-amber-400 inline-flex items-center gap-1 group underline underline-offset-4 decoration-amber-500/40 hover:decoration-amber-400 transition-all cursor-pointer"
                   title="Open Mishuk's Facebook Account"
                 >
                   <span className="group-hover:scale-105 transition-transform">Mishuk Babu Shoukhin</span>
@@ -1401,14 +1376,13 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
       <AnimatePresence>
         {showScrollTop && (
           <motion.button
-            initial={{ scale: 0, opacity: 0, y: 10 }}
+            initial={{ scale: 0, opacity: 0, y: 15 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0, opacity: 0, y: 10 }}
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.94 }}
-            transition={{ duration: 0.2, ease: BUTTER_EASE }}
+            exit={{ scale: 0, opacity: 0, y: 15 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.92 }}
             onClick={scrollToTop}
-            className={`fixed bottom-20 right-6 z-40 w-11 h-11 rounded-full shadow-xl backdrop-blur-xl border flex items-center justify-center cursor-pointer transition-colors group gpu-layer ${
+            className={`fixed bottom-20 right-6 z-40 w-11 h-11 rounded-full shadow-xl backdrop-blur-xl border flex items-center justify-center cursor-pointer transition-colors group ${
               isDark
                 ? 'bg-[#10121d]/90 border-amber-500/40 text-amber-400 shadow-amber-500/15 hover:border-amber-400 hover:bg-[#181c2e]'
                 : 'bg-white/95 border-amber-400/60 text-amber-600 shadow-amber-400/20 hover:bg-amber-50'
@@ -1429,7 +1403,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                 cx="18"
                 cy="18"
                 r="15"
-                className={`fill-none stroke-current ${isDark ? 'text-amber-400' : 'text-amber-500'}`}
+                className={`fill-none stroke-current transition-all duration-75 ${isDark ? 'text-amber-400' : 'text-amber-500'}`}
                 strokeWidth="2.5"
                 strokeDasharray="94.25"
                 strokeDashoffset={94.25 - (94.25 * scrollProgress) / 100}
@@ -1445,11 +1419,9 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
       <motion.button
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 0.4, type: "spring", stiffness: 280, damping: 24 }}
-        whileHover={{ scale: 1.06 }}
-        whileTap={{ scale: 0.94 }}
+        transition={{ delay: 0.8, type: "spring", stiffness: 260, damping: 20 }}
         onClick={() => scrollToSection('section-ello')}
-        className="fixed bottom-6 right-6 z-40 p-3 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-400 text-slate-950 shadow-2xl transition-transform flex items-center gap-2 font-bold text-xs border border-amber-300 cursor-pointer gpu-layer"
+        className="fixed bottom-6 right-6 z-40 p-3 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-400 text-slate-950 shadow-2xl hover:scale-110 transition-transform flex items-center gap-2 font-bold text-xs border border-amber-300 cursor-pointer"
         title="Chat with Ello AI"
       >
         <Bot className="w-5 h-5 text-slate-950" />
