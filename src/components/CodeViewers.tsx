@@ -61,7 +61,7 @@ export const DeveloperProfile = {
         <div className="flex items-center gap-2">
           <button
             onClick={onOpenContact}
-            className="flex items-center gap-1 px-2.5 py-1 rounded bg-amber-500/15 text-amber-500 border border-amber-500/30 hover:bg-amber-500/25 transition-all text-xs font-semibold cursor-pointer"
+            className="flex items-center gap-1 px-2.5 py-1 rounded bg-amber-500/15 text-amber-500 border border-amber-500/30 hover:bg-amber-500/25 transition-colors duration-150 text-xs font-semibold cursor-pointer"
           >
             <Sparkles className="w-3 h-3 text-amber-500" />
             <span>Connect</span>
@@ -161,7 +161,7 @@ export const ProjectsTsViewer: React.FC<CodeViewerProps> = ({
           {portfolioData.projects.map((p, idx) => (
             <div 
               key={p.id} 
-              className={`p-3.5 rounded-xl border transition-all ${
+              className={`p-3.5 rounded-xl border transition-colors duration-150 ${
                 isDark ? 'bg-[#12141c] border-[#22273d]' : 'bg-slate-50 border-slate-200'
               }`}
             >
@@ -169,7 +169,7 @@ export const ProjectsTsViewer: React.FC<CodeViewerProps> = ({
                 <span className="font-bold text-amber-500">[{idx + 1}] {p.title}</span>
                 <button
                   onClick={() => onOpenProject(p.id)}
-                  className="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/40 text-xs flex items-center gap-1 hover:bg-blue-500/30 transition-all cursor-pointer"
+                  className="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/40 text-xs flex items-center gap-1 hover:bg-blue-500/30 transition-colors duration-150 cursor-pointer"
                 >
                   <Play className="w-2.5 h-2.5 fill-blue-400" />
                   <span>inspect('{p.id}')</span>
@@ -272,7 +272,7 @@ export const ContactShViewer: React.FC<CodeViewerProps> = ({
         </span>
         <button
           onClick={() => onRunTerminalCommand('contact')}
-          className="px-2.5 py-1 rounded bg-amber-500 text-slate-950 font-bold text-xs flex items-center gap-1 cursor-pointer hover:bg-amber-400 transition-all"
+          className="px-2.5 py-1 rounded bg-amber-500 text-slate-950 font-bold text-xs flex items-center gap-1 cursor-pointer hover:bg-amber-400 transition-colors duration-150"
         >
           <Play className="w-3 h-3 fill-slate-950" />
           <span>Execute Script</span>

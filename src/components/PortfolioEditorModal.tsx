@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Save, Sparkles, User, Briefcase, GraduationCap, Code2, Layers, RotateCcw } from 'lucide-react';
 import { PortfolioData, ThemeMode } from '../types';
+import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 
 interface PortfolioEditorModalProps {
@@ -38,10 +39,16 @@ export const PortfolioEditorModal: React.FC<PortfolioEditorModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className={`relative w-full max-w-3xl max-h-[90vh] rounded-2xl border shadow-2xl flex flex-col overflow-hidden ${
-        isDark ? 'bg-[#0f1118] border-[#22273d] text-slate-200' : 'bg-white border-slate-200 text-slate-800'
-      }`}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-xs">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.96 }}
+        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+        className={`relative w-full max-w-3xl max-h-[90vh] rounded-2xl border shadow-2xl flex flex-col overflow-hidden gpu-layer ${
+          isDark ? 'bg-[#0f1118] border-[#22273d] text-slate-200' : 'bg-white border-slate-200 text-slate-800'
+        }`}
+      >
         {/* Header */}
         <div className={`px-5 py-4 border-b flex items-center justify-between ${
           isDark ? 'bg-[#141724] border-[#1f2438]' : 'bg-slate-50 border-slate-200'
@@ -512,7 +519,7 @@ export const PortfolioEditorModal: React.FC<PortfolioEditorModalProps> = ({
               </button>
               <button
                 type="submit"
-                className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-md"
+                className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg text-xs flex items-center gap-1.5 transition-colors duration-150 cursor-pointer shadow-md"
               >
                 <Save className="w-4 h-4" />
                 <span>Save & Sync All Modes</span>
@@ -520,7 +527,7 @@ export const PortfolioEditorModal: React.FC<PortfolioEditorModalProps> = ({
             </div>
           </div>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 };

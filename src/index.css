@@ -1,6 +1,11 @@
 @import "tailwindcss";
 
 @layer base {
+  :root {
+    --ease-butter: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
   html {
     scroll-behavior: smooth;
     text-rendering: optimizeLegibility;
@@ -13,18 +18,31 @@
     overflow-x: hidden;
   }
 
-  /* GPU acceleration for butter-smooth 60/90/120/144Hz interactions */
   * {
     -webkit-tap-highlight-color: transparent;
   }
+}
+
+/* GPU acceleration for 60fps locked interactions */
+.gpu-layer {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.animating {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 /* High performance smooth rendering */
 .smooth-gpu {
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   perspective: 1000px;
-  will-change: transform, opacity;
 }
 
 /* Custom modern scrollbars */
@@ -61,61 +79,65 @@
 .syn-tag { color: #a78bfa; }       /* Purple */
 .syn-prop { color: #93c5fd; }      /* Light Blue */
 
-/* Spin slow animation for theme sunburst */
-@keyframes spin-slow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin-slow {
-  animation: spin-slow 12s linear infinite;
-}
-
-/* Water Wave Theme Switch Progressive Frosted Blur */
-@keyframes water-theme-blur {
+/* Water Wave Theme Switch Compositor-Only Opacity Fade */
+@keyframes water-theme-fade {
   0% {
-    backdrop-filter: blur(0px);
-    -webkit-backdrop-filter: blur(0px);
     opacity: 0;
   }
-  32% {
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    opacity: 1;
-  }
-  48% {
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    opacity: 0.95;
+  40% {
+    opacity: 0.9;
   }
   100% {
-    backdrop-filter: blur(0px);
-    -webkit-backdrop-filter: blur(0px);
     opacity: 0;
   }
 }
 
 .water-theme-blur-overlay {
-  animation: water-theme-blur 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: water-theme-fade 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity;
 }
 
-/* Ultra-sleek Glassmorphism Utility Classes */
+/* Ultra-sleek Glassmorphism Utility Classes (with mobile fallback) */
 .glass-card-dark {
-  background: rgba(13, 16, 29, 0.45);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(13, 16, 29, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.28);
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.25);
+  transform: translateZ(0);
 }
 
 .glass-card-light {
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 255, 255, 0.7);
-  box-shadow: 0 8px 28px 0 rgba(148, 163, 184, 0.14);
+  box-shadow: 0 4px 16px 0 rgba(148, 163, 184, 0.12);
+  transform: translateZ(0);
+}
+
+/* Mobile optimizations: lighter blur for weak GPUs */
+@media (max-width: 640px) {
+  .glass-card-dark {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  .glass-card-light {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+}
+
+/* Reduced motion preference respect */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

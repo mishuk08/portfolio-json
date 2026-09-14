@@ -1,5 +1,6 @@
 import React from 'react';
 import { X, ExternalLink, Github, CheckCircle, Layers, Cpu, Sparkles, Terminal } from 'lucide-react';
+import { motion } from 'motion/react';
 import { Project } from '../types';
 
 interface ProjectModalProps {
@@ -12,8 +13,14 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, on
   if (!project) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
-      <div className="bg-[#10121a] border border-[#262b40] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl text-slate-200 font-sans">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+        className="bg-[#10121a] border border-[#262b40] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl text-slate-200 font-sans gpu-layer"
+      >
         {/* Header Bar */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#1f2438] sticky top-0 bg-[#10121a]/95 backdrop-blur-md z-10">
           <div className="flex items-center gap-2">
@@ -116,7 +123,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, on
             </button>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

@@ -64,7 +64,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   return (
-    <aside className={`w-full md:w-56 border-b md:border-b-0 md:border-r flex flex-col max-h-[70vh] md:max-h-full h-auto md:h-full select-none text-xs font-mono shrink-0 transition-all duration-300 shadow-lg md:shadow-none z-30 ${
+    <aside className={`w-full md:w-56 border-b md:border-b-0 md:border-r flex flex-col max-h-[70vh] md:max-h-full h-auto md:h-full select-none text-xs font-mono shrink-0 transition-colors duration-200 gpu-layer shadow-lg md:shadow-none z-30 ${
       isDark ? 'bg-[#0f1016] border-[#1e2232]' : 'bg-slate-50 border-slate-200'
     }`}>
       {/* Optional Mobile Close header */}
@@ -104,7 +104,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     setActiveTab('portfolio.json');
                     handleSectionClick('json-root');
                   }}
-                  className={`w-full flex items-center justify-between px-3 py-1.5 rounded-sm text-left transition-all cursor-pointer ${
+                  className={`w-full flex items-center justify-between px-3 py-1.5 rounded-sm text-left transition-colors duration-150 cursor-pointer ${
                     activeTab === 'portfolio.json'
                       ? (isDark 
                           ? 'bg-amber-500/15 text-amber-300 font-semibold border-l-2 border-l-amber-400' 
@@ -150,7 +150,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {/* Terminal Item */}
               <button
                 onClick={() => setActiveTab('terminal')}
-                className={`w-full flex items-center justify-between px-3 py-1.5 rounded-sm text-left transition-all cursor-pointer mt-2 ${
+                className={`w-full flex items-center justify-between px-3 py-1.5 rounded-sm text-left transition-colors duration-150 cursor-pointer mt-2 ${
                   activeTab === 'terminal'
                     ? (isDark 
                         ? 'bg-emerald-500/15 text-emerald-300 font-semibold border-l-2 border-l-emerald-400' 

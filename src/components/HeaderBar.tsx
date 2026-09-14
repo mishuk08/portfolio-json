@@ -77,7 +77,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           {viewMode === 'editor' && (
             <button
               onClick={onOpenTerminal}
-              className={`px-2 py-1 sm:px-2.5 sm:py-1 rounded-lg text-xs font-mono font-semibold flex items-center gap-1.5 transition-all cursor-pointer border ${
+              className={`px-2 py-1 sm:px-2.5 sm:py-1 rounded-lg text-xs font-mono font-semibold flex items-center gap-1.5 transition-colors duration-150 cursor-pointer border ${
                 activeFileName === 'terminal'
                   ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-xs'
                   : (isDark
@@ -94,7 +94,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           {/* Light / Dark Mode Toggle Button */}
           <button
             onClick={(e) => toggleThemeMode(e)}
-            className={`p-1.5 sm:px-2 sm:py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer border active:scale-95 ${
+            className={`p-1.5 sm:px-2 sm:py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors duration-150 cursor-pointer border active:scale-95 ${
               isDark
                 ? 'bg-slate-800/80 border-slate-700/70 text-amber-300 hover:bg-slate-700 hover:text-amber-200'
                 : 'bg-amber-100/80 border-amber-300 text-amber-900 hover:bg-amber-200'
@@ -107,7 +107,8 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
                   key="dark-sun"
                   initial={{ rotate: -90, scale: 0.8 }}
                   animate={{ rotate: 0, scale: 1 }}
-                  transition={{ duration: 0.3 }}
+                  transition={{ duration: 0.25, ease: [0.25, 0.8, 0.25, 1] }}
+                  className="gpu-layer flex items-center justify-center"
                 >
                   <Sun className="w-3.5 h-3.5 text-amber-400" />
                 </motion.div>
@@ -119,7 +120,8 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
                   key="light-moon"
                   initial={{ rotate: 90, scale: 0.8 }}
                   animate={{ rotate: 0, scale: 1 }}
-                  transition={{ duration: 0.3 }}
+                  transition={{ duration: 0.25, ease: [0.25, 0.8, 0.25, 1] }}
+                  className="gpu-layer flex items-center justify-center"
                 >
                   <Moon className="w-3.5 h-3.5 text-slate-800" />
                 </motion.div>
@@ -131,7 +133,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           {/* SINGLE GUI / JSON Mode Switch Button */}
           <button
             onClick={toggleViewMode}
-            className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 border border-amber-400 transition-all shadow-sm cursor-pointer active:scale-95"
+            className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 border border-amber-400 transition-[background-color,border-color,transform] duration-150 shadow-sm cursor-pointer active:scale-95 gpu-layer"
             title={viewMode === 'preview' ? 'Switch to JSON / Code Mode' : 'Switch to GUI / Live Mode'}
           >
             {viewMode === 'preview' ? (

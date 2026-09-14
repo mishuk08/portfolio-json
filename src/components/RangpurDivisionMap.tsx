@@ -51,7 +51,7 @@ export const RangpurDivisionMap: React.FC<RangpurDivisionMapProps> = ({
   }, []);
 
   return (
-    <div className={`mt-8 rounded-3xl border overflow-hidden transition-all duration-300 backdrop-blur-2xl shadow-xl ${
+    <div className={`mt-8 rounded-3xl border overflow-hidden transition-colors duration-200 backdrop-blur-2xl shadow-xl ${
       isDark
         ? 'bg-[#0f111c]/90 border-[#262c45]'
         : 'bg-white/95 border-slate-200 shadow-[0_16px_40px_rgba(245,158,11,0.06)]'
@@ -72,7 +72,7 @@ export const RangpurDivisionMap: React.FC<RangpurDivisionMapProps> = ({
 
         {/* Floating Rangpur City Highlight Pin Badge */}
         <div className="absolute top-4 left-4 z-10 pointer-events-none">
-          <div className={`px-3.5 py-2 rounded-2xl border flex items-center gap-2.5 shadow-xl backdrop-blur-md transition-all ${
+          <div className={`px-3.5 py-2 rounded-2xl border flex items-center gap-2.5 shadow-xl backdrop-blur-md transition-colors duration-200 gpu-layer ${
             isDark 
               ? 'bg-[#0b0d17]/90 border-amber-500/50 text-slate-100' 
               : 'bg-white/95 border-amber-400 text-slate-900'
@@ -99,7 +99,7 @@ export const RangpurDivisionMap: React.FC<RangpurDivisionMapProps> = ({
             href="https://www.google.com/maps/place/Rangpur,+Bangladesh/@25.7439,89.2752,12z"
             target="_blank"
             rel="noreferrer"
-            className={`px-3 py-2 rounded-2xl border text-xs font-semibold flex items-center gap-1.5 shadow-lg backdrop-blur-md transition-all cursor-pointer ${
+            className={`px-3 py-2 rounded-2xl border text-xs font-semibold flex items-center gap-1.5 shadow-lg backdrop-blur-md transition-colors duration-200 cursor-pointer ${
               isDark
                 ? 'bg-[#0f111c]/90 hover:bg-[#191d30] border-slate-700 text-slate-200 hover:text-amber-400'
                 : 'bg-white/95 hover:bg-slate-50 border-slate-200 text-slate-700 hover:text-amber-600'
