@@ -55,7 +55,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
         <div className="flex items-center justify-between px-5 py-4 border-b border-[#202538] bg-[#141724]">
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-amber-400" />
-            <h3 className="font-bold text-slate-100 text-base">Hire / Contact Mishuk Babu</h3>
+            <h3 className="font-bold text-slate-100 text-base">Hire / Contact Mishuk Babu Shoukhin</h3>
           </div>
           <button
             onClick={onClose}
@@ -86,7 +86,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
             {/* Direct Connect Chips */}
             <div className="grid grid-cols-2 gap-2 text-[11px] font-mono">
               <a
-                href={portfolioData.developer.socials.whatsapp}
+                href={portfolioData.developer.socials.whatsapp || "https://wa.link/0xyfj9"}
                 target="_blank"
                 rel="noreferrer"
                 className="p-2 rounded-lg bg-[#0b0c10] border border-[#22273d] hover:border-emerald-500/40 text-emerald-400 flex items-center gap-1.5 transition-colors"

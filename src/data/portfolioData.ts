@@ -13,7 +13,7 @@ export const portfolioData: PortfolioData = {
       avatar1Opt || "/avatar_optimized.webp",
       avatar2Opt || "/avatar2_optimized.webp"
     ],
-    email: "mdmishukbabu192@gmail.com",
+    email: "mishukbabushoukhin@gmail.com",
     location: "Rangpur, Bangladesh",
     yearsOfExperience: 1,
     bio: [
@@ -27,7 +27,7 @@ export const portfolioData: PortfolioData = {
       facebook: "https://www.facebook.com/mishuk008",
       instagram: "https://www.instagram.com/mi_sh_uk_008",
       twitter: "https://x.com/mishuk_008",
-      whatsapp: "https://wa.me/?text=Hi%20Mishuk%20Babu%20Shoukhin%20(@mishuk_babu_shoukhin)%2C%20contacting%20from%20portfolio",
+      whatsapp: "https://wa.link/0xyfj9",
       whatsappUsername: "mishuk_babu_shoukhin",
       portfolio: "https://robosuperior.org"
     }
