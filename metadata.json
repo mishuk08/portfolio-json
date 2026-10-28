@@ -1,6 +1,55 @@
+
 {
-  "name": "Mishuk Babu Shoukhin | Web & Software Developer, Rangpur, Bangladesh",
-  "description": "Portfolio of Mishuk Babu Shoukhin - Web Developer Bangladesh. Building fast, modern, and scalable software applications.",
+  "name": "Mishuk Babu Shoukhin (MISHUK) | Official Portfolio | Web & Software Developer in Rangpur, Bangladesh",
+  "description": "Explore the official portfolio of Mishuk Babu Shoukhin, professionally known as MISHUK, a Web Developer and Software Developer from Rangpur, Bangladesh. Discover his projects, technical skills, software development work, web applications, and AI-powered digital experiences.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ],
+  "metadata": {
+    "title": "Mishuk Babu Shoukhin (MISHUK) | Official Developer Portfolio",
+    "description": "Official portfolio of Mishuk Babu Shoukhin (MISHUK), Web & Software Developer in Rangpur, Bangladesh. Explore projects, skills, web development, software engineering, and AI integrations.",
+    "author": "Mishuk Babu Shoukhin",
+    "creator": "Mishuk Babu Shoukhin",
+    "applicationName": "MISHUK Portfolio",
+    "keywords": [
+      "Mishuk Babu Shoukhin",
+      "Mishuk Shoukhin",
+      "Mishuk Babu",
+      "MISHUK",
+      "Mishuk Developer",
+      "Mishuk Babu Shoukhin Portfolio",
+      "Mishuk Portfolio",
+      "Mishuk Web Developer",
+      "Mishuk Software Developer",
+      "Web Developer Bangladesh",
+      "Software Developer Bangladesh",
+      "Web Developer Rangpur",
+      "Software Developer Rangpur",
+      "Bangladeshi Developer",
+      "Frontend Developer Bangladesh",
+      "Web Application Developer",
+      "Software Engineering",
+      "AI-Powered Web Applications"
+    ],
+    "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+    "canonical": "https://mishuk-info.vercel.app/",
+    "language": "en",
+    "locale": "en_BD",
+    "themeColor": "#0A0A0B",
+    "colorScheme": "dark light",
+    "openGraph": {
+      "type": "website",
+      "title": "Mishuk Babu Shoukhin (MISHUK) | Official Portfolio",
+      "description": "Discover the projects, skills, and software development work of Mishuk Babu Shoukhin, a Web & Software Developer from Rangpur, Bangladesh.",
+      "url": "https://mishuk-info.vercel.app/",
+      "siteName": "MISHUK Portfolio",
+      "locale": "en_BD"
+    },
+    "twitter": {
+      "card": "summary_large_image",
+      "title": "Mishuk Babu Shoukhin (MISHUK) | Developer Portfolio",
+      "description": "Web development, software engineering, projects, and AI-powered digital experiences by Mishuk Babu Shoukhin."
+    }
+  }
 }
