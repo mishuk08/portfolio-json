@@ -1,7 +1,6 @@
 import { PortfolioData } from '../types';
 import { portfolioData as defaultPortfolioData } from '../data/portfolioData';
-import jsPDF from 'jspdf';
-import confetti from 'canvas-confetti';
+import { fireConfetti } from './confetti';
 import avatarImg from '../assets/avatar_optimized.webp';
 
 /**
@@ -60,6 +59,7 @@ export async function downloadDeveloperCv(customData?: PortfolioData) {
   const data = customData || defaultPortfolioData;
 
   try {
+    const { default: jsPDF } = await import('jspdf');
     const doc = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
@@ -289,7 +289,7 @@ export async function downloadDeveloperCv(customData?: PortfolioData) {
     const filename = `${data.developer.name.replace(/\s+/g, '_')}_CV.pdf`;
     doc.save(filename);
 
-    confetti({
+    fireConfetti({
       particleCount: 80,
       spread: 70,
       origin: { y: 0.6 }

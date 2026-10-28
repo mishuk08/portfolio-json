@@ -3,32 +3,33 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { HeaderBar } from './components/HeaderBar';
 import { TabBar } from './components/TabBar';
 import { Sidebar } from './components/Sidebar';
-import { JsonCodeViewer } from './components/JsonCodeViewer';
-import { 
-  AboutTsxViewer, 
-  ProjectsTsViewer, 
-  SkillsJsonViewer, 
-  ExperienceJsonViewer, 
-  ContactShViewer 
-} from './components/CodeViewers';
-import { TerminalComponent } from './components/Terminal';
 import { LivePreview } from './components/LivePreview';
-import { ProjectModal } from './components/ProjectModal';
-import { ContactModal } from './components/ContactModal';
-import { PortfolioEditorModal } from './components/PortfolioEditorModal';
-import { CvPreviewModal } from './components/CvPreviewModal';
 import { OpeningAnimation } from './components/OpeningAnimation';
-import { ModeTransitionOverlay } from './components/ModeTransitionOverlay';
-import { ThemeSwitchAnimation } from './components/ThemeSwitchAnimation';
 import { portfolioData as initialPortfolioData } from './data/portfolioData';
 import { EditorTabId, ViewMode, ThemeMode, Project, PortfolioData } from './types';
 import { syncGithubProjects } from './utils/githubSync';
 import { useAnimatedFavicon } from './hooks/useAnimatedFavicon';
-import confetti from 'canvas-confetti';
+import { fireConfetti } from './utils/confetti';
+
+// Lazy-load non-critical components and modals to dramatically shrink initial main-thread bundle
+const JsonCodeViewer = lazy(() => import('./components/JsonCodeViewer').then(m => ({ default: m.JsonCodeViewer })));
+const AboutTsxViewer = lazy(() => import('./components/CodeViewers').then(m => ({ default: m.AboutTsxViewer })));
+const ProjectsTsViewer = lazy(() => import('./components/CodeViewers').then(m => ({ default: m.ProjectsTsViewer })));
+const SkillsJsonViewer = lazy(() => import('./components/CodeViewers').then(m => ({ default: m.SkillsJsonViewer })));
+const ExperienceJsonViewer = lazy(() => import('./components/CodeViewers').then(m => ({ default: m.ExperienceJsonViewer })));
+const ContactShViewer = lazy(() => import('./components/CodeViewers').then(m => ({ default: m.ContactShViewer })));
+
+const TerminalComponent = lazy(() => import('./components/Terminal').then(m => ({ default: m.TerminalComponent })));
+const ProjectModal = lazy(() => import('./components/ProjectModal').then(m => ({ default: m.ProjectModal })));
+const ContactModal = lazy(() => import('./components/ContactModal').then(m => ({ default: m.ContactModal })));
+const PortfolioEditorModal = lazy(() => import('./components/PortfolioEditorModal').then(m => ({ default: m.PortfolioEditorModal })));
+const CvPreviewModal = lazy(() => import('./components/CvPreviewModal').then(m => ({ default: m.CvPreviewModal })));
+const ModeTransitionOverlay = lazy(() => import('./components/ModeTransitionOverlay').then(m => ({ default: m.ModeTransitionOverlay })));
+const ThemeSwitchAnimation = lazy(() => import('./components/ThemeSwitchAnimation').then(m => ({ default: m.ThemeSwitchAnimation })));
 
 export default function App() {
   // Website opens in GUI mode by default
@@ -56,8 +57,19 @@ export default function App() {
   // Dynamic animated browser tab favicon with user's photo and glowing neon aura
   useAnimatedFavicon(data.developer.avatar || '/avatar_optimized.webp');
 
-  // Opening animation state
-  const [isAppLoading, setIsAppLoading] = useState<boolean>(true);
+  // Opening animation state - instant skip if user already booted or prefers reduced motion
+  const [isAppLoading, setIsAppLoading] = useState<boolean>(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        if (sessionStorage.getItem('mishuk_has_booted') === '1' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          return false;
+        }
+      }
+    } catch {
+      // ignore
+    }
+    return true;
+  });
 
   // Load custom photo from localStorage if user previously uploaded one
   useEffect(() => {
@@ -106,7 +118,7 @@ export default function App() {
   // Full-screen mode transition (JSON <-> GUI) with 0-100% circle progress
   const [transitioningMode, setTransitioningMode] = useState<ViewMode | null>(null);
 
-  // Sync projects from GitHub @mishuk08 on startup (excluding mishuk08 and RS_Employ_Hosting)
+  // Sync projects from GitHub @mishuk08 - deferred to idle time to preserve initial paint speed
   useEffect(() => {
     let isMounted = true;
 
@@ -128,10 +140,11 @@ export default function App() {
       }
     }
 
-    loadGithubRepos();
+    const timer = setTimeout(loadGithubRepos, 2000);
 
     return () => {
       isMounted = false;
+      clearTimeout(timer);
     };
   }, []);
 
@@ -208,7 +221,7 @@ export default function App() {
     downloadAnchor.click();
     downloadAnchor.remove();
 
-    confetti({
+    fireConfetti({
       particleCount: 50,
       spread: 60,
       origin: { y: 0.7 }
@@ -398,7 +411,9 @@ export default function App() {
                   </div>
                 ) : (
                   <div className="h-full w-full overflow-hidden flex flex-col">
-                    {renderCodeEditor()}
+                    <Suspense fallback={<div className="p-4 text-xs font-mono text-slate-500">Loading editor environment...</div>}>
+                      {renderCodeEditor()}
+                    </Suspense>
                   </div>
                 )}
               </div>
@@ -406,14 +421,16 @@ export default function App() {
               {/* Bottom Overlay Terminal (When opened, occupies a sleek lower portion of the screen with close & fullscreen controls) */}
               {isTerminalBottomOpen && (
                 <div className="w-full shrink-0 z-40">
-                  <TerminalComponent
-                    onOpenProject={(id) => setSelectedProjectId(id)}
-                    onOpenContact={() => setIsContactOpen(true)}
-                    initialCommand={terminalCommand}
-                    themeMode={themeMode}
-                    isOverlay={true}
-                    onClose={() => setIsTerminalBottomOpen(false)}
-                  />
+                  <Suspense fallback={<div className="p-4 bg-slate-950 text-xs font-mono text-slate-400">Loading terminal...</div>}>
+                    <TerminalComponent
+                      onOpenProject={(id) => setSelectedProjectId(id)}
+                      onOpenContact={() => setIsContactOpen(true)}
+                      initialCommand={terminalCommand}
+                      themeMode={themeMode}
+                      isOverlay={true}
+                      onClose={() => setIsTerminalBottomOpen(false)}
+                    />
+                  </Suspense>
                 </div>
               )}
             </div>
@@ -432,54 +449,60 @@ export default function App() {
       )}
 
       {/* Brand New Modern Theme Switch Radial Ripple & Celestial HUD Animation */}
-      <ThemeSwitchAnimation
-        isActive={themeTransition.isActive}
-        targetTheme={themeTransition.targetTheme}
-        origin={themeTransition.origin}
-        onComplete={() => setThemeTransition(prev => ({ ...prev, isActive: false }))}
-      />
+      <Suspense fallback={null}>
+        <ThemeSwitchAnimation
+          isActive={themeTransition.isActive}
+          targetTheme={themeTransition.targetTheme}
+          origin={themeTransition.origin}
+          onComplete={() => setThemeTransition(prev => ({ ...prev, isActive: false }))}
+        />
+      </Suspense>
 
       {/* Fullscreen JSON <-> GUI Mode Transition Circular Loading Animation */}
       {transitioningMode && (
-        <ModeTransitionOverlay
-          targetMode={transitioningMode}
-          themeMode={themeMode}
-          onApplyMode={() => {
-            if (transitioningMode) {
-              setViewMode(transitioningMode);
-            }
-          }}
-          onComplete={handleModeTransitionComplete}
-        />
+        <Suspense fallback={null}>
+          <ModeTransitionOverlay
+            targetMode={transitioningMode}
+            themeMode={themeMode}
+            onApplyMode={() => {
+              if (transitioningMode) {
+                setViewMode(transitioningMode);
+              }
+            }}
+            onComplete={handleModeTransitionComplete}
+          />
+        </Suspense>
       )}
 
       {/* Interactive Modals */}
-      <ProjectModal
-        project={selectedProject}
-        onClose={() => setSelectedProjectId(null)}
-        onOpenContact={() => setIsContactOpen(true)}
-      />
+      <Suspense fallback={null}>
+        <ProjectModal
+          project={selectedProject}
+          onClose={() => setSelectedProjectId(null)}
+          onOpenContact={() => setIsContactOpen(true)}
+        />
 
-      <ContactModal
-        isOpen={isContactOpen}
-        onClose={() => setIsContactOpen(false)}
-      />
+        <ContactModal
+          isOpen={isContactOpen}
+          onClose={() => setIsContactOpen(false)}
+        />
 
-      <CvPreviewModal
-        isOpen={isCvModalOpen}
-        onClose={() => setIsCvModalOpen(false)}
-        portfolioData={data}
-        themeMode={themeMode}
-      />
+        <CvPreviewModal
+          isOpen={isCvModalOpen}
+          onClose={() => setIsCvModalOpen(false)}
+          portfolioData={data}
+          themeMode={themeMode}
+        />
 
-      <PortfolioEditorModal
-        isOpen={isEditorModalOpen}
-        onClose={() => setIsEditorModalOpen(false)}
-        portfolioData={data}
-        onSave={(updatedData) => setData(updatedData)}
-        onReset={() => setData(initialPortfolioData)}
-        themeMode={themeMode}
-      />
+        <PortfolioEditorModal
+          isOpen={isEditorModalOpen}
+          onClose={() => setIsEditorModalOpen(false)}
+          portfolioData={data}
+          onSave={(updatedData) => setData(updatedData)}
+          onReset={() => setData(initialPortfolioData)}
+          themeMode={themeMode}
+        />
+      </Suspense>
     </div>
   );
 }

@@ -7,9 +7,13 @@ import { useEffect } from 'react';
  */
 export function useAnimatedFavicon(avatarSrc: string = '/favicon.png') {
   useEffect(() => {
-    // Only run in browser environment
     if (typeof window === 'undefined') return;
 
+    // Check for mobile / touch device or reduced motion
+    const isMobileOrTouch = window.innerWidth < 768 || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+    const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Ensure link exists
     let link: HTMLLinkElement | null = document.getElementById('dynamic-favicon') as HTMLLinkElement;
     if (!link) {
       link = document.createElement('link');
@@ -19,31 +23,46 @@ export function useAnimatedFavicon(avatarSrc: string = '/favicon.png') {
       document.head.appendChild(link);
     }
 
-    const canvas = document.createElement('canvas');
-    canvas.width = 64;
-    canvas.height = 64;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    // On mobile or reduced motion, set static favicon once and avoid main-thread animation loop
+    if (isMobileOrTouch || prefersReducedMotion) {
+      if (link && !link.href.includes(avatarSrc)) {
+        link.href = avatarSrc;
+      }
+      return;
+    }
 
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = avatarSrc;
-
-    let angle = 0;
     let animId: number | null = null;
-    let lastTime = 0;
-    const fpsInterval = 1000 / 12; // 12 FPS is smooth for favicons while extremely lightweight
+    let isCancelled = false;
 
-    const render = (time: number) => {
-      animId = requestAnimationFrame(render);
+    // Defer start until main thread is completely idle after page load
+    const startAnimation = () => {
+      if (isCancelled) return;
 
-      // Pause when tab is not active to conserve CPU & battery
-      if (document.hidden) return;
+      const canvas = document.createElement('canvas');
+      canvas.width = 64;
+      canvas.height = 64;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
 
-      if (time - lastTime < fpsInterval) return;
-      lastTime = time;
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.src = avatarSrc;
 
-      angle = (angle + 0.08) % (Math.PI * 2);
+      let angle = 0;
+      let lastTime = 0;
+      const fpsInterval = 1000 / 5; // 5 FPS is gentle on CPU and smooth for 16px-32px browser tab
+
+      const render = (time: number) => {
+        if (isCancelled) return;
+        animId = requestAnimationFrame(render);
+
+        // Pause when tab is not active to conserve CPU & battery
+        if (document.hidden) return;
+
+        if (time - lastTime < fpsInterval) return;
+        lastTime = time;
+
+        angle = (angle + 0.12) % (Math.PI * 2);
 
       ctx.clearRect(0, 0, 64, 64);
 
@@ -96,19 +115,33 @@ export function useAnimatedFavicon(avatarSrc: string = '/favicon.png') {
       if (link) {
         link.href = canvas.toDataURL('image/png');
       }
+      };
+
+      img.onload = () => {
+        if (!isCancelled) animId = requestAnimationFrame(render);
+      };
+
+      if (img.complete) {
+        animId = requestAnimationFrame(render);
+      }
     };
 
-    img.onload = () => {
-      animId = requestAnimationFrame(render);
-    };
+    let idleHandle: any = null;
+    let timerHandle: any = null;
 
-    // If already loaded from cache
-    if (img.complete) {
-      animId = requestAnimationFrame(render);
+    if ('requestIdleCallback' in window) {
+      idleHandle = (window as any).requestIdleCallback(startAnimation, { timeout: 3000 });
+    } else {
+      timerHandle = setTimeout(startAnimation, 2000);
     }
 
     return () => {
+      isCancelled = true;
       if (animId) cancelAnimationFrame(animId);
+      if (idleHandle && 'cancelIdleCallback' in window) {
+        (window as any).cancelIdleCallback(idleHandle);
+      }
+      if (timerHandle) clearTimeout(timerHandle);
     };
   }, [avatarSrc]);
 }

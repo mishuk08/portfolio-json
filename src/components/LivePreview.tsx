@@ -34,12 +34,15 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { PortfolioData, ThemeMode } from '../types';
 import { ElloChatWidget } from './ElloChatWidget';
-import { RangpurDivisionMap } from './RangpurDivisionMap';
 import { downloadDeveloperCv } from '../utils/cvDownload';
 import avatar1Opt from '../assets/avatar_optimized.webp';
 import avatar2Opt from '../assets/avatar2_optimized.webp';
-import confetti from 'canvas-confetti';
+import { fireConfetti } from '../utils/confetti';
 import { syncGoogleDrivePhotos, getCachedPhotos, DEFAULT_PHOTOS } from '../services/driveSync';
+
+const RangpurDivisionMap = React.lazy(() => 
+  import('./RangpurDivisionMap').then(m => ({ default: m.RangpurDivisionMap }))
+);
 
 interface LivePreviewProps {
   portfolioData: PortfolioData;
@@ -64,15 +67,12 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   const [isPhotoPaused, setIsPhotoPaused] = useState(false);
-  const [syncedPhotos, setSyncedPhotos] = useState<string[]>(() => {
-    const cached = getCachedPhotos();
-    return cached.length > 0 ? cached : [
-      avatar1Opt || '/avatar_optimized.webp',
-      avatar2Opt || '/avatar2_optimized.webp'
-    ];
-  });
+  const [syncedPhotos, setSyncedPhotos] = useState<string[]>(() => [
+    avatar1Opt || '/avatar_optimized.webp',
+    avatar2Opt || '/avatar2_optimized.webp'
+  ]);
 
-  // Dynamic Google Drive Folder Real-time Synchronizer
+  // Dynamic Google Drive Folder Real-time Synchronizer - deferred to avoid competing with initial LCP
   useEffect(() => {
     let isMounted = true;
 
@@ -81,7 +81,6 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         const latest = await syncGoogleDrivePhotos();
         if (isMounted && latest && latest.length > 0) {
           setSyncedPhotos(prev => {
-            // Check if lists are different
             if (JSON.stringify(prev) !== JSON.stringify(latest)) {
               return latest;
             }
@@ -93,10 +92,9 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
       }
     };
 
-    // Initial background sync
-    doSync();
+    // Defer initial background sync so critical initial paint completes instantly
+    const initialTimer = setTimeout(doSync, 2500);
 
-    // Auto sync on window focus & tab visibility (e.g. when user returns after uploading to Google Drive)
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         doSync();
@@ -106,11 +104,11 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
     window.addEventListener('focus', doSync);
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    // Periodic live sync every 25 seconds for real-time automatic detection
-    const syncInterval = setInterval(doSync, 25000);
+    const syncInterval = setInterval(doSync, 30000);
 
     return () => {
       isMounted = false;
+      clearTimeout(initialTimer);
       window.removeEventListener('focus', doSync);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       clearInterval(syncInterval);
@@ -120,15 +118,19 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
   // Combined active photo playlist
   const photoList = (syncedPhotos.length > 0 ? syncedPhotos : DEFAULT_PHOTOS).filter(Boolean);
 
-  // Preload photos in browser cache for instant instant-switch rendering
+  // Preload secondary carousel photos during browser idle time only
   useEffect(() => {
-    photoList.forEach(url => {
-      if (url && typeof window !== 'undefined') {
-        const img = new Image();
-        img.referrerPolicy = 'no-referrer';
-        img.src = url;
-      }
-    });
+    const idleTimer = setTimeout(() => {
+      photoList.slice(1).forEach(url => {
+        if (url && typeof window !== 'undefined') {
+          const img = new Image();
+          img.referrerPolicy = 'no-referrer';
+          img.src = url;
+        }
+      });
+    }, 3500);
+
+    return () => clearTimeout(idleTimer);
   }, [photoList]);
 
   // Animated cyclic transition through Drive photos (each photo stays 4.5 seconds)
@@ -154,7 +156,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
 
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    confetti({
+    fireConfetti({
       particleCount: 90,
       spread: 70,
       origin: { y: 0.6 }
@@ -232,38 +234,20 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         />
       </div>
       
-      {/* Background ambient lighting with dynamic floating animations */}
+      {/* Background ambient lighting with GPU-accelerated CSS animations (Compositor Thread) */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <motion.div 
-          animate={{ 
-            x: [0, 40, 0], 
-            y: [0, -30, 0],
-            scale: [1, 1.2, 1] 
-          }}
-          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-          className={`absolute -top-40 -left-40 w-[480px] h-[480px] rounded-full blur-[140px] opacity-25 ${
+        <div 
+          className={`absolute -top-40 -left-40 w-[480px] h-[480px] rounded-full blur-[140px] opacity-25 animate-float-1 ${
             isDark ? 'bg-amber-500' : 'bg-amber-300'
           }`} 
         />
-        <motion.div 
-          animate={{ 
-            x: [0, -50, 0], 
-            y: [0, 40, 0],
-            scale: [1, 1.25, 1] 
-          }}
-          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-          className={`absolute top-1/3 -right-40 w-[500px] h-[500px] rounded-full blur-[160px] opacity-20 ${
+        <div 
+          className={`absolute top-1/3 -right-40 w-[500px] h-[500px] rounded-full blur-[160px] opacity-20 animate-float-2 ${
             isDark ? 'bg-cyan-500' : 'bg-cyan-300'
           }`} 
         />
-        <motion.div 
-          animate={{ 
-            x: [0, 35, 0], 
-            y: [0, -45, 0],
-            scale: [1, 1.15, 1] 
-          }}
-          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut", delay: 4 }}
-          className={`absolute bottom-20 left-1/4 w-[460px] h-[460px] rounded-full blur-[150px] opacity-20 ${
+        <div 
+          className={`absolute bottom-20 left-1/4 w-[460px] h-[460px] rounded-full blur-[150px] opacity-20 animate-float-3 ${
             isDark ? 'bg-purple-600' : 'bg-purple-300'
           }`} 
         />
@@ -359,7 +343,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 pt-3">
                   <button
                     onClick={() => {
-                      confetti({ particleCount: 80, spread: 60 });
+                      fireConfetti({ particleCount: 80, spread: 60 });
                       onOpenContact();
                     }}
                     className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm transition-all flex items-center gap-2 shadow-lg shadow-amber-500/25 cursor-pointer active:scale-95"
@@ -419,12 +403,17 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                         : 'bg-white/90 border-amber-400 shadow-amber-400/20'
                     }`}
                   >
-                    <AnimatePresence>
+                    <AnimatePresence mode="popLayout">
                       <motion.img
                         key={activePhotoIdx}
                         src={photoList[activePhotoIdx] || '/avatar_optimized.webp'}
                         alt={`${portfolioData.developer.name} - Photo ${activePhotoIdx + 1}`}
                         referrerPolicy="no-referrer"
+                        width={192}
+                        height={192}
+                        fetchPriority={activePhotoIdx === 0 ? "high" : "auto"}
+                        loading={activePhotoIdx === 0 ? "eager" : "lazy"}
+                        decoding="async"
                         onError={(e) => {
                           // Fallback to local optimized photo if remote url fails
                           const target = e.currentTarget;
@@ -432,10 +421,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                             target.src = '/avatar_optimized.webp';
                           }
                         }}
-                        initial={{ opacity: 0, scale: 1.08, filter: 'blur(8px)' }}
-                        animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                        exit={{ opacity: 0, scale: 0.95, filter: 'blur(8px)' }}
-                        transition={{ duration: 1.0, ease: [0.4, 0, 0.2, 1] }}
+                        initial={activePhotoIdx === 0 ? false : { opacity: 0, scale: 1.05 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.96 }}
+                        transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
                         className="absolute inset-0 w-full h-full object-cover rounded-full shadow-inner"
                       />
                     </AnimatePresence>
@@ -1228,7 +1217,13 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
               viewport={{ once: true, margin: "-40px" }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              <RangpurDivisionMap themeMode={themeMode} />
+              <React.Suspense fallback={
+                <div className="mt-8 h-96 w-full rounded-3xl bg-slate-900/30 border border-slate-800 animate-pulse flex items-center justify-center text-slate-500 font-mono text-xs">
+                  Loading Rangpur Map...
+                </div>
+              }>
+                <RangpurDivisionMap themeMode={themeMode} />
+              </React.Suspense>
             </motion.div>
           </div>
 

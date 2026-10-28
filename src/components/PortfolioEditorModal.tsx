@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Save, Sparkles, User, Briefcase, GraduationCap, Code2, Layers, RotateCcw } from 'lucide-react';
 import { PortfolioData, ThemeMode } from '../types';
-import confetti from 'canvas-confetti';
+import { fireConfetti } from '../utils/confetti';
 
 interface PortfolioEditorModalProps {
   isOpen: boolean;
@@ -29,7 +29,7 @@ export const PortfolioEditorModal: React.FC<PortfolioEditorModalProps> = ({
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(formData);
-    confetti({
+    fireConfetti({
       particleCount: 70,
       spread: 60,
       origin: { y: 0.6 }

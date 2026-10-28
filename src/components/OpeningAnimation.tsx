@@ -52,16 +52,29 @@ export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
   const finishAnimation = () => {
     if (hasFinishedRef.current) return;
     hasFinishedRef.current = true;
+    try {
+      sessionStorage.setItem('mishuk_has_booted', '1');
+    } catch {
+      // Local session storage error
+    }
     setIsFadingOut(true);
     setTimeout(() => {
       onFinish();
-    }, 280);
+    }, 180);
   };
 
   useEffect(() => {
-    let isReadyOnDevice = false;
+    // Skip instantly if user prefers reduced motion or has already booted in this session
+    try {
+      if (sessionStorage.getItem('mishuk_has_booted') === '1' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        onFinish();
+        return;
+      }
+    } catch {
+      // ignore
+    }
 
-    // Fast device readiness check: fonts, DOM, and instant image preloading
+    // Fast device readiness check: fonts and instant image preloading without artificial delays
     const checkReadiness = async () => {
       try {
         if (document.fonts?.ready) {
@@ -69,20 +82,21 @@ export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
         }
         const img = new Image();
         img.src = currentAvatar;
+        if (img.complete) return;
         await new Promise((resolve) => {
           img.onload = resolve;
           img.onerror = resolve;
-          setTimeout(resolve, 400);
+          setTimeout(resolve, 100);
         });
       } catch {
         // Continue safely
       }
-      isReadyOnDevice = true;
     };
 
     checkReadiness();
 
-    const totalDuration = 1450; // 1.45s ultra-crisp opening
+    // Fast snappy 380ms high-tech boot sequence that finishes without delaying FCP/LCP
+    const totalDuration = 380;
     const startTime = performance.now();
     let animationFrameId: number;
 
@@ -92,15 +106,8 @@ export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
       const elapsed = Math.max(0, now - startTime);
       const rawProgress = Math.min(1, elapsed / totalDuration);
       
-      // Smooth high-refresh rate eased progress
       const easedProgress = easeOutCubic(rawProgress) * 100;
-      
-      let finalProgress = easedProgress;
-      if (rawProgress > 0.9 && !isReadyOnDevice && elapsed < 2200) {
-        finalProgress = 90;
-      }
-
-      const clampedPct = Math.min(100, Math.round(finalProgress));
+      const clampedPct = Math.min(100, Math.round(easedProgress));
       setProgress(clampedPct);
 
       if (clampedPct < 22) setLogIndex(0);
@@ -109,7 +116,7 @@ export const OpeningAnimation: React.FC<OpeningAnimationProps> = ({
       else if (clampedPct < 94) setLogIndex(3);
       else setLogIndex(4);
 
-      if (rawProgress >= 1 || (clampedPct >= 100 && isReadyOnDevice)) {
+      if (rawProgress >= 1 || clampedPct >= 100) {
         finishAnimation();
       } else {
         animationFrameId = requestAnimationFrame(tick);

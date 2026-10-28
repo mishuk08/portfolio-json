@@ -14,7 +14,7 @@ import {
   Github 
 } from 'lucide-react';
 import { portfolioData } from '../data/portfolioData';
-import confetti from 'canvas-confetti';
+import { fireConfetti } from '../utils/confetti';
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -36,7 +36,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    confetti({
+    fireConfetti({
       particleCount: 100,
       spread: 70,
       origin: { y: 0.6 }

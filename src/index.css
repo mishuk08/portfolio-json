@@ -119,3 +119,56 @@
   border: 1px solid rgba(255, 255, 255, 0.7);
   box-shadow: 0 8px 28px 0 rgba(148, 163, 184, 0.14);
 }
+
+/* GPU-Accelerated Hardware Offloaded Ambient Lighting Animations (Compositor Thread) */
+@keyframes float-ambient-1 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(36px, -24px, 0) scale(1.15);
+  }
+}
+
+@keyframes float-ambient-2 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-40px, 32px, 0) scale(1.2);
+  }
+}
+
+@keyframes float-ambient-3 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(28px, -36px, 0) scale(1.1);
+  }
+}
+
+.animate-float-1 {
+  animation: float-ambient-1 16s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-float-2 {
+  animation: float-ambient-2 20s ease-in-out infinite 2s;
+  will-change: transform;
+}
+
+.animate-float-3 {
+  animation: float-ambient-3 18s ease-in-out infinite 4s;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-1,
+  .animate-float-2,
+  .animate-float-3,
+  .animate-spin-slow {
+    animation: none !important;
+  }
+}
+

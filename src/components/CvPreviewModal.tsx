@@ -22,9 +22,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { PortfolioData, ThemeMode } from '../types';
-import confetti from 'canvas-confetti';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import { fireConfetti } from '../utils/confetti';
 import { downloadDeveloperCv } from '../utils/cvDownload';
 import avatarImg from '../assets/avatar_optimized.webp';
 
@@ -70,6 +68,10 @@ export const CvPreviewModal: React.FC<CvPreviewModalProps> = ({
 
     try {
       if (cvRef.current) {
+        const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
+          import('html2canvas'),
+          import('jspdf')
+        ]);
         const element = cvRef.current;
         const canvas = await html2canvas(element, {
           scale: 2,
@@ -103,7 +105,7 @@ export const CvPreviewModal: React.FC<CvPreviewModalProps> = ({
         }
 
         pdf.save(`Mishuk_Babu_Shoukhin_CV.pdf`);
-        confetti({
+        fireConfetti({
           particleCount: 80,
           spread: 60,
           origin: { y: 0.6 }

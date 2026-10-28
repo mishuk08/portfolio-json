@@ -12,9 +12,9 @@ export const VERIFIED_DRIVE_PHOTOS: string[] = [
 ];
 
 export const DEFAULT_PHOTOS: string[] = [
-  ...VERIFIED_DRIVE_PHOTOS,
   '/avatar_optimized.webp',
-  '/avatar2_optimized.webp'
+  '/avatar2_optimized.webp',
+  ...VERIFIED_DRIVE_PHOTOS
 ];
 
 // LocalStorage cache keys
@@ -27,13 +27,15 @@ export function getCachedPhotos(): string[] {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
+        // Ensure local optimized avatar is always first for instant LCP
+        const withoutLocal = parsed.filter((url: string) => !url.includes('avatar_optimized'));
+        return ['/avatar_optimized.webp', ...withoutLocal];
       }
     }
   } catch (e) {
     console.warn('Failed to read photo cache:', e);
   }
-  return [...VERIFIED_DRIVE_PHOTOS];
+  return [...DEFAULT_PHOTOS];
 }
 
 export function saveCachedPhotos(photos: string[]): void {

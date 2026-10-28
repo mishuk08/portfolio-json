@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { portfolioData } from '../data/portfolioData';
 import { ThemeMode } from '../types';
-import confetti from 'canvas-confetti';
+import { fireConfetti } from '../utils/confetti';
 
 interface TerminalProps {
   onOpenProject: (projectId: string) => void;
@@ -178,7 +178,7 @@ export const TerminalComponent: React.FC<TerminalProps> = ({
         break;
 
       case 'hire':
-        confetti({
+        fireConfetti({
           particleCount: 100,
           spread: 80,
           origin: { y: 0.6 }
