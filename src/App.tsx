@@ -332,7 +332,9 @@ export default function App() {
 
   return (
     <div className={`h-screen w-screen max-w-full flex flex-col overflow-x-hidden overflow-y-hidden font-sans ${
-      isDark ? 'bg-[#0d0e13] text-slate-200' : 'bg-slate-50 text-slate-800'
+      isDark
+        ? 'bg-gradient-to-br from-[#070913] via-[#0f152a] to-[#160f29] text-slate-200'
+        : 'bg-gradient-to-br from-[#fffaf0] via-[#eff8ff] to-[#eef2ff] text-slate-800'
     }`}>
       {/* Visual Content Wrapper */}
       <div className="flex-1 flex flex-col overflow-hidden w-full">
@@ -368,7 +370,9 @@ export default function App() {
 
           {/* View Content Area */}
           <div className={`flex-1 flex flex-col overflow-hidden w-full max-w-full ${
-            isDark ? 'bg-[#0d0e13]' : 'bg-white'
+            isDark
+              ? 'bg-gradient-to-br from-[#070913] via-[#0f152a] to-[#160f29]'
+              : 'bg-gradient-to-br from-[#fffaf0] via-[#eff8ff] to-[#eef2ff]'
           }`}>
             {/* Top Tab Bar (in JSON/Code mode) */}
             {viewMode === 'editor' && (

@@ -48,7 +48,7 @@ export const DeveloperProfile = {
 
   return (
     <div className={`flex flex-col h-full font-mono text-xs sm:text-sm leading-relaxed select-text overflow-hidden transition-colors duration-200 ${
-      isDark ? 'bg-[#0d0e13] text-[#d1d5db]' : 'bg-[#ffffff] text-slate-800'
+      isDark ? 'bg-gradient-to-br from-[#090c17] via-[#0f1528] to-[#140f24] text-[#d1d5db]' : 'bg-gradient-to-br from-[#fffaf0] via-[#f2f8ff] to-[#eef2ff] text-slate-800'
     }`}>
       <div className={`flex items-center justify-between px-4 py-2 border-b text-xs ${
         isDark ? 'bg-[#12141c] border-[#1f2333]' : 'bg-slate-100 border-slate-200'
@@ -134,7 +134,7 @@ export const ProjectsTsViewer: React.FC<CodeViewerProps> = ({
 
   return (
     <div className={`flex flex-col h-full font-mono text-xs sm:text-sm select-text overflow-hidden transition-colors duration-200 ${
-      isDark ? 'bg-[#0d0e13] text-[#d1d5db]' : 'bg-[#ffffff] text-slate-800'
+      isDark ? 'bg-gradient-to-br from-[#090c17] via-[#0f1528] to-[#140f24] text-[#d1d5db]' : 'bg-gradient-to-br from-[#fffaf0] via-[#f2f8ff] to-[#eef2ff] text-slate-800'
     }`}>
       <div className={`flex items-center justify-between px-4 py-2 border-b text-xs ${
         isDark ? 'bg-[#12141c] border-[#1f2333]' : 'bg-slate-100 border-slate-200'
@@ -198,7 +198,7 @@ export const SkillsJsonViewer: React.FC<CodeViewerProps> = ({
 
   return (
     <div className={`flex flex-col h-full font-mono text-xs sm:text-sm select-text overflow-hidden transition-colors duration-200 ${
-      isDark ? 'bg-[#0d0e13] text-[#d1d5db]' : 'bg-[#ffffff] text-slate-800'
+      isDark ? 'bg-gradient-to-br from-[#090c17] via-[#0f1528] to-[#140f24] text-[#d1d5db]' : 'bg-gradient-to-br from-[#fffaf0] via-[#f2f8ff] to-[#eef2ff] text-slate-800'
     }`}>
       <div className={`flex items-center justify-between px-4 py-2 border-b text-xs ${
         isDark ? 'bg-[#12141c] border-[#1f2333]' : 'bg-slate-100 border-slate-200'
@@ -228,7 +228,7 @@ export const ExperienceJsonViewer: React.FC<CodeViewerProps> = ({
 
   return (
     <div className={`flex flex-col h-full font-mono text-xs sm:text-sm select-text overflow-hidden transition-colors duration-200 ${
-      isDark ? 'bg-[#0d0e13] text-[#d1d5db]' : 'bg-[#ffffff] text-slate-800'
+      isDark ? 'bg-gradient-to-br from-[#090c17] via-[#0f1528] to-[#140f24] text-[#d1d5db]' : 'bg-gradient-to-br from-[#fffaf0] via-[#f2f8ff] to-[#eef2ff] text-slate-800'
     }`}>
       <div className={`flex items-center justify-between px-4 py-2 border-b text-xs ${
         isDark ? 'bg-[#12141c] border-[#1f2333]' : 'bg-slate-100 border-slate-200'
@@ -260,7 +260,7 @@ export const ContactShViewer: React.FC<CodeViewerProps> = ({
 
   return (
     <div className={`flex flex-col h-full font-mono text-xs sm:text-sm select-text overflow-hidden transition-colors duration-200 ${
-      isDark ? 'bg-[#0d0e13] text-[#d1d5db]' : 'bg-[#ffffff] text-slate-800'
+      isDark ? 'bg-gradient-to-br from-[#090c17] via-[#0f1528] to-[#140f24] text-[#d1d5db]' : 'bg-gradient-to-br from-[#fffaf0] via-[#f2f8ff] to-[#eef2ff] text-slate-800'
     }`}>
       <div className={`flex items-center justify-between px-4 py-2 border-b text-xs ${
         isDark ? 'bg-[#12141c] border-[#1f2333]' : 'bg-slate-100 border-slate-200'

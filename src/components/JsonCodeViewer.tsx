@@ -53,8 +53,8 @@ export const JsonCodeViewer: React.FC<JsonCodeViewerProps> = ({
 
   // Syntax highlighting classes based on theme
   const colors = isDark ? {
-    bg: 'bg-[#0d0e13]',
-    headerBg: 'bg-[#12141c]',
+    bg: 'bg-gradient-to-br from-[#090c17] via-[#0f1528] to-[#140f24]',
+    headerBg: 'bg-[#12141c]/90',
     headerBorder: 'border-[#1f2333]',
     text: 'text-[#d1d5db]',
     lineNum: 'text-slate-600',
@@ -71,8 +71,8 @@ export const JsonCodeViewer: React.FC<JsonCodeViewerProps> = ({
     comment: 'text-slate-500 italic',
     lineHover: 'hover:bg-slate-800/30'
   } : {
-    bg: 'bg-[#ffffff]',
-    headerBg: 'bg-[#f8fafc]',
+    bg: 'bg-gradient-to-br from-[#fffaf0] via-[#f2f8ff] to-[#eef2ff]',
+    headerBg: 'bg-[#f8fafc]/90',
     headerBorder: 'border-slate-200',
     text: 'text-slate-800',
     lineNum: 'text-slate-400',

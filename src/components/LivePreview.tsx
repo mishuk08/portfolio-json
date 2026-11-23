@@ -29,7 +29,9 @@ import {
   Linkedin,
   Twitter,
   Globe,
-  Heart
+  Heart,
+  Menu,
+  X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { PortfolioData, ThemeMode } from '../types';
@@ -65,6 +67,7 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   const [isPhotoPaused, setIsPhotoPaused] = useState(false);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [syncedPhotos, setSyncedPhotos] = useState<string[]>(() => getCachedPhotos());
 
   // Dynamic Google Drive Folder Real-time Synchronizer
@@ -218,10 +221,10 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
     <div 
       ref={scrollContainerRef}
       onScroll={handleScroll}
-      className={`h-full w-full max-w-full overflow-y-auto overflow-x-hidden antialiased transition-colors duration-200 relative scroll-smooth ${
+      className={`h-full w-full max-w-full overflow-y-auto overflow-x-hidden antialiased relative scroll-smooth ${
       isDark 
-        ? 'bg-[#08090d] text-slate-200 selection:bg-amber-500/30 selection:text-amber-300' 
-        : 'bg-[#f4f6fa] text-slate-800 selection:bg-amber-500/30 selection:text-amber-900'
+        ? 'bg-[radial-gradient(ellipse_at_top_left,_rgba(245,158,11,0.16),_transparent_46%),radial-gradient(ellipse_at_top_right,_rgba(6,182,212,0.16),_transparent_46%),radial-gradient(ellipse_at_bottom_center,_rgba(139,92,246,0.18),_transparent_52%),linear-gradient(135deg,#070913_0%,#0f152a_50%,#160f29_100%)] text-slate-200 selection:bg-amber-500/30 selection:text-amber-300' 
+        : 'bg-[radial-gradient(ellipse_at_top_left,_rgba(251,191,36,0.26),_transparent_46%),radial-gradient(ellipse_at_top_right,_rgba(56,189,248,0.24),_transparent_46%),radial-gradient(ellipse_at_bottom_center,_rgba(167,139,250,0.22),_transparent_52%),linear-gradient(135deg,#fffaf0_0%,#eff8ff_50%,#eef2ff_100%)] text-slate-800 selection:bg-amber-500/30 selection:text-amber-900'
     }`}>
       {/* Interactive Sticky Scroll Progress Bar */}
       <div className="sticky top-0 left-0 right-0 z-50 h-1 bg-transparent pointer-events-none">
@@ -238,28 +241,28 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
       {/* Background ambient lighting with GPU-accelerated CSS animations (Compositor Thread) */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div 
-          className={`absolute -top-40 -left-40 w-[480px] h-[480px] rounded-full blur-[140px] opacity-25 animate-float-1 ${
-            isDark ? 'bg-amber-500' : 'bg-amber-300'
+          className={`absolute -top-40 -left-40 w-[520px] h-[520px] rounded-full blur-[140px] animate-float-1 ${
+            isDark ? 'bg-amber-500 opacity-25' : 'bg-amber-300 opacity-40'
           }`} 
         />
         <div 
-          className={`absolute top-1/3 -right-40 w-[500px] h-[500px] rounded-full blur-[160px] opacity-20 animate-float-2 ${
-            isDark ? 'bg-cyan-500' : 'bg-cyan-300'
+          className={`absolute top-1/3 -right-40 w-[540px] h-[540px] rounded-full blur-[160px] animate-float-2 ${
+            isDark ? 'bg-cyan-500 opacity-20' : 'bg-sky-300 opacity-35'
           }`} 
         />
         <div 
-          className={`absolute bottom-20 left-1/4 w-[460px] h-[460px] rounded-full blur-[150px] opacity-20 animate-float-3 ${
-            isDark ? 'bg-purple-600' : 'bg-purple-300'
+          className={`absolute bottom-20 left-1/4 w-[500px] h-[500px] rounded-full blur-[150px] animate-float-3 ${
+            isDark ? 'bg-purple-600 opacity-25' : 'bg-indigo-300 opacity-35'
           }`} 
         />
       </div>
 
       <div className="relative z-10 w-full">
         {/* HERO SECTION */}
-        <section className={`relative px-3 sm:px-6 lg:px-8 py-8 sm:py-14 border-b transition-colors duration-200 w-full max-w-full overflow-hidden ${
+        <section className={`relative px-3 sm:px-6 lg:px-8 py-8 sm:py-14 border-b w-full max-w-full overflow-hidden ${
           isDark 
-            ? 'border-[#1b1e2c]/80 bg-gradient-to-b from-[#10121d]/90 to-[#08090d]/90' 
-            : 'border-slate-200/80 bg-gradient-to-b from-amber-50/50 via-white/80 to-slate-50/80'
+            ? 'border-[#1b1e2c]/80 bg-gradient-to-b from-[#13182e]/60 via-[#0d1122]/30 to-transparent' 
+            : 'border-slate-200/70 bg-gradient-to-b from-amber-100/35 via-white/35 to-transparent'
         }`}>
           <div className="max-w-5xl mx-auto space-y-6">
             
@@ -268,51 +271,126 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
               initial={{ opacity: 0, y: -12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45 }}
-              className="flex flex-wrap items-center justify-between gap-2"
+              className="relative"
             >
-              <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono border backdrop-blur-md ${
-                isDark
-                  ? 'bg-slate-900/70 border-slate-700/60 text-slate-300'
-                  : 'bg-white/80 border-slate-300 text-slate-700 font-medium shadow-xs'
-              }`}>
-                <MapPin className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                <span className="truncate">{portfolioData.developer.location}</span>
-              </div>
+              <div className="flex items-center justify-between gap-2">
+                <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono border backdrop-blur-md min-w-0 ${
+                  isDark
+                    ? 'bg-slate-900/70 border-slate-700/60 text-slate-300'
+                    : 'bg-white/80 border-slate-300 text-slate-700 font-medium shadow-xs'
+                }`}>
+                  <MapPin className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                  <span className="truncate">{portfolioData.developer.location}</span>
+                </div>
 
-              {/* Quick Navigation Links with Active Scrollspy Highlighting */}
-              <div className="flex items-center gap-1.5 overflow-x-auto text-xs font-mono py-1">
-                {['about', 'skills', 'experience', 'education', 'projects'].map((sec) => {
-                  const isActive = activeSection === sec;
-                  return (
-                    <button
-                      key={sec}
-                      onClick={() => scrollToSection(`section-${sec}`)}
-                      className={`relative px-2.5 py-1 rounded-lg transition-all cursor-pointer capitalize font-medium ${
-                        isActive
-                          ? (isDark 
-                              ? 'text-amber-400 bg-amber-500/15 border border-amber-500/30 font-bold shadow-xs' 
-                              : 'text-amber-800 bg-amber-100 border border-amber-300 font-bold shadow-xs')
-                          : (isDark 
-                              ? 'hover:bg-white/10 text-slate-400 hover:text-slate-100' 
-                              : 'hover:bg-black/5 text-slate-600 hover:text-slate-950')
-                      }`}
-                    >
-                      {sec}
-                    </button>
-                  );
-                })}
+                {/* Desktop Quick Navigation Links with Active Scrollspy Highlighting */}
+                <div className="hidden md:flex items-center gap-1.5 text-xs font-mono py-1">
+                  {['about', 'skills', 'experience', 'education', 'projects'].map((sec) => {
+                    const isActive = activeSection === sec;
+                    return (
+                      <button
+                        key={sec}
+                        onClick={() => scrollToSection(`section-${sec}`)}
+                        className={`relative px-2.5 py-1 rounded-lg transition-all cursor-pointer capitalize font-medium ${
+                          isActive
+                            ? (isDark 
+                                ? 'text-amber-400 bg-amber-500/15 border border-amber-500/30 font-bold shadow-xs' 
+                                : 'text-amber-800 bg-amber-100 border border-amber-300 font-bold shadow-xs')
+                            : (isDark 
+                                ? 'hover:bg-white/10 text-slate-400 hover:text-slate-100' 
+                                : 'hover:bg-black/5 text-slate-600 hover:text-slate-950')
+                        }`}
+                      >
+                        {sec}
+                      </button>
+                    );
+                  })}
+                  <button
+                    onClick={() => scrollToSection('section-ello')}
+                    className={`px-2.5 py-1 rounded-lg font-bold border transition-colors cursor-pointer flex items-center gap-1 ${
+                      activeSection === 'ello'
+                        ? 'bg-amber-500 text-slate-950 border-amber-400'
+                        : 'bg-amber-500/15 text-amber-500 border-amber-500/30 hover:bg-amber-500/25'
+                    }`}
+                  >
+                    <Bot className="w-3.5 h-3.5" />
+                    <span>Ask Ello</span>
+                  </button>
+                </div>
+
+                {/* Mobile Single Menu Toggle Button */}
                 <button
-                  onClick={() => scrollToSection('section-ello')}
-                  className={`px-2.5 py-1 rounded-lg font-bold border transition-colors cursor-pointer flex items-center gap-1 ${
-                    activeSection === 'ello'
-                      ? 'bg-amber-500 text-slate-950 border-amber-400'
-                      : 'bg-amber-500/15 text-amber-500 border-amber-500/30 hover:bg-amber-500/25'
+                  type="button"
+                  onClick={() => setIsMobileNavOpen(prev => !prev)}
+                  aria-expanded={isMobileNavOpen}
+                  aria-label="Toggle navigation menu"
+                  className={`md:hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-semibold border backdrop-blur-md cursor-pointer shrink-0 ${
+                    isMobileNavOpen
+                      ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-sm'
+                      : (isDark
+                          ? 'bg-slate-900/80 border-slate-700/70 text-slate-200 hover:bg-slate-800'
+                          : 'bg-white/85 border-slate-300 text-slate-800 hover:bg-white shadow-xs')
                   }`}
                 >
-                  <Bot className="w-3.5 h-3.5" />
-                  <span>Ask Ello</span>
+                  {isMobileNavOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4 text-amber-500" />}
+                  <span>Menu</span>
                 </button>
               </div>
+
+              {/* Mobile Collapsible Navigation Dropdown */}
+              {isMobileNavOpen && (
+                <div className={`md:hidden mt-2.5 p-2.5 rounded-2xl border backdrop-blur-2xl shadow-xl grid grid-cols-2 gap-1.5 text-xs font-mono ${
+                  isDark
+                    ? 'bg-[#0f1324]/95 border-[#252b45] text-slate-200'
+                    : 'bg-white/95 border-slate-200 text-slate-800'
+                }`}>
+                  {['about', 'skills', 'experience', 'education', 'projects'].map((sec) => {
+                    const isActive = activeSection === sec;
+                    return (
+                      <button
+                        key={sec}
+                        type="button"
+                        onClick={() => {
+                          setIsMobileNavOpen(false);
+                          scrollToSection(`section-${sec}`);
+                        }}
+                        className={`px-3 py-2 rounded-xl text-left capitalize font-medium cursor-pointer flex items-center justify-between ${
+                          isActive
+                            ? (isDark
+                                ? 'text-amber-400 bg-amber-500/15 border border-amber-500/30 font-bold'
+                                : 'text-amber-800 bg-amber-100 border border-amber-300 font-bold')
+                            : (isDark
+                                ? 'bg-white/5 hover:bg-white/10 text-slate-300'
+                                : 'bg-slate-100/70 hover:bg-slate-200/70 text-slate-700')
+                        }`}
+                      >
+                        <span>{sec}</span>
+                        <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+                      </button>
+                    );
+                  })}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileNavOpen(false);
+                      scrollToSection('section-ello');
+                    }}
+                    className={`px-3 py-2 rounded-xl font-bold border cursor-pointer flex items-center justify-between ${
+                      activeSection === 'ello'
+                        ? 'bg-amber-500 text-slate-950 border-amber-400'
+                        : isDark
+                          ? 'bg-amber-500/15 text-amber-400 border-amber-500/30'
+                          : 'bg-amber-500/15 text-amber-700 border-amber-500/30'
+                    }`}
+                  >
+                    <span className="flex items-center gap-1.5">
+                      <Bot className="w-3.5 h-3.5" />
+                      <span>Ask Ello</span>
+                    </span>
+                    <ChevronRight className="w-3.5 h-3.5 opacity-70" />
+                  </button>
+                </div>
+              )}
             </motion.div>
 
             {/* Profile Identity & User's Permanent Photo (Circular / Rounded) */}
