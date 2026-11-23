@@ -1,6 +1,5 @@
 import { PortfolioData } from '../types';
-import avatar1Opt from '../assets/avatar_optimized.webp';
-import avatar2Opt from '../assets/avatar2_optimized.webp';
+import { VERIFIED_DRIVE_PHOTOS } from '../services/driveSync';
 
 export const portfolioData: PortfolioData = {
   developer: {
@@ -8,11 +7,8 @@ export const portfolioData: PortfolioData = {
     role: "Web & Software Developer",
     tagline: "Dedicated Web & Software Developer passionate about building clean, performant, and scalable applications.",
     status: "Available for Projects & Collaboration",
-    avatar: avatar1Opt || "/avatar_optimized.webp",
-    avatars: [
-      avatar1Opt || "/avatar_optimized.webp",
-      avatar2Opt || "/avatar2_optimized.webp"
-    ],
+    avatar: VERIFIED_DRIVE_PHOTOS[0] || "/avatar_optimized.webp",
+    avatars: [...VERIFIED_DRIVE_PHOTOS],
     email: "mishukbabushoukhin@gmail.com",
     location: "Rangpur, Bangladesh",
     yearsOfExperience: 1,

@@ -35,17 +35,11 @@ import { motion, AnimatePresence } from 'motion/react';
 import { PortfolioData, ThemeMode } from '../types';
 import { ElloChatWidget } from './ElloChatWidget';
 import { downloadDeveloperCv } from '../utils/cvDownload';
-import avatar1Opt from '../assets/avatar_optimized.webp';
-import avatar2Opt from '../assets/avatar2_optimized.webp';
 import { fireConfetti } from '../utils/confetti';
 import { syncGoogleDrivePhotos, getCachedPhotos, DEFAULT_PHOTOS } from '../services/driveSync';
 
 const RangpurDivisionMap = React.lazy(() => 
   import('./RangpurDivisionMap').then(m => ({ default: m.RangpurDivisionMap }))
-);
-
-const CursorTilesDistortion = React.lazy(() => 
-  import('./CursorTilesDistortion').then(m => ({ default: m.CursorTilesDistortion }))
 );
 
 interface LivePreviewProps {
@@ -71,13 +65,9 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   const [isPhotoPaused, setIsPhotoPaused] = useState(false);
-  const [syncedPhotos, setSyncedPhotos] = useState<string[]>(() => [
-    avatar1Opt || '/avatar_optimized.webp',
-    avatar2Opt || '/avatar2_optimized.webp'
-  ]);
-  const [isTilesDemoOpen, setIsTilesDemoOpen] = useState(false);
+  const [syncedPhotos, setSyncedPhotos] = useState<string[]>(() => getCachedPhotos());
 
-  // Dynamic Google Drive Folder Real-time Synchronizer - deferred to avoid competing with initial LCP
+  // Dynamic Google Drive Folder Real-time Synchronizer
   useEffect(() => {
     let isMounted = true;
 
@@ -92,13 +82,13 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
             return prev;
           });
         }
-      } catch (err) {
+      } catch {
         console.info('Drive sync background check completed');
       }
     };
 
-    // Defer initial background sync so critical initial paint completes instantly
-    const initialTimer = setTimeout(doSync, 2500);
+    // Sync immediately on mount so profile pic always reflects live Drive folder
+    doSync();
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
@@ -113,7 +103,6 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
 
     return () => {
       isMounted = false;
-      clearTimeout(initialTimer);
       window.removeEventListener('focus', doSync);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       clearInterval(syncInterval);
@@ -122,6 +111,13 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
 
   // Combined active photo playlist
   const photoList = (syncedPhotos.length > 0 ? syncedPhotos : DEFAULT_PHOTOS).filter(Boolean);
+
+  // Keep activePhotoIdx within bounds if Drive photos change
+  useEffect(() => {
+    if (activePhotoIdx >= photoList.length) {
+      setActivePhotoIdx(0);
+    }
+  }, [photoList.length, activePhotoIdx]);
 
   // Preload secondary carousel photos during browser idle time only
   useEffect(() => {
@@ -256,15 +252,6 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
             isDark ? 'bg-purple-600' : 'bg-purple-300'
           }`} 
         />
-
-        {/* Three.js Cursor Tiles Distortion Animation (Anton Bobrov reproduction) */}
-        <React.Suspense fallback={null}>
-          <CursorTilesDistortion
-            themeMode={themeMode}
-            opacity={isDark ? 0.35 : 0.22}
-            className="absolute inset-0 w-full h-full"
-          />
-        </React.Suspense>
       </div>
 
       <div className="relative z-10 w-full">
@@ -324,18 +311,6 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
                 >
                   <Bot className="w-3.5 h-3.5" />
                   <span>Ask Ello</span>
-                </button>
-                <button
-                  onClick={() => setIsTilesDemoOpen(true)}
-                  className={`px-2.5 py-1 rounded-lg font-bold border transition-colors cursor-pointer flex items-center gap-1 ${
-                    isDark
-                      ? 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30 hover:bg-cyan-500/25'
-                      : 'bg-cyan-100 text-cyan-800 border-cyan-300 hover:bg-cyan-200'
-                  }`}
-                  title="Experience 1:1 Three.js Cursor Tiles Distortion Demo"
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>Tiles FX</span>
                 </button>
               </div>
             </motion.div>
@@ -1448,44 +1423,6 @@ export const LivePreview: React.FC<LivePreviewProps> = ({
         <Bot className="w-5 h-5 text-slate-950" />
         <span className="hidden sm:inline">Ask Ello</span>
       </motion.button>
-
-      {/* 1:1 Three.js Cursor Tiles Distortion Fullscreen Modal Experience */}
-      <AnimatePresence>
-        {isTilesDemoOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black flex flex-col select-none"
-          >
-            <div className="absolute top-4 left-4 z-30 flex items-center gap-2">
-              <span className="px-3 py-1.5 rounded-full text-xs font-mono font-bold bg-slate-900/90 text-amber-400 border border-amber-500/30 backdrop-blur-md flex items-center gap-1.5 shadow-lg">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Three.js Cursor Tiles Distortion (1:1 Anton Bobrov Demo)</span>
-              </span>
-            </div>
-
-            <button
-              onClick={() => setIsTilesDemoOpen(false)}
-              className="absolute top-4 right-4 z-30 px-3.5 py-1.5 rounded-full bg-slate-900/90 hover:bg-slate-800 text-white font-mono text-xs border border-white/20 transition backdrop-blur-md shadow-lg cursor-pointer"
-            >
-              ✕ Close Fullscreen
-            </button>
-
-            <div className="flex-1 w-full h-full relative">
-              <React.Suspense fallback={<div className="w-full h-full flex items-center justify-center text-white font-mono text-sm">Initializing Three.js WebGPU Scene...</div>}>
-                <CursorTilesDistortion
-                  themeMode={themeMode}
-                  showBadge={true}
-                  showControls={true}
-                  enableWheel={true}
-                  className="w-full h-full"
-                />
-              </React.Suspense>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };

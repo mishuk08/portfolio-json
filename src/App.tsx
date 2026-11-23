@@ -12,6 +12,7 @@ import { OpeningAnimation } from './components/OpeningAnimation';
 import { portfolioData as initialPortfolioData } from './data/portfolioData';
 import { EditorTabId, ViewMode, ThemeMode, Project, PortfolioData } from './types';
 import { syncGithubProjects } from './utils/githubSync';
+import { syncGoogleDrivePhotos, getCachedPhotos } from './services/driveSync';
 import { useAnimatedFavicon } from './hooks/useAnimatedFavicon';
 import { fireConfetti } from './utils/confetti';
 
@@ -101,6 +102,52 @@ export default function App() {
       }
     }));
   };
+
+  // Sync developer profile pictures with Google Drive folder unless custom avatar is set
+  useEffect(() => {
+    let isMounted = true;
+    let hasCustomAvatar = false;
+    try {
+      hasCustomAvatar = Boolean(localStorage.getItem('mishuk_custom_avatar'));
+    } catch {
+      // ignore
+    }
+
+    const applyDrivePhotos = (photos: string[]) => {
+      if (!isMounted || !photos || photos.length === 0) return;
+      setData(prev => ({
+        ...prev,
+        developer: {
+          ...prev.developer,
+          avatar: hasCustomAvatar ? prev.developer.avatar : photos[0],
+          avatars: photos
+        }
+      }));
+    };
+
+    // Apply cached Drive photos immediately
+    applyDrivePhotos(getCachedPhotos());
+
+    // Fetch live updates from Google Drive folder
+    const syncDrive = async () => {
+      try {
+        const latest = await syncGoogleDrivePhotos();
+        if (latest && latest.length > 0) {
+          applyDrivePhotos(latest);
+        }
+      } catch {
+        // Keep cached/default Drive photos
+      }
+    };
+
+    syncDrive();
+    const driveInterval = setInterval(syncDrive, 30000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(driveInterval);
+    };
+  }, []);
 
   // Sync projects from GitHub @mishuk08 - deferred to idle time to preserve initial paint speed
   useEffect(() => {
