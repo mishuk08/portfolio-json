@@ -9,7 +9,6 @@ import {
   Sun,
   Moon
 } from 'lucide-react';
-import { motion } from 'motion/react';
 import { ViewMode, ThemeMode } from '../types';
 
 interface HeaderBarProps {
@@ -43,13 +42,13 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   const isDark = themeMode === 'dark';
 
   return (
-    <header className={`border-b select-none sticky top-0 z-30 transition-colors duration-200 w-full max-w-full overflow-hidden ${
+    <header className={`border-b select-none sticky top-0 z-30 w-full max-w-full overflow-hidden ${
       isDark 
         ? 'bg-[#121318] border-[#232634] text-slate-300' 
         : 'bg-slate-50 border-slate-200 text-slate-700 shadow-xs'
     }`}>
       {/* Top macOS-style window header */}
-      <div className={`flex items-center justify-between px-2.5 sm:px-4 py-2 border-b transition-colors duration-200 gap-2 w-full max-w-full ${
+      <div className={`flex items-center justify-between px-2.5 sm:px-4 py-2 border-b gap-2 w-full max-w-full ${
         isDark ? 'border-[#1b1d27]' : 'border-slate-200'
       }`}>
         {/* Left: Window controls & Name */}
@@ -94,7 +93,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           {/* Light / Dark Mode Toggle Button */}
           <button
             onClick={(e) => toggleThemeMode(e)}
-            className={`p-1.5 sm:px-2 sm:py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer border active:scale-95 ${
+            className={`p-1.5 sm:px-2 sm:py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 cursor-pointer border ${
               isDark
                 ? 'bg-slate-800/80 border-slate-700/70 text-amber-300 hover:bg-slate-700 hover:text-amber-200'
                 : 'bg-amber-100/80 border-amber-300 text-amber-900 hover:bg-amber-200'
@@ -103,26 +102,12 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           >
             {isDark ? (
               <>
-                <motion.div
-                  key="dark-sun"
-                  initial={{ rotate: -90, scale: 0.8 }}
-                  animate={{ rotate: 0, scale: 1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Sun className="w-3.5 h-3.5 text-amber-400" />
-                </motion.div>
+                <Sun className="w-3.5 h-3.5 text-amber-400" />
                 <span className="hidden md:inline text-[11px] font-mono">Light</span>
               </>
             ) : (
               <>
-                <motion.div
-                  key="light-moon"
-                  initial={{ rotate: 90, scale: 0.8 }}
-                  animate={{ rotate: 0, scale: 1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Moon className="w-3.5 h-3.5 text-slate-800" />
-                </motion.div>
+                <Moon className="w-3.5 h-3.5 text-slate-800" />
                 <span className="hidden md:inline text-[11px] font-mono">Dark</span>
               </>
             )}
@@ -131,7 +116,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           {/* SINGLE GUI / JSON Mode Switch Button */}
           <button
             onClick={toggleViewMode}
-            className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 border border-amber-400 transition-all shadow-sm cursor-pointer active:scale-95"
+            className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 border border-amber-400 shadow-sm cursor-pointer"
             title={viewMode === 'preview' ? 'Switch to JSON / Code Mode' : 'Switch to GUI / Live Mode'}
           >
             {viewMode === 'preview' ? (

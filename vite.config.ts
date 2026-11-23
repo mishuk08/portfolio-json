@@ -87,6 +87,9 @@ export default defineConfig(() => {
       driveSyncPlugin(),
       VitePWA({
         registerType: 'autoUpdate',
+        workbox: {
+          maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
+        },
         includeAssets: ['favicon.png', 'apple-touch-icon.png', 'avatar.png', 'pwa-192x192.png', 'pwa-512x512.png', 'pwa-maskable-512x512.png'],
         manifest: {
           id: '/',
@@ -147,6 +150,9 @@ export default defineConfig(() => {
           manualChunks(id) {
             if (id.includes('node_modules/jspdf') || id.includes('node_modules/html2canvas') || id.includes('node_modules/dompurify')) {
               return 'pdf-generator';
+            }
+            if (id.includes('node_modules/three')) {
+              return 'vendor-three';
             }
             if (id.includes('node_modules/motion')) {
               return 'vendor-motion';

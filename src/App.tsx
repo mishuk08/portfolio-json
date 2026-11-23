@@ -28,13 +28,11 @@ const ProjectModal = lazy(() => import('./components/ProjectModal').then(m => ({
 const ContactModal = lazy(() => import('./components/ContactModal').then(m => ({ default: m.ContactModal })));
 const PortfolioEditorModal = lazy(() => import('./components/PortfolioEditorModal').then(m => ({ default: m.PortfolioEditorModal })));
 const CvPreviewModal = lazy(() => import('./components/CvPreviewModal').then(m => ({ default: m.CvPreviewModal })));
-const ModeTransitionOverlay = lazy(() => import('./components/ModeTransitionOverlay').then(m => ({ default: m.ModeTransitionOverlay })));
-const ThemeSwitchAnimation = lazy(() => import('./components/ThemeSwitchAnimation').then(m => ({ default: m.ThemeSwitchAnimation })));
 
 export default function App() {
-  // Website opens in GUI mode by default
+  // Website opens in GUI mode and Light mode by default
   const [viewMode, setViewMode] = useState<ViewMode>('preview');
-  const [themeMode, setThemeMode] = useState<ThemeMode>('dark');
+  const [themeMode, setThemeMode] = useState<ThemeMode>('light');
   const [data, setData] = useState<PortfolioData>(initialPortfolioData);
   const [activeTab, setActiveTab] = useState<EditorTabId>('portfolio.json');
   const [openTabs, setOpenTabs] = useState<EditorTabId[]>([
@@ -104,20 +102,6 @@ export default function App() {
     }));
   };
 
-  // Brand New Modern Theme Switch Ripple & Water Blur Transition
-  const [isThemeBlurring, setIsThemeBlurring] = useState<boolean>(false);
-  const [themeTransition, setThemeTransition] = useState<{
-    isActive: boolean;
-    targetTheme: ThemeMode;
-    origin?: { x: number; y: number };
-  }>({
-    isActive: false,
-    targetTheme: 'dark'
-  });
-
-  // Full-screen mode transition (JSON <-> GUI) with 0-100% circle progress
-  const [transitioningMode, setTransitioningMode] = useState<ViewMode | null>(null);
-
   // Sync projects from GitHub @mishuk08 - deferred to idle time to preserve initial paint speed
   useEffect(() => {
     let isMounted = true;
@@ -148,48 +132,13 @@ export default function App() {
     };
   }, []);
 
-  const toggleThemeMode = (e?: React.MouseEvent) => {
-    if (themeTransition.isActive) return;
-    
-    const nextTheme: ThemeMode = themeMode === 'dark' ? 'light' : 'dark';
-    const origin = e ? { x: e.clientX, y: e.clientY } : undefined;
-
-    // 1. Trigger water wave ripple animation and initiate progressive screen blur
-    setThemeTransition({
-      isActive: true,
-      targetTheme: nextTheme,
-      origin
-    });
-    setIsThemeBlurring(true);
-
-    // 2. Exactly when blur reaches its peak (300ms): Swap the theme from dark to light or light to dark!
-    // "Jokhon blur hoy tokhon dark theke light ba light theke dark Hobe"
-    setTimeout(() => {
-      setThemeMode(nextTheme);
-    }, 300);
-
-    // 3. Immediately after swapping under heavy blur (380ms), reduce blur back to crystal clear
-    // "then blur kome poriskar Hobe"
-    setTimeout(() => {
-      setIsThemeBlurring(false);
-    }, 380);
-
-    // 4. After water ripples fully dissipate (820ms), cleanly end the animation state
-    setTimeout(() => {
-      setThemeTransition(prev => ({ ...prev, isActive: false }));
-    }, 820);
+  const toggleThemeMode = () => {
+    setThemeMode(prev => (prev === 'dark' ? 'light' : 'dark'));
   };
 
   const handleRequestViewMode = (newMode: ViewMode) => {
-    if (newMode === viewMode || transitioningMode) return;
-    setTransitioningMode(newMode);
-  };
-
-  const handleModeTransitionComplete = () => {
-    if (transitioningMode) {
-      setViewMode(transitioningMode);
-      setTransitioningMode(null);
-    }
+    if (newMode === viewMode) return;
+    setViewMode(newMode);
   };
 
   const selectedProject: Project | null = selectedProjectId
@@ -335,20 +284,11 @@ export default function App() {
   const isDark = themeMode === 'dark';
 
   return (
-    <div className={`h-screen w-screen max-w-full flex flex-col overflow-x-hidden overflow-y-hidden font-sans transition-colors duration-200 ${
+    <div className={`h-screen w-screen max-w-full flex flex-col overflow-x-hidden overflow-y-hidden font-sans ${
       isDark ? 'bg-[#0d0e13] text-slate-200' : 'bg-slate-50 text-slate-800'
     }`}>
-      {/* Visual Content Wrapper with synchronized water blur & clear transitions */}
-      <div 
-        className={`flex-1 flex flex-col overflow-hidden w-full transition-all ${
-          isThemeBlurring 
-            ? 'filter blur-[12px] opacity-90 scale-[0.996]' 
-            : 'filter-none opacity-100 scale-100'
-        }`}
-        style={{
-          transition: 'filter 0.32s cubic-bezier(0.16, 1, 0.3, 1), transform 0.32s ease, opacity 0.32s ease'
-        }}
-      >
+      {/* Visual Content Wrapper */}
+      <div className="flex-1 flex flex-col overflow-hidden w-full">
         {/* Top Application Bar with macOS Window Buttons, GUI/JSON mode switch, and Dark/Light toggle */}
         <HeaderBar
           viewMode={viewMode}
@@ -446,32 +386,6 @@ export default function App() {
           avatarUrl={data.developer.avatar || '/avatar_optimized.webp'}
           developerName={data.developer.name}
         />
-      )}
-
-      {/* Brand New Modern Theme Switch Radial Ripple & Celestial HUD Animation */}
-      <Suspense fallback={null}>
-        <ThemeSwitchAnimation
-          isActive={themeTransition.isActive}
-          targetTheme={themeTransition.targetTheme}
-          origin={themeTransition.origin}
-          onComplete={() => setThemeTransition(prev => ({ ...prev, isActive: false }))}
-        />
-      </Suspense>
-
-      {/* Fullscreen JSON <-> GUI Mode Transition Circular Loading Animation */}
-      {transitioningMode && (
-        <Suspense fallback={null}>
-          <ModeTransitionOverlay
-            targetMode={transitioningMode}
-            themeMode={themeMode}
-            onApplyMode={() => {
-              if (transitioningMode) {
-                setViewMode(transitioningMode);
-              }
-            }}
-            onComplete={handleModeTransitionComplete}
-          />
-        </Suspense>
       )}
 
       {/* Interactive Modals */}
